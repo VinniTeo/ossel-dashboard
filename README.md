@@ -1,6 +1,4 @@
-# OSSEL Dashboard - Versão profissional V7
-
-Sistema Flask + SQLite para acompanhamento executivo e operacional de projetos.
+# OSSEL Dashboard - Versao Profissional V10
 
 ## Deploy no Render
 
@@ -14,35 +12,33 @@ Start Command:
 gunicorn app:app
 ```
 
-## Importante: manter senhas e dados após atualizações
+## MUITO IMPORTANTE - senhas e dados persistentes
 
-Para que usuários, senhas e alterações fiquem salvos mesmo após novos deploys, configure um **Persistent Disk** no Render e monte em:
+Para as senhas criadas no primeiro acesso continuarem salvas apos novos deploys, o Render precisa ter **Persistent Disk**.
 
-```text
-/var/data
-```
+Configure no Render:
 
-Opcionalmente, adicione a variável de ambiente:
+- Disk mount path: `/var/data`
+- Environment variable: `DATA_DIR=/var/data`
 
-```text
-DATA_DIR=/var/data
-```
+Sem Persistent Disk, o Render pode recriar o banco SQLite a cada novo deploy. Nesse caso, os usuarios voltam para primeiro acesso. Isso nao e erro do sistema: e comportamento da hospedagem quando nao existe disco persistente.
 
-O sistema usará automaticamente esse caminho para o banco SQLite. Sem disco persistente, o Render pode recriar o banco em alguns deploys.
-
-## Usuários iniciais
+## Usuarios iniciais
 
 - ADM: administrador
 - Thiago: administrador
 - Denis: administrador
-- Filipe: operação Troca de Máquinas
-- Eduardo: operação Troca de Máquinas
+- Filipe: operacao Troca de Maquinas
+- Eduardo: operacao Troca de Maquinas
 
-As senhas são criadas no primeiro acesso e salvas criptografadas.
+As senhas sao criadas no primeiro acesso e ficam criptografadas no banco.
 
+## V10
 
-## V9
-- Responsáveis múltiplos por projeto.
-- Controle de progresso corrigido com slider, campo numérico e botões rápidos 0/25/50/75/100.
-- Gráfico e resumo por responsável considerando múltiplos vinculados.
-- Compatível com banco existente: não apaga senhas nem projetos.
+- Removidos botoes rapidos 0/25/50/75/100.
+- Mantida apenas a barra de percentual com exibicao visual do valor.
+- Cards de projeto redesenhados com visual executivo.
+- Alertas de prazo mais elegantes por borda, sombra e sinalizacao.
+- Melhorias de UX na area operacional.
+- Mantida selecao de multiplos responsaveis por projeto.
+- Compatibilidade com banco antigo, sem apagar usuarios, senhas ou projetos existentes.
