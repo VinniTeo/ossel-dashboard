@@ -20,6 +20,7 @@ DEFAULT_USERS = [
     ("Thiago", "Thiago", "troca"),
     ("Filipe", "Filipe", "troca"),
     ("Eduardo", "Eduardo", "troca"),
+    ("Denis", "Denis", "admin"),
 ]
 
 app = Flask(__name__)
@@ -45,11 +46,28 @@ def date_to_br(value):
 
 
 def infer_unidade(nome):
-    n = nome.replace("Troca de maquinas -", "").replace("Troca das antenas -", "").strip()
+    """Extrai a unidade sem abreviar nomes compostos, como Sao Roque e Sorocaba Central."""
+    n = str(nome or "").replace("Troca de maquinas -", "").replace("Troca das antenas -", "").strip()
+    if not n:
+        return ""
+    # Para estruturas corporativas como SA - ADM ou SCS - FUNE, a unidade principal fica antes do segundo separador.
     if " - " in n:
-        return n.split(" - ")[0].strip()
-    parts = n.split()
-    return parts[0].strip() if parts else ""
+        parts = [x.strip() for x in n.split(" - ") if x.strip()]
+        if len(parts) >= 2 and parts[0] in {"SA", "SCS", "SP"}:
+            return f"{parts[0]} - {parts[1]}"
+        return parts[0]
+    # Se nao existe segundo separador, mantem o nome completo da unidade.
+    return n
+
+
+def normalize_unidade(unidade, nome):
+    u = str(unidade or "").strip()
+    n = str(nome or "")
+    if u.lower() in {"sao", "são"} and "São Roque" in n:
+        return "São Roque"
+    if u.lower() == "sorocaba" and "Sorocaba Central" in n:
+        return "Sorocaba Central"
+    return u
 
 
 def status_from_progress(progress):
@@ -130,6 +148,9 @@ def init_db():
             """,
             (username, display_name, role, datetime.now().isoformat(timespec="seconds"), datetime.now().isoformat(timespec="seconds")),
         )
+    # Garante que novos usuarios padrao sejam sincronizados em bancos ja existentes.
+    for username, display_name, role in DEFAULT_USERS:
+        cur.execute("UPDATE users SET display_name=?, role=? WHERE lower(username)=lower(?)", (display_name, role, username))
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     if count == 0 and SEED_PATH.exists():
         seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
@@ -189,6 +210,7 @@ def rows_to_dict(rows):
     out = []
     for r in rows:
         d = dict(r)
+        d["unidade"] = normalize_unidade(d.get("unidade"), d.get("nome"))
         d["prazo_br"] = date_to_br(d.get("prazo"))
         out.append(d)
     return out
@@ -203,6 +225,9 @@ def seed_projects(clear_existing=False):
     if clear_existing:
         cur.execute("DELETE FROM projects")
         cur.execute("DELETE FROM sqlite_sequence WHERE name='projects'")
+    # Garante que novos usuarios padrao sejam sincronizados em bancos ja existentes.
+    for username, display_name, role in DEFAULT_USERS:
+        cur.execute("UPDATE users SET display_name=?, role=? WHERE lower(username)=lower(?)", (display_name, role, username))
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     if count == 0 and SEED_PATH.exists():
         seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))

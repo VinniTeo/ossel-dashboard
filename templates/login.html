@@ -1,4 +1,33 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login - OSSEL Dashboard</title><style>
-:root{--navy:#061a35;--blue:#1463c2;--line:#e2e8f0;--muted:#64748b;--ink:#0f172a}
-*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 20% 10%,rgba(71,215,255,.24),transparent 30%),linear-gradient(135deg,#061a35,#0b3266 60%,#1463c2);color:var(--ink);padding:22px}.box{width:min(460px,94vw);background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.35);border-radius:30px;padding:32px;box-shadow:0 30px 90px rgba(0,0,0,.28)}.brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}.mark{width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,#061a35,#1463c2);display:grid;place-items:center;color:#fff;font-weight:950}.brand b{display:block;color:#061a35}.brand span{color:#64748b;font-size:.88rem;font-weight:700}h1{margin:0 0 8px;color:#061a35;font-size:1.7rem}p{color:#64748b;line-height:1.5}label{display:block;color:#334155;font-weight:800;font-size:.86rem;margin-top:13px}input{width:100%;border:1px solid var(--line);border-radius:16px;padding:14px;font-size:1rem;margin-top:7px;outline:none}input:focus{border-color:#1463c2;box-shadow:0 0 0 4px rgba(20,99,194,.12)}button{width:100%;border:0;border-radius:16px;padding:14px;background:#1463c2;color:#fff;font-weight:900;font-size:1rem;cursor:pointer;margin-top:18px}.err{color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:14px;padding:11px;margin-top:14px}.hint{background:#eef6ff;border:1px solid #bfdbfe;border-radius:16px;padding:12px;color:#334155;font-size:.9rem}.users{font-size:.86rem;color:#64748b;margin-top:12px}.users b{color:#061a35}</style></head><body><form class="box" method="post" autocomplete="off"><div class="brand"><div class="mark">OS</div><div><b>OSSEL Assistência</b><span>Centro Tecnológico • Dashboard Executivo</span></div></div><h1>Acesso ao painel</h1><p>Entre com seu usuário corporativo. No primeiro acesso, informe uma senha nova e confirme para ativar sua conta.</p>{% if erro %}<div class="err">{{ erro }}</div>{% endif %}<label>Usuário</label><input name="username" placeholder="ADM, Thiago, Filipe ou Eduardo" value="{{ username or '' }}" required autofocus><label>Senha</label><input name="password" type="password" placeholder="Digite sua senha" required><label>Confirmar senha <span style="font-weight:600;color:#64748b">somente no primeiro acesso</span></label><input name="confirm_password" type="password" placeholder="Repita a senha se for seu primeiro login"><button>Entrar</button><div class="hint" style="margin-top:18px"><b>Permissões:</b><br>ADM: acesso completo.<br>Thiago, Filipe e Eduardo: alteração apenas em projetos de Troca de Máquinas.</div><div class="users">Usuários iniciais: <b>ADM</b>, <b>Thiago</b>, <b>Filipe</b>, <b>Eduardo</b>.</div></form></body></html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Acesso - OSSEL Assistência</title>
+<style>
+:root{--navy:#061a35;--navy2:#0b3266;--blue:#1463c2;--cyan:#47d7ff;--line:#dbe7f3;--muted:#64748b;--ink:#0f172a;--card:#ffffff;--red:#ef4444}
+*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(71,215,255,.26),transparent 30%),radial-gradient(circle at 85% 18%,rgba(20,99,194,.36),transparent 34%),linear-gradient(135deg,#04142c,#0b3266 62%,#1463c2);color:var(--ink);padding:22px;overflow:hidden}.bgMark{position:fixed;inset:auto -120px -130px auto;width:520px;height:520px;border-radius:999px;background:rgba(255,255,255,.08);filter:blur(6px)}.box{width:min(520px,94vw);background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.42);border-radius:34px;padding:34px;box-shadow:0 34px 100px rgba(0,0,0,.30);position:relative;overflow:hidden}.box:before{content:"";position:absolute;right:-80px;top:-90px;width:220px;height:220px;border-radius:999px;background:linear-gradient(135deg,rgba(20,99,194,.16),rgba(71,215,255,.18))}.brand{display:flex;align-items:center;gap:18px;margin-bottom:24px;position:relative}.brand img{width:118px;height:auto;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(2,8,23,.16))}.brandText b{display:block;color:var(--navy);font-size:1.05rem}.brandText span{color:var(--muted);font-size:.9rem;font-weight:800}.securityTag{display:inline-flex;align-items:center;gap:8px;margin:4px 0 18px;padding:9px 12px;border-radius:999px;background:#eef6ff;border:1px solid #bfdbfe;color:#0b3266;font-size:.82rem;font-weight:900}h1{margin:0 0 10px;color:var(--navy);font-size:1.95rem;letter-spacing:-.035em}p{color:var(--muted);line-height:1.58;margin:0 0 18px}label{display:block;color:#334155;font-weight:900;font-size:.86rem;margin-top:14px}input{width:100%;border:1px solid var(--line);border-radius:18px;padding:15px 16px;font-size:1rem;margin-top:7px;outline:none;background:#fff}input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(20,99,194,.12)}button{width:100%;border:0;border-radius:18px;padding:15px;background:linear-gradient(135deg,var(--blue),#0b58ad);color:#fff;font-weight:950;font-size:1rem;cursor:pointer;margin-top:20px;box-shadow:0 16px 34px rgba(20,99,194,.22)}button:hover{transform:translateY(-1px)}.err{color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:16px;padding:12px;margin:12px 0}.foot{margin-top:18px;color:#64748b;font-size:.82rem;display:flex;align-items:center;gap:8px}.dot{width:8px;height:8px;border-radius:99px;background:#16a34a;box-shadow:0 0 0 5px rgba(22,163,74,.12)}@media(max-width:560px){.box{padding:26px}.brand{align-items:flex-start;flex-direction:column}.brand img{width:106px}}
+</style>
+</head>
+<body>
+<div class="bgMark"></div>
+<form class="box" method="post" autocomplete="off">
+  <div class="brand">
+    <img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL Assistência" style="background:linear-gradient(135deg,#061a35,#0b3266);border-radius:18px;padding:10px">
+    <div class="brandText"><b>OSSEL Assistência</b><span>Centro Tecnológico • Painel Executivo</span></div>
+  </div>
+  <div class="securityTag">🔒 Acesso corporativo restrito</div>
+  <h1>Acesso ao painel</h1>
+  <p>Informe seu usuário corporativo e senha. No primeiro acesso, defina uma senha própria para ativar sua conta.</p>
+  {% if erro %}<div class="err">{{ erro }}</div>{% endif %}
+  <label>Usuário</label>
+  <input name="username" placeholder="Digite seu usuário" value="{{ username or '' }}" required autofocus>
+  <label>Senha</label>
+  <input name="password" type="password" placeholder="Digite sua senha" required>
+  <label>Confirmar senha</label>
+  <input name="confirm_password" type="password" placeholder="Use apenas no primeiro acesso">
+  <button>Entrar com segurança</button>
+  <div class="foot"><span class="dot"></span><span>Ambiente online com controle de acesso e atualização centralizada.</span></div>
+</form>
+</body>
+</html>
