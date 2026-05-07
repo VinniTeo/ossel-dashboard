@@ -39,3 +39,10 @@ O sistema usará automaticamente esse caminho para o banco SQLite. Sem disco per
 - Eduardo: operação Troca de Máquinas
 
 As senhas são criadas no primeiro acesso e salvas criptografadas.
+
+
+## V9
+- Responsáveis múltiplos por projeto.
+- Controle de progresso corrigido com slider, campo numérico e botões rápidos 0/25/50/75/100.
+- Gráfico e resumo por responsável considerando múltiplos vinculados.
+- Compatível com banco existente: não apaga senhas nem projetos.

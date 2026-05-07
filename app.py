@@ -455,7 +455,7 @@ def api_update_project(project_id):
         if k in data:
             updates[k] = data[k]
     if "progresso" in updates:
-        progress = max(0, min(100, int(updates["progresso"] or 0)))
+        progress = max(0, min(100, int(float(updates["progresso"] or 0))))
         updates["progresso"] = progress
         updates["status"] = status_from_progress(progress)
     if "prazo" in updates and updates["prazo"] and "/" in str(updates["prazo"]):
@@ -481,7 +481,7 @@ def api_create_project():
     if not require_admin():
         return jsonify({"error": "Apenas ADM pode criar projetos"}), 403
     data = request.get_json(force=True) or {}
-    progresso = max(0, min(100, int(data.get("progresso") or 0)))
+    progresso = max(0, min(100, int(float(data.get("progresso") or 0))))
     conn = connect()
     cur = conn.cursor()
     cur.execute(
