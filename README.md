@@ -1,25 +1,33 @@
-# OSSEL Dashboard Executivo - V5.1 Corrigido
+# OSSEL Dashboard TI - Diretoria v3
 
-Correções desta versão:
+Sistema web Flask + SQLite para controle executivo e operacional dos projetos.
 
-- Restaura automaticamente a base completa quando o banco estiver vazio.
-- Corrige compatibilidade com bancos antigos já criados no Render.
-- Mantém Denis como ADM.
-- Mantém destaque visual para prazos vencidos e prazos próximos.
-- Mantém correção dos nomes completos das unidades.
+## Usuários iniciais
 
-## Deploy no Render
+- ADM: acesso completo.
+- Thiago: altera apenas projetos da categoria Troca de Máquinas.
+- Filipe: altera apenas projetos da categoria Troca de Máquinas.
+- Eduardo: altera apenas projetos da categoria Troca de Máquinas.
+
+No primeiro login, cada usuário escolhe sua própria senha. Não existe mais PIN visível na tela de login.
+
+## Rodar localmente
+
+```bash
+pip install -r requirements.txt
+python app.py
+```
+
+Acesse: http://127.0.0.1:5000
+
+## Render
 
 Build Command:
-
 ```bash
 pip install -r requirements.txt
 ```
 
 Start Command:
-
 ```bash
 gunicorn app:app
 ```
-
-Root Directory: deixe vazio se os arquivos estiverem na raiz do GitHub.
