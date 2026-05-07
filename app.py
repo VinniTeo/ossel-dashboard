@@ -135,7 +135,8 @@ def init_db():
             obs TEXT,
             ordem INTEGER,
             updated_at TEXT,
-            updated_by TEXT
+            updated_by TEXT,
+            assigned_to TEXT
         )
         """
     )
@@ -153,6 +154,11 @@ def init_db():
         )
         """
     )
+    # Migra bancos antigos sem apagar dados existentes.
+    project_cols = [r[1] for r in cur.execute("PRAGMA table_info(projects)").fetchall()]
+    if "assigned_to" not in project_cols:
+        cur.execute("ALTER TABLE projects ADD COLUMN assigned_to TEXT")
+
     for username, display_name, role in DEFAULT_USERS:
         now = datetime.now().isoformat(timespec="seconds")
         existing = cur.execute("SELECT * FROM users WHERE lower(username)=lower(?)", (username,)).fetchone()
@@ -182,8 +188,8 @@ def init_db():
                     cur.execute(
                         """
                         INSERT INTO projects
-                        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, assigned_to)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
                             sp.get("nome", ""),
@@ -197,6 +203,7 @@ def init_db():
                             sp.get("obs") or p.get("obs") or "",
                             ordem,
                             datetime.now().isoformat(timespec="seconds"),
+                            "",
                         ),
                     )
                     ordem += 1
@@ -204,8 +211,8 @@ def init_db():
                 cur.execute(
                     """
                     INSERT INTO projects
-                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, assigned_to)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         p.get("nome", ""),
@@ -219,6 +226,7 @@ def init_db():
                         p.get("obs") or "",
                         ordem,
                         datetime.now().isoformat(timespec="seconds"),
+                            "",
                     ),
                 )
                 ordem += 1
@@ -259,8 +267,8 @@ def seed_projects(clear_existing=False):
             cur.execute(
                 """
                 INSERT INTO projects
-                (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, assigned_to)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     p.get("nome", ""),
@@ -274,6 +282,7 @@ def seed_projects(clear_existing=False):
                     p.get("obs") or "",
                     ordem,
                     datetime.now().isoformat(timespec="seconds"),
+                    "",
                 ),
             )
             ordem += 1
@@ -281,8 +290,8 @@ def seed_projects(clear_existing=False):
                 cur.execute(
                     """
                     INSERT INTO projects
-                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, assigned_to)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         sp.get("nome", ""),
@@ -296,6 +305,7 @@ def seed_projects(clear_existing=False):
                         sp.get("obs") or p.get("obs") or "",
                         ordem,
                         datetime.now().isoformat(timespec="seconds"),
+                            "",
                     ),
                 )
                 ordem += 1
@@ -401,6 +411,16 @@ def api_me():
     return jsonify(current_user())
 
 
+
+@app.route("/api/users")
+def api_users():
+    if not require_auth():
+        return jsonify({"error": "unauthorized"}), 401
+    conn = connect()
+    rows = conn.execute("SELECT username, display_name, role FROM users ORDER BY display_name").fetchall()
+    conn.close()
+    return jsonify([dict(r) for r in rows])
+
 @app.route("/api/projects")
 def api_projects():
     if not require_auth():
@@ -426,7 +446,7 @@ def api_update_project(project_id):
 
     data = request.get_json(force=True) or {}
     if session.get("role") == "admin":
-        allowed = ["nome", "projeto_pai", "unidade", "setor", "categoria", "progresso", "status", "prazo", "obs", "ordem"]
+        allowed = ["nome", "projeto_pai", "unidade", "setor", "categoria", "progresso", "status", "prazo", "obs", "ordem", "assigned_to"]
     else:
         # Usuários operacionais podem atualizar somente andamento e observações das trocas de máquinas.
         allowed = ["progresso", "obs"]
@@ -466,8 +486,8 @@ def api_create_project():
     cur = conn.cursor()
     cur.execute(
         """
-        INSERT INTO projects (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO projects (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by, assigned_to)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             data.get("nome") or "Novo item",
@@ -482,6 +502,7 @@ def api_create_project():
             data.get("ordem") or 999,
             datetime.now().isoformat(timespec="seconds"),
             session.get("display_name") or session.get("username") or "",
+            data.get("assigned_to") or "",
         ),
     )
     conn.commit()
@@ -528,9 +549,9 @@ def export_csv():
     conn.close()
     output = io.StringIO()
     writer = csv.writer(output, delimiter=";")
-    writer.writerow(["ID", "Projeto", "Projeto Pai", "Unidade", "Setor", "Categoria", "Progresso", "Status", "Prazo", "Observacao", "Atualizado em", "Atualizado por"])
+    writer.writerow(["ID", "Projeto", "Projeto Pai", "Unidade", "Setor", "Categoria", "Responsavel", "Progresso", "Status", "Prazo", "Observacao", "Atualizado em", "Atualizado por"])
     for r in rows:
-        writer.writerow([r["id"], r["nome"], r["projeto_pai"], r["unidade"], r["setor"], r["categoria"], r["progresso"], r["status"], r["prazo_br"], r["obs"], r["updated_at"], r["updated_by"]])
+        writer.writerow([r["id"], r["nome"], r["projeto_pai"], r["unidade"], r["setor"], r["categoria"], r.get("assigned_to", ""), r["progresso"], r["status"], r["prazo_br"], r["obs"], r["updated_at"], r["updated_by"]])
     return Response(output.getvalue(), mimetype="text/csv; charset=utf-8", headers={"Content-Disposition": "attachment; filename=ossel_projetos.csv"})
 
 
