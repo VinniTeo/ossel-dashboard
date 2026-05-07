@@ -12,15 +12,22 @@ from pathlib import Path
 from flask import Flask, jsonify, redirect, render_template, request, Response, session, url_for
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "instance" / "ossel_dashboard.db"
+DATA_DIR_ENV = os.environ.get("DATA_DIR")
+if DATA_DIR_ENV:
+    DB_DIR = Path(DATA_DIR_ENV)
+elif Path("/var/data").exists():
+    DB_DIR = Path("/var/data")
+else:
+    DB_DIR = BASE_DIR / "instance"
+DB_PATH = DB_DIR / "ossel_dashboard.db"
 SEED_PATH = BASE_DIR / "data" / "seed.json"
 
 DEFAULT_USERS = [
     ("ADM", "Administrador", "admin"),
-    ("Thiago", "Thiago", "troca"),
+    ("Thiago", "Thiago", "admin"),
+    ("Denis", "Denis", "admin"),
     ("Filipe", "Filipe", "troca"),
     ("Eduardo", "Eduardo", "troca"),
-    ("Denis", "Denis", "admin"),
 ]
 
 app = Flask(__name__)
@@ -46,28 +53,35 @@ def date_to_br(value):
 
 
 def infer_unidade(nome):
-    """Extrai a unidade sem abreviar nomes compostos, como Sao Roque e Sorocaba Central."""
-    n = str(nome or "").replace("Troca de maquinas -", "").replace("Troca das antenas -", "").strip()
-    if not n:
-        return ""
-    # Para estruturas corporativas como SA - ADM ou SCS - FUNE, a unidade principal fica antes do segundo separador.
-    if " - " in n:
-        parts = [x.strip() for x in n.split(" - ") if x.strip()]
-        if len(parts) >= 2 and parts[0] in {"SA", "SCS", "SP"}:
-            return f"{parts[0]} - {parts[1]}"
-        return parts[0]
-    # Se nao existe segundo separador, mantem o nome completo da unidade.
-    return n
+    """Identifica a unidade com nome completo a partir do nome do projeto."""
+    original = str(nome or "").strip()
+    n = original.lower()
+    known = [
+        "Sorocaba Central", "Vila Assis", "Millenium", "Giullias SBA", "Salto", "Votorantim", "Araçoiaba", "São Roque",
+        "SA - INOVA", "SA - ADM", "SA - PERI 179", "SA - PERI 75", "SA - COMFLORES", "SA - ABAVILLI JARDIM",
+        "SA - ABAVILLI BOSQUE", "SA - QUADRO ADM", "SA - QUADRO", "SA - LEONI", "SA - MONT CRISTO",
+        "SCS - FUNE", "SCS - VEL GOIÁS", "SCS - GIULLIAS", "MAUA I", "MAUA II",
+        "SP - FUNE JARDIM AVELINO", "SP - OSSEL HELIOPOLIS", "SP - FLOR DO SOL", "SP - GIULLIAS"
+    ]
+    for unit in sorted(known, key=len, reverse=True):
+        if unit.lower() in n:
+            return unit
+    cleaned = original.replace("Troca de maquinas -", "").replace("Troca das antenas -", "").strip()
+    if " - " in cleaned:
+        parts = cleaned.split(" - ")
+        return " - ".join(parts[:2]).strip() if len(parts) >= 2 else parts[0].strip()
+    return cleaned or "Sem unidade definida"
 
 
-def normalize_unidade(unidade, nome):
-    u = str(unidade or "").strip()
-    n = str(nome or "")
-    if u.lower() in {"sao", "são"} and "São Roque" in n:
+def normalize_unidade(value, nome="", projeto_pai=""):
+    current = (value or "").strip()
+    source = " ".join([str(nome or ""), str(projeto_pai or "")])
+    inferred = infer_unidade(source)
+    if not current or current in ["São", "SA", "SCS", "SP", "MAUA"]:
+        return inferred
+    if current == "Sao Roque":
         return "São Roque"
-    if u.lower() == "sorocaba" and "Sorocaba Central" in n:
-        return "Sorocaba Central"
-    return u
+    return current
 
 
 def status_from_progress(progress):
@@ -97,7 +111,7 @@ def verify_password(stored_hash, password):
 
 
 def connect():
-    DB_PATH.parent.mkdir(exist_ok=True)
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
@@ -140,17 +154,23 @@ def init_db():
         """
     )
     for username, display_name, role in DEFAULT_USERS:
-        cur.execute(
-            """
-            INSERT OR IGNORE INTO users
-            (username, display_name, role, password_hash, must_set_password, created_at, updated_at)
-            VALUES (?, ?, ?, NULL, 1, ?, ?)
-            """,
-            (username, display_name, role, datetime.now().isoformat(timespec="seconds"), datetime.now().isoformat(timespec="seconds")),
-        )
-    # Garante que novos usuarios padrao sejam sincronizados em bancos ja existentes.
-    for username, display_name, role in DEFAULT_USERS:
-        cur.execute("UPDATE users SET display_name=?, role=? WHERE lower(username)=lower(?)", (display_name, role, username))
+        now = datetime.now().isoformat(timespec="seconds")
+        existing = cur.execute("SELECT * FROM users WHERE lower(username)=lower(?)", (username,)).fetchone()
+        if existing:
+            # Atualiza apenas nome/permissão. Mantém senha já cadastrada pelo usuário.
+            cur.execute(
+                "UPDATE users SET display_name=?, role=?, updated_at=? WHERE id=?",
+                (display_name, role, now, existing["id"]),
+            )
+        else:
+            cur.execute(
+                """
+                INSERT INTO users
+                (username, display_name, role, password_hash, must_set_password, created_at, updated_at)
+                VALUES (?, ?, ?, NULL, 1, ?, ?)
+                """,
+                (username, display_name, role, now, now),
+            )
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     if count == 0 and SEED_PATH.exists():
         seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
@@ -202,6 +222,11 @@ def init_db():
                     ),
                 )
                 ordem += 1
+    # Corrige nomes de unidades antigas ou abreviadas sem apagar dados existentes.
+    for row in cur.execute("SELECT id, nome, projeto_pai, unidade FROM projects").fetchall():
+        fixed = normalize_unidade(row["unidade"], row["nome"], row["projeto_pai"])
+        if fixed != (row["unidade"] or ""):
+            cur.execute("UPDATE projects SET unidade=? WHERE id=?", (fixed, row["id"]))
     conn.commit()
     conn.close()
 
@@ -210,7 +235,6 @@ def rows_to_dict(rows):
     out = []
     for r in rows:
         d = dict(r)
-        d["unidade"] = normalize_unidade(d.get("unidade"), d.get("nome"))
         d["prazo_br"] = date_to_br(d.get("prazo"))
         out.append(d)
     return out
@@ -225,9 +249,6 @@ def seed_projects(clear_existing=False):
     if clear_existing:
         cur.execute("DELETE FROM projects")
         cur.execute("DELETE FROM sqlite_sequence WHERE name='projects'")
-    # Garante que novos usuarios padrao sejam sincronizados em bancos ja existentes.
-    for username, display_name, role in DEFAULT_USERS:
-        cur.execute("UPDATE users SET display_name=?, role=? WHERE lower(username)=lower(?)", (display_name, role, username))
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     if count == 0 and SEED_PATH.exists():
         seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
@@ -460,7 +481,7 @@ def api_create_project():
             data.get("obs") or "",
             data.get("ordem") or 999,
             datetime.now().isoformat(timespec="seconds"),
-            data.get("updated_by") or "",
+            session.get("display_name") or session.get("username") or "",
         ),
     )
     conn.commit()

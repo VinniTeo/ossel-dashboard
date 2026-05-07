@@ -3,31 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Acesso - OSSEL Assistência</title>
+<title>OSSEL Assistência | Acesso ao Centro Tecnológico</title>
 <style>
-:root{--navy:#061a35;--navy2:#0b3266;--blue:#1463c2;--cyan:#47d7ff;--line:#dbe7f3;--muted:#64748b;--ink:#0f172a;--card:#ffffff;--red:#ef4444}
-*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 18% 12%,rgba(71,215,255,.26),transparent 30%),radial-gradient(circle at 85% 18%,rgba(20,99,194,.36),transparent 34%),linear-gradient(135deg,#04142c,#0b3266 62%,#1463c2);color:var(--ink);padding:22px;overflow:hidden}.bgMark{position:fixed;inset:auto -120px -130px auto;width:520px;height:520px;border-radius:999px;background:rgba(255,255,255,.08);filter:blur(6px)}.box{width:min(520px,94vw);background:rgba(255,255,255,.97);border:1px solid rgba(255,255,255,.42);border-radius:34px;padding:34px;box-shadow:0 34px 100px rgba(0,0,0,.30);position:relative;overflow:hidden}.box:before{content:"";position:absolute;right:-80px;top:-90px;width:220px;height:220px;border-radius:999px;background:linear-gradient(135deg,rgba(20,99,194,.16),rgba(71,215,255,.18))}.brand{display:flex;align-items:center;gap:18px;margin-bottom:24px;position:relative}.brand img{width:118px;height:auto;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(2,8,23,.16))}.brandText b{display:block;color:var(--navy);font-size:1.05rem}.brandText span{color:var(--muted);font-size:.9rem;font-weight:800}.securityTag{display:inline-flex;align-items:center;gap:8px;margin:4px 0 18px;padding:9px 12px;border-radius:999px;background:#eef6ff;border:1px solid #bfdbfe;color:#0b3266;font-size:.82rem;font-weight:900}h1{margin:0 0 10px;color:var(--navy);font-size:1.95rem;letter-spacing:-.035em}p{color:var(--muted);line-height:1.58;margin:0 0 18px}label{display:block;color:#334155;font-weight:900;font-size:.86rem;margin-top:14px}input{width:100%;border:1px solid var(--line);border-radius:18px;padding:15px 16px;font-size:1rem;margin-top:7px;outline:none;background:#fff}input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(20,99,194,.12)}button{width:100%;border:0;border-radius:18px;padding:15px;background:linear-gradient(135deg,var(--blue),#0b58ad);color:#fff;font-weight:950;font-size:1rem;cursor:pointer;margin-top:20px;box-shadow:0 16px 34px rgba(20,99,194,.22)}button:hover{transform:translateY(-1px)}.err{color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:16px;padding:12px;margin:12px 0}.foot{margin-top:18px;color:#64748b;font-size:.82rem;display:flex;align-items:center;gap:8px}.dot{width:8px;height:8px;border-radius:99px;background:#16a34a;box-shadow:0 0 0 5px rgba(22,163,74,.12)}@media(max-width:560px){.box{padding:26px}.brand{align-items:flex-start;flex-direction:column}.brand img{width:106px}}
+:root{--navy:#061a35;--navy2:#0b3266;--blue:#1463c2;--cyan:#47d7ff;--ink:#0f172a;--muted:#64748b;--line:#dbe4ef;--card:#ffffff;--danger:#dc2626}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:#061a35;display:grid;grid-template-columns:1.05fr .95fr;overflow:hidden}.visual{position:relative;padding:56px 6vw;color:#fff;background:radial-gradient(circle at 16% 16%,rgba(71,215,255,.22),transparent 30%),linear-gradient(135deg,#061a35,#0b3266 58%,#1463c2);display:flex;flex-direction:column;justify-content:space-between}.visual:before{content:"";position:absolute;right:-170px;top:-120px;width:540px;height:540px;border-radius:999px;background:rgba(71,215,255,.18);filter:blur(8px)}.visual:after{content:"";position:absolute;left:-110px;bottom:-150px;width:380px;height:380px;border-radius:999px;background:rgba(255,255,255,.09)}.brand{position:relative;z-index:2;display:flex;align-items:center;gap:18px}.brand img{height:70px;filter:drop-shadow(0 14px 24px rgba(0,0,0,.32))}.brand b{display:block;font-size:1.25rem}.brand span{display:block;color:#c8e7ff;font-weight:800;margin-top:4px}.hero{position:relative;z-index:2;max-width:760px}.eyebrow{display:inline-flex;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.12);border-radius:999px;padding:9px 13px;font-weight:900;color:#dcecff;margin-bottom:18px}.hero h1{font-size:clamp(2.4rem,5.4vw,5.4rem);line-height:.98;letter-spacing:-.06em;margin:0 0 20px}.hero p{font-size:1.08rem;line-height:1.7;color:#dcecff;max-width:620px}.metrics{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:680px}.metric{border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.10);border-radius:22px;padding:16px;backdrop-filter:blur(14px)}.metric b{display:block;font-size:1.45rem}.metric small{display:block;color:#c8e7ff;font-weight:800;margin-top:5px}.loginSide{min-height:100vh;background:linear-gradient(180deg,#f8fbff,#eef4fb);display:grid;place-items:center;padding:34px}.box{width:min(520px,94vw);background:rgba(255,255,255,.96);border:1px solid rgba(226,232,240,.9);border-radius:34px;padding:34px;box-shadow:0 28px 80px rgba(2,8,23,.18)}.miniBrand{display:none;align-items:center;gap:12px;margin-bottom:18px}.miniBrand img{height:48px}.miniBrand b{display:block;color:var(--navy)}.miniBrand span{color:var(--muted);font-weight:800;font-size:.9rem}.lock{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--navy),var(--blue));display:grid;place-items:center;color:#fff;font-size:1.25rem;box-shadow:0 14px 28px rgba(20,99,194,.25);margin-bottom:18px}h2{font-size:2rem;letter-spacing:-.04em;color:var(--navy);margin:0 0 10px}p{color:var(--muted);line-height:1.55;margin:0 0 18px}label{display:block;color:#24364f;font-weight:900;font-size:.86rem;margin-top:14px}input{width:100%;border:1px solid var(--line);border-radius:18px;padding:15px;font-size:1rem;margin-top:7px;outline:none;background:#fff}input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(20,99,194,.12)}button{width:100%;border:0;border-radius:18px;padding:15px;background:linear-gradient(135deg,#1463c2,#0b4fa7);color:#fff;font-weight:950;font-size:1rem;cursor:pointer;margin-top:20px;box-shadow:0 16px 28px rgba(20,99,194,.22)}button:hover{filter:brightness(1.04);transform:translateY(-1px)}.err{color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:16px;padding:12px;margin-bottom:14px}.security{display:flex;gap:10px;align-items:flex-start;margin-top:18px;border:1px solid #bfdbfe;background:#eef6ff;border-radius:18px;padding:13px;color:#334155;font-size:.9rem}.security b{color:#061a35}.first{font-size:.84rem;color:#64748b;margin-top:10px}.foot{position:absolute;bottom:22px;color:#88a7c9;font-size:.85rem}@media(max-width:980px){body{display:block;overflow:auto}.visual{min-height:420px}.loginSide{min-height:auto}.metrics{grid-template-columns:1fr}.miniBrand{display:flex}.brand{display:none}.foot{position:relative;bottom:auto;margin-top:30px}}@media(max-width:560px){.visual{padding:34px 22px}.loginSide{padding:18px}.box{padding:24px;border-radius:26px}.hero h1{font-size:2.5rem}}
 </style>
 </head>
 <body>
-<div class="bgMark"></div>
-<form class="box" method="post" autocomplete="off">
-  <div class="brand">
-    <img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL Assistência" style="background:linear-gradient(135deg,#061a35,#0b3266);border-radius:18px;padding:10px">
-    <div class="brandText"><b>OSSEL Assistência</b><span>Centro Tecnológico • Painel Executivo</span></div>
-  </div>
-  <div class="securityTag">🔒 Acesso corporativo restrito</div>
-  <h1>Acesso ao painel</h1>
-  <p>Informe seu usuário corporativo e senha. No primeiro acesso, defina uma senha própria para ativar sua conta.</p>
-  {% if erro %}<div class="err">{{ erro }}</div>{% endif %}
-  <label>Usuário</label>
-  <input name="username" placeholder="Digite seu usuário" value="{{ username or '' }}" required autofocus>
-  <label>Senha</label>
-  <input name="password" type="password" placeholder="Digite sua senha" required>
-  <label>Confirmar senha</label>
-  <input name="confirm_password" type="password" placeholder="Use apenas no primeiro acesso">
-  <button>Entrar com segurança</button>
-  <div class="foot"><span class="dot"></span><span>Ambiente online com controle de acesso e atualização centralizada.</span></div>
-</form>
+<section class="visual">
+  <div class="brand"><img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL Assistência"><div><b>OSSEL Assistência</b><span>Centro Tecnológico</span></div></div>
+  <div class="hero"><div class="eyebrow">Dashboard executivo • Tecnologia e Operações</div><h1>Gestão online de projetos</h1><p>Acompanhamento seguro de prazos, andamento, unidades, observações e entregas em um painel corporativo integrado para diretoria e operação.</p></div>
+  <div class="metrics"><div class="metric"><b>Online</b><small>Atualização compartilhada</small></div><div class="metric"><b>Seguro</b><small>Acesso por usuário</small></div><div class="metric"><b>Executivo</b><small>Visão de prazos e riscos</small></div></div>
+  <div class="foot">OSSEL Assistência — Centro Tecnológico</div>
+</section>
+<section class="loginSide">
+  <form class="box" method="post" autocomplete="off">
+    <div class="miniBrand"><img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL"><div><b>OSSEL Assistência</b><span>Centro Tecnológico</span></div></div>
+    <div class="lock">🔐</div>
+    <h2>Acesso ao painel</h2>
+    <p>Entre com seu usuário corporativo. No primeiro acesso, cadastre sua senha de forma segura.</p>
+    {% if erro %}<div class="err">{{ erro }}</div>{% endif %}
+    <label>Usuário</label><input name="username" placeholder="Digite seu usuário" value="{{ username or '' }}" required autofocus>
+    <label>Senha</label><input name="password" type="password" placeholder="Digite sua senha" required>
+    <label>Confirmar senha <span style="font-weight:600;color:#64748b">somente no primeiro acesso</span></label><input name="confirm_password" type="password" placeholder="Confirme a senha no primeiro acesso">
+    <button>Entrar com segurança</button>
+    <div class="security"><span>🛡️</span><div><b>Acesso protegido</b><br>As permissões são aplicadas automaticamente conforme o perfil do usuário.</div></div>
+    <div class="first">No primeiro acesso, a senha escolhida fica criptografada no banco de dados.</div>
+  </form>
+</section>
 </body>
 </html>
