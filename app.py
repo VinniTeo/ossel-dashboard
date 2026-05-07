@@ -17,6 +17,7 @@ SEED_PATH = BASE_DIR / "data" / "seed.json"
 
 DEFAULT_USERS = [
     ("ADM", "Administrador", "admin"),
+    ("Denis", "Denis", "admin"),
     ("Thiago", "Thiago", "troca"),
     ("Filipe", "Filipe", "troca"),
     ("Eduardo", "Eduardo", "troca"),
@@ -45,12 +46,30 @@ def date_to_br(value):
 
 
 def infer_unidade(nome):
-    n = nome.replace("Troca de maquinas -", "").replace("Troca das antenas -", "").strip()
-    if " - " in n:
-        return n.split(" - ")[0].strip()
-    parts = n.split()
-    return parts[0].strip() if parts else ""
+    """Extrai a unidade/localidade completa a partir do nome do projeto.
+    Exemplos:
+    - Troca de maquinas - SA - ADM -> SA - ADM
+    - Troca das antenas - São Roque -> São Roque
+    - Troca de maquinas - Sorocaba Central -> Sorocaba Central
+    """
+    raw = (nome or "").strip()
+    for prefix in ["Troca de maquinas -", "Troca das antenas -"]:
+        if raw.lower().startswith(prefix.lower()):
+            return raw[len(prefix):].strip()
+    return ""
 
+def unidade_referencia(row):
+    return infer_unidade(row["projeto_pai"] or row["nome"] or "")
+
+def reparar_unidades_completas(conn):
+    """Corrige bancos já publicados que tinham unidade abreviada, como 'São' em vez de 'São Roque'."""
+    rows = conn.execute(
+        "SELECT id, nome, projeto_pai, unidade, categoria FROM projects WHERE categoria IN ('Troca de Máquinas','Antenas')"
+    ).fetchall()
+    for row in rows:
+        unidade = unidade_referencia(row)
+        if unidade and row["unidade"] != unidade:
+            conn.execute("UPDATE projects SET unidade=? WHERE id=?", (unidade, row["id"]))
 
 def status_from_progress(progress):
     progress = int(progress or 0)
@@ -181,6 +200,7 @@ def init_db():
                     ),
                 )
                 ordem += 1
+    reparar_unidades_completas(conn)
     conn.commit()
     conn.close()
 
@@ -253,6 +273,7 @@ def seed_projects(clear_existing=False):
                     ),
                 )
                 ordem += 1
+    reparar_unidades_completas(conn)
     conn.commit()
     conn.close()
 

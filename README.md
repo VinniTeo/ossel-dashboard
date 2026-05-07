@@ -28,3 +28,14 @@ gunicorn app:app
 - Dark mode.
 - Mapa de unidades com nome completo.
 - Melhorias visuais para apresentacao a diretoria.
+
+
+## Versão v5 - Diretoria e Governança
+
+Melhorias adicionadas:
+- Usuário Denis criado com perfil ADM e senha definida no primeiro acesso.
+- Destaque visual automático para projetos com prazo vencido ou próximo.
+- Correção das unidades/localidades para nomes completos, como São Roque, Sorocaba Central e SA - ADM.
+- Radar executivo no topo com vencidos, próximos 21 dias, baixo avanço e próxima entrega.
+- Cards, linha cronológica, operação e mapa com alertas visuais por prazo.
+- Migração automática do banco já publicado para corrigir unidades antigas abreviadas.
