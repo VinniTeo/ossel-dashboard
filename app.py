@@ -104,6 +104,79 @@ def connect():
     return conn
 
 
+def ensure_project_columns(conn):
+    """Garante compatibilidade com bancos antigos já criados no Render."""
+    existing = {r[1] for r in conn.execute("PRAGMA table_info(projects)").fetchall()}
+    columns = {
+        "projeto_pai": "TEXT",
+        "unidade": "TEXT",
+        "setor": "TEXT",
+        "obs": "TEXT",
+        "ordem": "INTEGER",
+        "updated_at": "TEXT",
+        "updated_by": "TEXT",
+    }
+    for name, coltype in columns.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE projects ADD COLUMN {name} {coltype}")
+
+
+def load_seed_data():
+    if SEED_PATH.exists():
+        return json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    return []
+
+
+def import_seed_rows(cur, seed):
+    ordem = 1
+    for p in seed:
+        subs = p.get("subprojetos") or []
+        # Grava também o projeto pai para manter a carteira completa no dashboard executivo.
+        cur.execute(
+            """
+            INSERT INTO projects
+            (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                p.get("nome", ""),
+                "",
+                infer_unidade(p.get("nome", "")) if p.get("categoria") in ["Troca de Máquinas", "Antenas"] else "",
+                "",
+                p.get("categoria", "Outros"),
+                int(p.get("progresso") or 0),
+                status_from_progress(p.get("progresso") or 0),
+                parse_date_br(p.get("prazo")),
+                p.get("obs") or "",
+                ordem,
+                datetime.now().isoformat(timespec="seconds"),
+            ),
+        )
+        ordem += 1
+        for sp in subs:
+            cur.execute(
+                """
+                INSERT INTO projects
+                (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    sp.get("nome", ""),
+                    p.get("nome", ""),
+                    infer_unidade(p.get("nome", "")),
+                    sp.get("nome", ""),
+                    p.get("categoria", "Outros"),
+                    int(sp.get("progresso") or 0),
+                    status_from_progress(sp.get("progresso") or 0),
+                    parse_date_br(sp.get("prazo")),
+                    sp.get("obs") or p.get("obs") or "",
+                    ordem,
+                    datetime.now().isoformat(timespec="seconds"),
+                ),
+            )
+            ordem += 1
+
+
 def init_db():
     conn = connect()
     cur = conn.cursor()
@@ -126,6 +199,7 @@ def init_db():
         )
         """
     )
+    ensure_project_columns(conn)
     cur.execute(
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -150,56 +224,10 @@ def init_db():
             (username, display_name, role, datetime.now().isoformat(timespec="seconds"), datetime.now().isoformat(timespec="seconds")),
         )
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
-    if count == 0 and SEED_PATH.exists():
-        seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
-        ordem = 1
-        for p in seed:
-            subs = p.get("subprojetos") or []
-            if subs:
-                for sp in subs:
-                    cur.execute(
-                        """
-                        INSERT INTO projects
-                        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            sp.get("nome", ""),
-                            p.get("nome", ""),
-                            infer_unidade(p.get("nome", "")),
-                            sp.get("nome", ""),
-                            p.get("categoria", "Outros"),
-                            int(sp.get("progresso") or 0),
-                            status_from_progress(sp.get("progresso") or 0),
-                            parse_date_br(sp.get("prazo")),
-                            sp.get("obs") or p.get("obs") or "",
-                            ordem,
-                            datetime.now().isoformat(timespec="seconds"),
-                        ),
-                    )
-                    ordem += 1
-            else:
-                cur.execute(
-                    """
-                    INSERT INTO projects
-                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        p.get("nome", ""),
-                        "",
-                        infer_unidade(p.get("nome", "")) if p.get("categoria") in ["Troca de Máquinas", "Antenas"] else "",
-                        "",
-                        p.get("categoria", "Outros"),
-                        int(p.get("progresso") or 0),
-                        status_from_progress(p.get("progresso") or 0),
-                        parse_date_br(p.get("prazo")),
-                        p.get("obs") or "",
-                        ordem,
-                        datetime.now().isoformat(timespec="seconds"),
-                    ),
-                )
-                ordem += 1
+    if count == 0:
+        seed = load_seed_data()
+        if seed:
+            import_seed_rows(cur, seed)
     reparar_unidades_completas(conn)
     conn.commit()
     conn.close()
@@ -220,62 +248,19 @@ def seed_projects(clear_existing=False):
     """Importa a base completa do seed.json. Use clear_existing=True para substituir tudo."""
     conn = connect()
     cur = conn.cursor()
+    ensure_project_columns(conn)
     if clear_existing:
         cur.execute("DELETE FROM projects")
         cur.execute("DELETE FROM sqlite_sequence WHERE name='projects'")
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
-    if count == 0 and SEED_PATH.exists():
-        seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
-        ordem = 1
-        for p in seed:
-            subs = p.get("subprojetos") or []
-            # Também grava o projeto pai para manter a visão executiva completa.
-            cur.execute(
-                """
-                INSERT INTO projects
-                (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    p.get("nome", ""),
-                    "",
-                    infer_unidade(p.get("nome", "")) if p.get("categoria") in ["Troca de Máquinas", "Antenas"] else "",
-                    "",
-                    p.get("categoria", "Outros"),
-                    int(p.get("progresso") or 0),
-                    status_from_progress(p.get("progresso") or 0),
-                    parse_date_br(p.get("prazo")),
-                    p.get("obs") or "",
-                    ordem,
-                    datetime.now().isoformat(timespec="seconds"),
-                ),
-            )
-            ordem += 1
-            for sp in subs:
-                cur.execute(
-                    """
-                    INSERT INTO projects
-                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        sp.get("nome", ""),
-                        p.get("nome", ""),
-                        infer_unidade(p.get("nome", "")),
-                        sp.get("nome", ""),
-                        p.get("categoria", "Outros"),
-                        int(sp.get("progresso") or 0),
-                        status_from_progress(sp.get("progresso") or 0),
-                        parse_date_br(sp.get("prazo")),
-                        sp.get("obs") or p.get("obs") or "",
-                        ordem,
-                        datetime.now().isoformat(timespec="seconds"),
-                    ),
-                )
-                ordem += 1
+    if count == 0:
+        seed = load_seed_data()
+        if seed:
+            import_seed_rows(cur, seed)
     reparar_unidades_completas(conn)
     conn.commit()
     conn.close()
+
 
 @app.before_request
 def ensure_db():
@@ -381,7 +366,13 @@ def api_projects():
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
     conn = connect()
-    rows = conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), ordem, id").fetchall()
+    ensure_project_columns(conn)
+    count = conn.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
+    if count == 0:
+        conn.close()
+        seed_projects(clear_existing=True)
+        conn = connect()
+    rows = conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), COALESCE(ordem,999999), id").fetchall()
     conn.close()
     return jsonify(rows_to_dict(rows))
 
@@ -499,7 +490,7 @@ def export_csv():
     if not require_auth():
         return redirect(url_for("login"))
     conn = connect()
-    rows = rows_to_dict(conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), ordem, id").fetchall())
+    rows = rows_to_dict(conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), COALESCE(ordem,999999), id").fetchall())
     conn.close()
     output = io.StringIO()
     writer = csv.writer(output, delimiter=";")
