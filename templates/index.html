@@ -93,6 +93,63 @@ header{background:radial-gradient(circle at 88% 10%,rgba(57,207,255,.22),transpa
   border-color:#244467;
 }
 
+
+/* V13 - cards compactos e visual executivo */
+.opItem,.chronoItem{
+  grid-template-columns:72px minmax(0,1fr) 288px !important;
+  gap:18px !important;
+  align-items:start !important;
+  padding:18px 20px !important;
+  border-radius:24px !important;
+  min-height:0 !important;
+}
+.chronoItem{grid-template-columns:92px minmax(0,1fr) 288px !important;}
+.opItem>.control,.chronoItem>.control{
+  grid-column:auto !important;
+  width:100% !important;
+  margin-top:0 !important;
+  align-self:center !important;
+}
+.opItem>.lastUpdate,.chronoItem>.lastUpdate{display:none !important;}
+.opItem h3,.chronoItem h3{font-size:1.02rem !important;margin:8px 0 6px !important;line-height:1.25 !important;}
+.opItem .obs,.chronoItem .obs{margin:4px 0 8px !important;font-size:.86rem !important;}
+.obsBox{padding:10px 12px !important;border-radius:14px !important;font-size:.88rem !important;line-height:1.35 !important;}
+.obsBox strong{font-size:.82rem !important;margin-bottom:3px !important;}
+.opNum{width:48px !important;height:48px !important;border-radius:16px !important;}
+.dateBadge{width:76px !important;border-radius:16px !important;padding:8px !important;}
+.control{
+  padding:12px !important;
+  border-radius:18px !important;
+  background:linear-gradient(180deg,#f8fbff,#eef6ff) !important;
+  box-shadow:inset 0 0 0 1px rgba(6,53,111,.04) !important;
+}
+.progressPanel{gap:8px !important;}
+.progressTop{display:grid !important;grid-template-columns:1fr auto !important;align-items:center !important;}
+.progressTop .saveHint:first-child{font-size:.72rem !important;text-transform:uppercase !important;letter-spacing:.05em !important;}
+.progressValue{font-size:1.45rem !important;line-height:1 !important;}
+.progressSlider{display:block !important;}
+.progressSlider .saveHint{display:none !important;}
+.progressSlider input[type=range]{height:18px !important;margin:2px 0 0 !important;}
+.actions{display:grid !important;grid-template-columns:1fr 1fr !important;gap:8px !important;margin-top:4px !important;}
+.btn{justify-content:center !important;padding:10px 11px !important;border-radius:12px !important;font-size:.86rem !important;}
+.compactUpdate{font-size:.72rem;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.card{border-radius:24px !important;padding:18px !important;gap:10px !important;}
+.card h3{font-size:1.03rem !important;line-height:1.25 !important;}
+.card .control{margin-top:2px !important;}
+.pill{padding:6px 9px !important;font-size:.72rem !important;}
+.meta{gap:6px !important;}
+@media(max-width:1050px){
+  .opItem,.chronoItem{grid-template-columns:64px minmax(0,1fr) !important;}
+  .chronoItem{grid-template-columns:84px minmax(0,1fr) !important;}
+  .opItem>.control,.chronoItem>.control{grid-column:2/-1 !important;margin-top:8px !important;max-width:520px !important;}
+}
+@media(max-width:760px){
+  .opItem,.chronoItem{grid-template-columns:1fr !important;padding:16px !important;}
+  .opItem>.control,.chronoItem>.control{grid-column:1/-1 !important;max-width:none !important;}
+  .actions{grid-template-columns:1fr !important;}
+}
+[data-theme="dark"] .control{background:linear-gradient(180deg,#0d223a,#0b1c30) !important;}
+
 </style>
 </head>
 <body>
@@ -164,7 +221,7 @@ function parseOwners(value){return String(value||'').split(',').map(x=>x.trim())
 function joinOwners(arr){return [...new Set((arr||[]).map(x=>String(x||'').trim()).filter(Boolean))].join(', ')}
 function populateUsers(){const sel=el('assignedSelect');if(!sel)return;const current=parseOwners(sel.dataset.current||'');sel.innerHTML=usuarios.map(u=>`<option value="${safe(u.display_name)}">${safe(u.display_name)} ${u.role==='admin'?'(ADM)':'(Operacional)'}</option>`).join('');[...sel.options].forEach(o=>o.selected=current.includes(o.value))}
 function ownerChip(p){const owners=parseOwners(p.assigned_to);if(!owners.length)return `<span class="ownerChip empty">Sem responsável</span>`;const visible=owners.slice(0,3).map(o=>`<span class="ownerChip">👤 ${safe(o)}</span>`).join('');const extra=owners.length>3?`<span class="ownerChip more">+${owners.length-3}</span>`:'';return `<span class="ownerStack">${visible}${extra}</span>`}
-function updateInfo(p){return p.updated_at?`<div class="lastUpdate">Atualizado por ${safe(p.updated_by||'-')} em ${safe(p.updated_at.replace('T',' '))}</div>`:''}
+function updateInfo(p){return p.updated_at?`<div class="compactUpdate">Atualizado por ${safe(p.updated_by||'-')} em ${safe(p.updated_at.replace('T',' '))}</div>`:''}
 function miniItem(p){return `<div class="miniItem"><span><b>${safe(p.nome)}</b><br><small>${safe(p.categoria)} • ${safe(p.prazo_br||'-')} • ${p.progresso}%</small></span><span class="pill ${statusClass(p.status)}">${p.status}</span></div>`}
 function renderExecutive(all){const next=projetos.filter(p=>p.status!=='Entregue'&&daysTo(p)!==99999&&daysTo(p)>=0).sort((a,b)=>daysTo(a)-daysTo(b)).slice(0,6);const att=projetos.filter(p=>p.status!=='Entregue'&&(daysTo(p)<0||Number(p.progresso)<=30)).sort((a,b)=>daysTo(a)-daysTo(b)).slice(0,6);const done=projetos.filter(p=>p.status==='Entregue').sort((a,b)=>daysTo(b)-daysTo(a)).slice(0,6);renderDeadlineStrip();el('nextDeadlines').innerHTML=next.length?next.map(miniItem).join(''):'<p class="obs">Sem próximos prazos.</p>';el('attentionList').innerHTML=att.length?att.map(miniItem).join(''):'<p class="obs">Sem itens críticos.</p>';el('doneList').innerHTML=done.length?done.map(miniItem).join(''):'<p class="obs">Sem entregas registradas.</p>';const cats={};projetos.forEach(p=>{cats[p.categoria]=cats[p.categoria]||[];cats[p.categoria].push(p)});el('categoryCards').innerHTML=Object.entries(cats).sort((a,b)=>a[0].localeCompare(b[0],'pt-BR')).map(([cat,items])=>{const avg=Math.round(items.reduce((a,p)=>a+Number(p.progresso||0),0)/items.length);const pend=items.filter(p=>p.status!=='Entregue').length;return `<article class="card"><div class="meta"><span class="pill">${safe(cat)}</span><span class="pill ${pend?'prazoProximo':'statusEntregue'}">${pend} pendente(s)</span></div><h3>${safe(cat)}</h3>${progress(avg)}<strong style="color:${color(avg)}">${avg}% médio</strong><p class="obs">${items.length} item(ns) na carteira.</p></article>`}).join('')}
 
@@ -179,12 +236,12 @@ function renderMap(all){const groups={};all.forEach(p=>{const key=p.unidade||inf
 function inferUnitFromName(nome){const n=String(nome||'');if(n.includes(' - ')){const parts=n.split(' - ');return parts.length>1?parts[1].trim():''}return ''}
 function canEdit(p){return IS_ADMIN || p.categoria==='Troca de Máquinas'}
 function canFullEdit(){return IS_ADMIN}
-function controls(p){if(!canEdit(p)){return `<div class="control locked"><span class="pill prazoOk">Somente leitura</span><small class="obs">Usuários operacionais alteram apenas Troca de Máquinas.</small></div>`}const editLabel=IS_ADMIN?'Editar / OBS':'Atualizar OBS';const v=Number(p.progresso||0);return `<div class="control" data-id="${p.id}"><div class="progressPanel"><div class="progressTop"><span class="saveHint">Andamento do projeto</span><span class="progressValue">${v}%</span></div><div class="progressSlider"><input type="range" min="0" max="100" step="1" value="${v}" style="--p:${v}%" oninput="syncProgressControl(this)" onchange="commitProgress(${p.id},this.value)"><span class="saveHint">salva ao soltar</span></div></div><div class="actions"><button class="btn ok" onclick="commitProgress(${p.id},100)">Concluir</button><button class="btn warn" onclick="openEditModal(${p.id})">${editLabel}</button></div></div>`}
+function controls(p){if(!canEdit(p)){return `<div class="control locked"><span class="pill prazoOk">Somente leitura</span><small class="obs">Usuários operacionais alteram apenas Troca de Máquinas.</small></div>`}const editLabel=IS_ADMIN?'Editar / OBS':'Atualizar OBS';const v=Number(p.progresso||0);return `<div class="control" data-id="${p.id}"><div class="progressPanel"><div class="progressTop"><span class="saveHint">Andamento</span><span class="progressValue">${v}%</span></div><div class="progressSlider"><input aria-label="Andamento do projeto" type="range" min="0" max="100" step="1" value="${v}" style="--p:${v}%" oninput="syncProgressControl(this)" onchange="commitProgress(${p.id},this.value)"></div></div><div class="actions"><button class="btn ok" onclick="commitProgress(${p.id},100)">Concluir</button><button class="btn warn" onclick="openEditModal(${p.id})">${editLabel}</button></div></div>`}
 function clampProgress(v){v=Number(v||0);if(Number.isNaN(v))v=0;return Math.max(0,Math.min(100,Math.round(v)))}
 function syncProgressControl(input){const box=input.closest('.control');const v=clampProgress(input.value);box.querySelectorAll('input[type=range]').forEach(i=>{if(i!==input)i.value=v});const val=box.querySelector('.progressValue');if(val)val.textContent=v+'%'; input.style.setProperty('--p',v+'%');const article=input.closest('article');if(article){const fill=article.querySelector('.fill');if(fill){fill.style.setProperty('--w',v+'%');fill.style.background=color(v)}}}
 async function commitProgress(id,value){await patch(id,{progresso:clampProgress(value)})}
-function opItem(p,n){return `<article class="opItem ${urgencyClass(p)}"><div class="opNum">${n}</div><div><div class="meta"><span class="pill ${statusClass(p.status)}">${p.status}</span><span class="pill ${prazoClass(p)}">${prazoLabel(p)}: ${safe(p.prazo_br||'-')}</span>${alertFlag(p)}<span class="pill">${safe(p.unidade||'Sem unidade')}</span>${ownerChip(p)}</div><h3>${safe(p.projeto_pai?`${p.projeto_pai} > `:'')}${safe(p.nome)}</h3><p class="obs"><b>Setor:</b> ${safe(p.setor||'-')}</p><div class="obsBox"><strong>Observações</strong>${safe(p.obs||'Sem observação registrada.')}</div></div>${updateInfo(p)}${controls(p)}</article>`}
-function chronoItem(p,n){return `<article class="chronoItem ${urgencyClass(p)}">${dateMini(p)}<div><div class="meta"><span class="pill">#${n}</span><span class="pill ${statusClass(p.status)}">${p.status}</span><span class="pill">${safe(p.categoria)}</span><span class="pill ${prazoClass(p)}">${prazoLabel(p)}</span>${alertFlag(p)}${ownerChip(p)}</div><h3>${safe(p.projeto_pai?`${p.projeto_pai} > `:'')}${safe(p.nome)}</h3><p class="obs"><b>Unidade:</b> ${safe(p.unidade||'-')} | <b>Setor:</b> ${safe(p.setor||'-')}</p><div class="obsBox"><strong>Observações</strong>${safe(p.obs||'Sem observação registrada.')}</div></div>${updateInfo(p)}${controls(p)}</article>`}
+function opItem(p,n){return `<article class="opItem ${urgencyClass(p)}"><div class="opNum">${n}</div><div><div class="meta"><span class="pill ${statusClass(p.status)}">${p.status}</span><span class="pill ${prazoClass(p)}">${prazoLabel(p)}: ${safe(p.prazo_br||'-')}</span>${alertFlag(p)}<span class="pill">${safe(p.unidade||'Sem unidade')}</span>${ownerChip(p)}</div><h3>${safe(p.projeto_pai?`${p.projeto_pai} > `:'')}${safe(p.nome)}</h3><p class="obs"><b>Setor:</b> ${safe(p.setor||'-')}</p><div class="obsBox"><strong>Observações</strong>${safe(p.obs||'Sem observação registrada.')}</div>${updateInfo(p)}</div>${controls(p)}</article>`}
+function chronoItem(p,n){return `<article class="chronoItem ${urgencyClass(p)}">${dateMini(p)}<div><div class="meta"><span class="pill">#${n}</span><span class="pill ${statusClass(p.status)}">${p.status}</span><span class="pill">${safe(p.categoria)}</span><span class="pill ${prazoClass(p)}">${prazoLabel(p)}</span>${alertFlag(p)}${ownerChip(p)}</div><h3>${safe(p.projeto_pai?`${p.projeto_pai} > `:'')}${safe(p.nome)}</h3><p class="obs"><b>Unidade:</b> ${safe(p.unidade||'-')} | <b>Setor:</b> ${safe(p.setor||'-')}</p><div class="obsBox"><strong>Observações</strong>${safe(p.obs||'Sem observação registrada.')}</div>${updateInfo(p)}</div>${controls(p)}</article>`}
 function card(p){return `<article class="card ${urgencyClass(p)}"><div class="meta"><span class="pill ${statusClass(p.status)}">${p.status}</span><span class="pill">${safe(p.categoria)}</span><span class="pill ${prazoClass(p)}">${prazoLabel(p)}: ${safe(p.prazo_br||'-')}</span>${alertFlag(p)}${ownerChip(p)}</div><h3>${safe(p.projeto_pai?`${p.projeto_pai} > `:'')}${safe(p.nome)}</h3><p class="obs"><b>Unidade:</b> ${safe(p.unidade||'-')} | <b>Setor:</b> ${safe(p.setor||'-')}</p><div class="obsBox"><strong>Observações</strong>${safe(p.obs||'Sem observação registrada.')}</div>${updateInfo(p)}${controls(p)}</article>`}
 function row(p){const action=canEdit(p)?`<button class="btn warn" onclick="openEditModal(${p.id})">Editar</button>${IS_ADMIN?` <button class="btn red" onclick="removeItem(${p.id})">Excluir</button>`:''}`:'<span class="pill prazoOk">Somente leitura</span>';return `<tr><td>${p.id}</td><td><b>${safe(p.nome)}</b><br><small>${safe(p.projeto_pai||'')}</small></td><td>${safe(p.unidade||'')}</td><td>${safe(p.setor||'')}</td><td>${safe(p.categoria)}</td><td>${ownerChip(p)}</td><td><span class="pill ${statusClass(p.status)}">${p.status}</span></td><td>${progress(p.progresso)}<b style="color:${color(p.progresso)}">${p.progresso}%</b></td><td><span class="pill ${prazoClass(p)}">${prazoLabel(p)}: ${safe(p.prazo_br||'-')}</span>${alertFlag(p)}</td><td>${safe(p.obs||'')}</td><td>${action}</td></tr>`}
 function openEditModal(id){const form=el('editForm');form.reset();[...form.elements].forEach(x=>{x.disabled=false;x.classList.remove('readonly')});if(id){const p=projetos.find(x=>x.id===id);if(!canEdit(p)){alert('Sem permissão para editar este projeto.');return}el('modalTitle').textContent=IS_ADMIN?'Editar projeto / observações':'Atualizar andamento / observações';form.id.value=p.id;form.nome.value=p.nome||'';form.projeto_pai.value=p.projeto_pai||'';form.unidade.value=p.unidade||'';form.setor.value=p.setor||'';form.categoria.value=p.categoria||'Outros';const assigned=el('assignedSelect');assigned.dataset.current=p.assigned_to||'';populateUsers();form.prazo.value=p.prazo_br||'';form.progresso.value=p.progresso||0;form.ordem.value=p.ordem||'';form.obs.value=p.obs||'';if(!IS_ADMIN){['nome','projeto_pai','unidade','setor','categoria','assigned_to','prazo','ordem'].forEach(n=>{form[n].disabled=true;form[n].classList.add('readonly')})}}else{if(!IS_ADMIN){alert('Apenas ADM pode criar novos projetos.');return}el('modalTitle').textContent='Novo item';form.id.value='';form.progresso.value=0;const assigned=el('assignedSelect');assigned.dataset.current='';populateUsers()}el('editModal').classList.add('open')}
