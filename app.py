@@ -357,18 +357,28 @@ def get_user_by_username(username):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+        mode = request.form.get("mode") or "login"
         username = (request.form.get("username") or "").strip()
         password = request.form.get("password") or ""
         confirm = request.form.get("confirm_password") or ""
         user = get_user_by_username(username)
         if not user:
-            return render_template("login.html", erro="Usuário não encontrado.")
+            return render_template("login.html", erro="Usuário não encontrado.", username=username, mode=mode)
 
-        if not user["password_hash"] or int(user["must_set_password"] or 0) == 1:
+        needs_first_access = (not user["password_hash"] or int(user["must_set_password"] or 0) == 1)
+
+        if mode == "first_access":
+            if not needs_first_access:
+                return render_template(
+                    "login.html",
+                    erro="Este usuário já possui senha cadastrada. Use a aba Entrar.",
+                    username=username,
+                    mode="login",
+                )
             if len(password) < 6:
-                return render_template("login.html", erro="No primeiro acesso, crie uma senha com pelo menos 6 caracteres.", username=username)
+                return render_template("login.html", erro="Crie uma senha com pelo menos 6 caracteres.", username=username, mode="first_access")
             if password != confirm:
-                return render_template("login.html", erro="As senhas não conferem.", username=username)
+                return render_template("login.html", erro="As senhas não conferem.", username=username, mode="first_access")
             conn = connect()
             conn.execute(
                 "UPDATE users SET password_hash=?, must_set_password=0, updated_at=? WHERE id=?",
@@ -377,8 +387,16 @@ def login():
             conn.commit()
             conn.close()
             user = get_user_by_username(username)
-        elif not verify_password(user["password_hash"], password):
-            return render_template("login.html", erro="Senha inválida.", username=username)
+        else:
+            if needs_first_access:
+                return render_template(
+                    "login.html",
+                    erro="Este usuário ainda não possui senha cadastrada. Use a aba Primeiro acesso.",
+                    username=username,
+                    mode="first_access",
+                )
+            if not verify_password(user["password_hash"], password):
+                return render_template("login.html", erro="Senha inválida.", username=username, mode="login")
 
         session.clear()
         session["auth"] = True
@@ -388,7 +406,7 @@ def login():
         session["role"] = user["role"]
         return redirect(url_for("index"))
 
-    return render_template("login.html")
+    return render_template("login.html", mode="login")
 
 
 @app.route("/logout")
