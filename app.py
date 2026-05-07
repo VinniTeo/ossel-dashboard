@@ -3,6 +3,10 @@ import io
 import json
 import os
 import sqlite3
+from functools import wraps
+import hashlib
+import hmac
+import secrets
 from datetime import datetime
 from pathlib import Path
 from flask import Flask, jsonify, redirect, render_template, request, Response, session, url_for
@@ -11,9 +15,15 @@ BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "instance" / "ossel_dashboard.db"
 SEED_PATH = BASE_DIR / "data" / "seed.json"
 
+DEFAULT_USERS = [
+    ("ADM", "Administrador", "admin"),
+    ("Thiago", "Thiago", "troca"),
+    ("Filipe", "Filipe", "troca"),
+    ("Eduardo", "Eduardo", "troca"),
+]
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "ossel-dashboard-secret-change-me")
-APP_PIN = os.environ.get("APP_PIN", "ossel2026")
 
 
 def parse_date_br(value):
@@ -51,6 +61,23 @@ def status_from_progress(progress):
     return "Em andamento"
 
 
+def make_password_hash(password):
+    salt = secrets.token_hex(16)
+    digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 200000).hex()
+    return f"pbkdf2_sha256$200000${salt}${digest}"
+
+
+def verify_password(stored_hash, password):
+    try:
+        scheme, iterations, salt, digest = stored_hash.split("$", 3)
+        if scheme != "pbkdf2_sha256":
+            return False
+        calc = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), int(iterations)).hex()
+        return hmac.compare_digest(calc, digest)
+    except Exception:
+        return False
+
+
 def connect():
     DB_PATH.parent.mkdir(exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -80,6 +107,29 @@ def init_db():
         )
         """
     )
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            display_name TEXT NOT NULL,
+            role TEXT NOT NULL,
+            password_hash TEXT,
+            must_set_password INTEGER NOT NULL DEFAULT 1,
+            created_at TEXT,
+            updated_at TEXT
+        )
+        """
+    )
+    for username, display_name, role in DEFAULT_USERS:
+        cur.execute(
+            """
+            INSERT OR IGNORE INTO users
+            (username, display_name, role, password_hash, must_set_password, created_at, updated_at)
+            VALUES (?, ?, ?, NULL, 1, ?, ?)
+            """,
+            (username, display_name, role, datetime.now().isoformat(timespec="seconds"), datetime.now().isoformat(timespec="seconds")),
+        )
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     if count == 0 and SEED_PATH.exists():
         seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
@@ -211,13 +261,77 @@ def ensure_db():
     init_db()
 
 
+def current_user():
+    if not require_auth():
+        return None
+    return {
+        "id": session.get("user_id"),
+        "username": session.get("username"),
+        "display_name": session.get("display_name"),
+        "role": session.get("role"),
+        "is_admin": session.get("role") == "admin",
+    }
+
+
+def require_auth():
+    return bool(session.get("auth") and session.get("user_id") and session.get("role"))
+
+
+def require_admin():
+    return bool(session.get("auth") and session.get("role") == "admin")
+
+
+def can_edit_project_row(row):
+    if not require_auth() or row is None:
+        return False
+    if session.get("role") == "admin":
+        return True
+    if session.get("role") == "troca" and row["categoria"] == "Troca de Máquinas":
+        return True
+    return False
+
+
+def get_user_by_username(username):
+    conn = connect()
+    row = conn.execute("SELECT * FROM users WHERE lower(username)=lower(?)", (username or "",)).fetchone()
+    conn.close()
+    return row
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if request.form.get("pin") == APP_PIN:
-            session["auth"] = True
-            return redirect(url_for("index"))
-        return render_template("login.html", erro="PIN inválido")
+        username = (request.form.get("username") or "").strip()
+        password = request.form.get("password") or ""
+        confirm = request.form.get("confirm_password") or ""
+        user = get_user_by_username(username)
+        if not user:
+            return render_template("login.html", erro="Usuário não encontrado.")
+
+        if not user["password_hash"] or int(user["must_set_password"] or 0) == 1:
+            if len(password) < 6:
+                return render_template("login.html", erro="No primeiro acesso, crie uma senha com pelo menos 6 caracteres.", username=username)
+            if password != confirm:
+                return render_template("login.html", erro="As senhas não conferem.", username=username)
+            conn = connect()
+            conn.execute(
+                "UPDATE users SET password_hash=?, must_set_password=0, updated_at=? WHERE id=?",
+                (make_password_hash(password), datetime.now().isoformat(timespec="seconds"), user["id"]),
+            )
+            conn.commit()
+            conn.close()
+            user = get_user_by_username(username)
+        elif not verify_password(user["password_hash"], password):
+            return render_template("login.html", erro="Senha inválida.", username=username)
+
+        session.clear()
+        session["auth"] = True
+        session["user_id"] = user["id"]
+        session["username"] = user["username"]
+        session["display_name"] = user["display_name"]
+        session["role"] = user["role"]
+        return redirect(url_for("index"))
+
     return render_template("login.html")
 
 
@@ -227,15 +341,18 @@ def logout():
     return redirect(url_for("login"))
 
 
-def require_auth():
-    return bool(session.get("auth"))
-
-
 @app.route("/")
 def index():
     if not require_auth():
         return redirect(url_for("login"))
-    return render_template("index.html")
+    return render_template("index.html", user=current_user())
+
+
+@app.route("/api/me")
+def api_me():
+    if not require_auth():
+        return jsonify({"error": "unauthorized"}), 401
+    return jsonify(current_user())
 
 
 @app.route("/api/projects")
@@ -252,8 +369,21 @@ def api_projects():
 def api_update_project(project_id):
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
+    conn = connect()
+    row = conn.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Projeto não encontrado"}), 404
+    if not can_edit_project_row(row):
+        conn.close()
+        return jsonify({"error": "Sem permissão para alterar este projeto"}), 403
+
     data = request.get_json(force=True) or {}
-    allowed = ["nome", "projeto_pai", "unidade", "setor", "categoria", "progresso", "status", "prazo", "obs", "ordem", "updated_by"]
+    if session.get("role") == "admin":
+        allowed = ["nome", "projeto_pai", "unidade", "setor", "categoria", "progresso", "status", "prazo", "obs", "ordem"]
+    else:
+        # Usuários operacionais podem atualizar somente andamento e observações das trocas de máquinas.
+        allowed = ["progresso", "obs"]
     updates = {}
     for k in allowed:
         if k in data:
@@ -265,11 +395,12 @@ def api_update_project(project_id):
     if "prazo" in updates and updates["prazo"] and "/" in str(updates["prazo"]):
         updates["prazo"] = parse_date_br(updates["prazo"])
     updates["updated_at"] = datetime.now().isoformat(timespec="seconds")
+    updates["updated_by"] = session.get("display_name") or session.get("username") or ""
     if not updates:
+        conn.close()
         return jsonify({"ok": True})
     cols = ", ".join([f"{k}=?" for k in updates])
     values = list(updates.values()) + [project_id]
-    conn = connect()
     conn.execute(f"UPDATE projects SET {cols} WHERE id=?", values)
     conn.commit()
     row = conn.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
@@ -281,6 +412,8 @@ def api_update_project(project_id):
 def api_create_project():
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
+    if not require_admin():
+        return jsonify({"error": "Apenas ADM pode criar projetos"}), 403
     data = request.get_json(force=True) or {}
     progresso = max(0, min(100, int(data.get("progresso") or 0)))
     conn = connect()
@@ -315,6 +448,8 @@ def api_create_project():
 def api_delete_project(project_id):
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
+    if not require_admin():
+        return jsonify({"error": "Apenas ADM pode excluir projetos"}), 403
     conn = connect()
     conn.execute("DELETE FROM projects WHERE id=?", (project_id,))
     conn.commit()
@@ -327,6 +462,8 @@ def api_delete_project(project_id):
 def api_reseed():
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
+    if not require_admin():
+        return jsonify({"error": "Apenas ADM pode importar a base"}), 403
     data = request.get_json(silent=True) or {}
     if data.get("confirm") != "IMPORTAR_BASE_COMPLETA":
         return jsonify({"error": "Confirmação inválida"}), 400

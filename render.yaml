@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ossel-dashboard-ti
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    disk:
+      name: ossel-dashboard-data
+      mountPath: /opt/render/project/src/instance
+      sizeGB: 1
