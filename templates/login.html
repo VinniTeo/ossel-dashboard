@@ -1,4 +1,50 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Login - OSSEL Dashboard</title><style>
-:root{--navy:#061a35;--blue:#1463c2;--line:#e2e8f0;--muted:#64748b;--ink:#0f172a}
-*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(circle at 20% 10%,rgba(71,215,255,.24),transparent 30%),linear-gradient(135deg,#061a35,#0b3266 60%,#1463c2);color:var(--ink);padding:22px}.box{width:min(460px,94vw);background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.35);border-radius:30px;padding:32px;box-shadow:0 30px 90px rgba(0,0,0,.28)}.brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}.mark{width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,#061a35,#1463c2);display:grid;place-items:center;color:#fff;font-weight:950}.brand b{display:block;color:#061a35}.brand span{color:#64748b;font-size:.88rem;font-weight:700}h1{margin:0 0 8px;color:#061a35;font-size:1.7rem}p{color:#64748b;line-height:1.5}label{display:block;color:#334155;font-weight:800;font-size:.86rem;margin-top:13px}input{width:100%;border:1px solid var(--line);border-radius:16px;padding:14px;font-size:1rem;margin-top:7px;outline:none}input:focus{border-color:#1463c2;box-shadow:0 0 0 4px rgba(20,99,194,.12)}button{width:100%;border:0;border-radius:16px;padding:14px;background:#1463c2;color:#fff;font-weight:900;font-size:1rem;cursor:pointer;margin-top:18px}.err{color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:14px;padding:11px;margin-top:14px}.hint{background:#eef6ff;border:1px solid #bfdbfe;border-radius:16px;padding:12px;color:#334155;font-size:.9rem}.users{font-size:.86rem;color:#64748b;margin-top:12px}.users b{color:#061a35}</style></head><body><form class="box" method="post" autocomplete="off"><div class="brand"><div class="mark">OS</div><div><b>OSSEL Assistência</b><span>Centro Tecnológico • Dashboard Executivo</span></div></div><h1>Acesso ao painel</h1><p>Entre com seu usuário corporativo. No primeiro acesso, informe uma senha nova e confirme para ativar sua conta.</p>{% if erro %}<div class="err">{{ erro }}</div>{% endif %}<label>Usuário</label><input name="username" placeholder="ADM, Thiago, Filipe ou Eduardo" value="{{ username or '' }}" required autofocus><label>Senha</label><input name="password" type="password" placeholder="Digite sua senha" required><label>Confirmar senha <span style="font-weight:600;color:#64748b">somente no primeiro acesso</span></label><input name="confirm_password" type="password" placeholder="Repita a senha se for seu primeiro login"><button>Entrar</button><div class="hint" style="margin-top:18px"><b>Permissões:</b><br>ADM: acesso completo.<br>Thiago, Filipe e Eduardo: alteração apenas em projetos de Troca de Máquinas.</div><div class="users">Usuários iniciais: <b>ADM</b>, <b>Thiago</b>, <b>Filipe</b>, <b>Eduardo</b>.</div></form></body></html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acesso | OSSEL Dashboard Executivo</title>
+  <style>
+    :root{
+      --navy:#061a35;--navy2:#0b3266;--blue:#1463c2;--cyan:#47d7ff;--ink:#0f172a;--muted:#64748b;--line:#dbe4ef;--card:#ffffff;
+      --shadow:0 30px 90px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);display:grid;grid-template-columns:1fr 520px;background:linear-gradient(135deg,#061a35,#0b3266 58%,#1463c2);overflow:hidden}.visual{position:relative;padding:54px 6vw;color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-height:100vh}.visual:before{content:"";position:absolute;right:-160px;top:-180px;width:620px;height:620px;border-radius:999px;background:rgba(71,215,255,.20);filter:blur(8px)}.visual:after{content:"";position:absolute;left:8vw;bottom:-160px;width:420px;height:420px;border-radius:999px;background:rgba(255,255,255,.08)}.brandPanel{position:relative;z-index:2;display:flex;align-items:center;gap:18px}.brandPanel img{height:62px;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(0,0,0,.28))}.brandPanel b{display:block;font-size:1.15rem}.brandPanel span{display:block;color:#c8e4ff;font-weight:700;margin-top:4px}.heroCopy{position:relative;z-index:2;max-width:720px}.badge{display:inline-flex;border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.11);border-radius:999px;padding:9px 13px;color:#e8f4ff;font-weight:900;font-size:.82rem;margin-bottom:24px}.heroCopy h1{font-size:clamp(2.8rem,6vw,5.8rem);line-height:1;letter-spacing:-.07em;margin:0 0 20px}.heroCopy p{font-size:1.08rem;line-height:1.65;color:#dcecff;max-width:760px}.loginWrap{min-height:100vh;display:grid;place-items:center;background:rgba(248,251,255,.94);backdrop-filter:blur(10px);padding:28px}.box{width:min(440px,94vw);background:rgba(255,255,255,.96);border:1px solid rgba(226,232,240,.92);border-radius:32px;padding:32px;box-shadow:var(--shadow)}.mobileLogo{display:none;align-items:center;gap:14px;margin-bottom:22px}.mobileLogo img{height:52px;filter:drop-shadow(0 8px 16px rgba(2,8,23,.14))}.mobileLogo b{display:block;color:#061a35}.mobileLogo span{display:block;color:#64748b;font-weight:700;font-size:.88rem}.lock{width:46px;height:46px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(135deg,#061a35,#1463c2);color:#fff;font-size:1.2rem;margin-bottom:18px}h2{font-size:1.85rem;color:#061a35;letter-spacing:-.035em;margin:0 0 10px}.lead{color:#64748b;line-height:1.55;margin:0 0 18px}label{display:block;color:#1e293b;font-weight:900;font-size:.86rem;margin-top:15px}input{width:100%;border:1px solid var(--line);border-radius:17px;padding:14px 15px;font-size:1rem;margin-top:8px;outline:none;background:#fff;transition:.18s}input:focus{border-color:#1463c2;box-shadow:0 0 0 4px rgba(20,99,194,.12)}.hintLine{font-size:.78rem;color:#64748b;font-weight:800;margin-left:4px}.btn{width:100%;border:0;border-radius:18px;padding:15px;background:linear-gradient(135deg,#1463c2,#1d72d8);color:#fff;font-weight:950;font-size:1rem;cursor:pointer;margin-top:20px;box-shadow:0 16px 34px rgba(20,99,194,.24);transition:.18s}.btn:hover{transform:translateY(-2px);box-shadow:0 22px 42px rgba(20,99,194,.30)}.err{color:#991b1b;background:#fee2e2;border:1px solid #fecaca;border-radius:16px;padding:12px;margin-top:15px}.secure{margin-top:18px;padding:13px 14px;border-radius:18px;background:#f8fbff;border:1px solid #dbeafe;color:#475569;font-size:.84rem;line-height:1.45}.secure b{color:#061a35}.foot{margin-top:18px;color:#94a3b8;font-size:.78rem;text-align:center}@media(max-width:980px){body{grid-template-columns:1fr;overflow:auto}.visual{display:none}.loginWrap{background:linear-gradient(135deg,#061a35,#0b3266 58%,#1463c2)}.mobileLogo{display:flex}.box{box-shadow:0 24px 70px rgba(0,0,0,.28)}}
+  </style>
+</head>
+<body>
+  <section class="visual">
+    <div class="brandPanel">
+      <img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL Assistência">
+      <div><b>OSSEL Assistência</b><span>Centro Tecnológico</span></div>
+    </div>
+    <div class="heroCopy">
+      <span class="badge">Dashboard executivo • Projetos e operações</span>
+      <h1>Gestão de projetos em tempo real.</h1>
+      <p>Acompanhe prazos, prioridades, status, evolução e observações operacionais em uma visão única para tomada de decisão.</p>
+    </div>
+    <div style="position:relative;z-index:2;color:#b9dcff;font-weight:800;font-size:.85rem">Acesso restrito • Ambiente corporativo</div>
+  </section>
+  <main class="loginWrap">
+    <form class="box" method="post" autocomplete="off">
+      <div class="mobileLogo">
+        <img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL Assistência">
+        <div><b>OSSEL Assistência</b><span>Centro Tecnológico</span></div>
+      </div>
+      <div class="lock">🔐</div>
+      <h2>Acesso ao painel</h2>
+      <p class="lead">Entre com seu usuário corporativo. No primeiro acesso, informe uma nova senha e confirme para ativar a conta.</p>
+      {% if erro %}<div class="err">{{ erro }}</div>{% endif %}
+      <label>Usuário</label>
+      <input name="username" value="{{ username or '' }}" placeholder="Digite seu usuário" required autofocus>
+      <label>Senha</label>
+      <input type="password" name="password" placeholder="Digite sua senha" required>
+      <label>Confirmar senha <span class="hintLine">somente no primeiro acesso</span></label>
+      <input type="password" name="confirm_password" placeholder="Repita a senha se for seu primeiro login">
+      <button class="btn" type="submit">Entrar com segurança</button>
+      <div class="secure"><b>Segurança:</b> a senha é definida pelo próprio usuário no primeiro acesso e não é exibida no painel.</div>
+      <div class="foot">OSSEL Assistência • Centro Tecnológico</div>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,33 +1,30 @@
-# OSSEL Dashboard TI - Diretoria v3
+# OSSEL Dashboard Executivo - V4
 
-Sistema web Flask + SQLite para controle executivo e operacional dos projetos.
+Sistema web Flask + SQLite para controle executivo de projetos.
 
-## Usuários iniciais
+## Login
+- Usuarios cadastrados no banco: ADM, Thiago, Filipe e Eduardo.
+- A tela nao exibe usuarios nem PIN.
+- No primeiro acesso, o usuario define a propria senha.
+- ADM tem acesso completo.
+- Usuarios operacionais alteram apenas projetos da categoria Troca de Maquinas.
 
-- ADM: acesso completo.
-- Thiago: altera apenas projetos da categoria Troca de Máquinas.
-- Filipe: altera apenas projetos da categoria Troca de Máquinas.
-- Eduardo: altera apenas projetos da categoria Troca de Máquinas.
-
-No primeiro login, cada usuário escolhe sua própria senha. Não existe mais PIN visível na tela de login.
-
-## Rodar localmente
-
-```bash
-pip install -r requirements.txt
-python app.py
-```
-
-Acesse: http://127.0.0.1:5000
-
-## Render
-
+## Deploy Render
 Build Command:
 ```bash
 pip install -r requirements.txt
 ```
-
 Start Command:
 ```bash
 gunicorn app:app
 ```
+
+## Novidades V4
+- Login mais profissional e sem exposicao de usuarios.
+- Logo OSSEL no login e no painel.
+- Nova visao executiva com score, recomendacao e graficos.
+- Aba Ordem Cronologica com todos os projetos.
+- Observacoes editaveis por projeto.
+- Dark mode.
+- Mapa de unidades com nome completo.
+- Melhorias visuais para apresentacao a diretoria.
