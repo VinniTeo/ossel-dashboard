@@ -1,8 +1,8 @@
 {
-  "updated_at": "2026-05-08T14:48:48",
+  "updated_at": "2026-05-08T14:50:20",
   "projects": [
     {
-      "id": 6,
+      "id": 1,
       "nome": "PDV - VarejoOnline",
       "projeto_pai": "",
       "unidade": "PDV - VarejoOnline",
@@ -18,7 +18,7 @@
       "assigned_to": ""
     },
     {
-      "id": 101,
+      "id": 2,
       "nome": "Troca das antenas - SA - MONT CRISTO",
       "projeto_pai": "",
       "unidade": "SA - MONT CRISTO",
@@ -34,7 +34,7 @@
       "assigned_to": ""
     },
     {
-      "id": 11,
+      "id": 3,
       "nome": "Command Center - NOC",
       "projeto_pai": "",
       "unidade": "Command Center - NOC",
@@ -50,7 +50,7 @@
       "assigned_to": ""
     },
     {
-      "id": 59,
+      "id": 4,
       "nome": "Troca de maquinas - SA - MONT CRISTO",
       "projeto_pai": "",
       "unidade": "SA - MONT CRISTO",
@@ -66,7 +66,7 @@
       "assigned_to": ""
     },
     {
-      "id": 76,
+      "id": 5,
       "nome": "ITSM - Znuny - TI",
       "projeto_pai": "",
       "unidade": "ITSM - Znuny",
@@ -82,7 +82,7 @@
       "assigned_to": ""
     },
     {
-      "id": 5,
+      "id": 6,
       "nome": "PDV - Gus Café - GRD",
       "projeto_pai": "",
       "unidade": "PDV - Gus Café",
@@ -98,7 +98,7 @@
       "assigned_to": ""
     },
     {
-      "id": 3,
+      "id": 7,
       "nome": "PDV - TOTVS Omni",
       "projeto_pai": "",
       "unidade": "PDV - TOTVS Omni",
@@ -114,7 +114,7 @@
       "assigned_to": ""
     },
     {
-      "id": 10,
+      "id": 8,
       "nome": "RDstation - Atendimento Sorocaba",
       "projeto_pai": "",
       "unidade": "RDstation - Atendimento Sorocaba",
@@ -130,7 +130,7 @@
       "assigned_to": ""
     },
     {
-      "id": 12,
+      "id": 9,
       "nome": "Troca de maquinas HOME OFFICE - BackOffice ( - Financeiros)",
       "projeto_pai": "",
       "unidade": "Troca de maquinas HOME OFFICE - BackOffice (",
@@ -146,7 +146,7 @@
       "assigned_to": ""
     },
     {
-      "id": 72,
+      "id": 10,
       "nome": "TOTVS Chefe - Mont Cristo",
       "projeto_pai": "",
       "unidade": "TOTVS Chefe - Mont Cristo",
@@ -162,7 +162,7 @@
       "assigned_to": ""
     },
     {
-      "id": 78,
+      "id": 11,
       "nome": "Intranet OSSEL",
       "projeto_pai": "",
       "unidade": "Intranet OSSEL",
@@ -178,7 +178,7 @@
       "assigned_to": ""
     },
     {
-      "id": 9,
+      "id": 12,
       "nome": "RDstation - Floricultura",
       "projeto_pai": "",
       "unidade": "RDstation - Floricultura",
@@ -194,7 +194,7 @@
       "assigned_to": ""
     },
     {
-      "id": 69,
+      "id": 13,
       "nome": "Telefonia Atendimento Mauá",
       "projeto_pai": "",
       "unidade": "Telefonia Atendimento Mauá",
@@ -226,7 +226,7 @@
       "assigned_to": ""
     },
     {
-      "id": 16,
+      "id": 15,
       "nome": "Financeiro Fune",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -242,7 +242,7 @@
       "assigned_to": ""
     },
     {
-      "id": 70,
+      "id": 16,
       "nome": "Telefonia Atendimento OSSL Pet",
       "projeto_pai": "",
       "unidade": "Telefonia Atendimento OSSL Pet",
@@ -264,17 +264,17 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Plano",
       "categoria": "Troca de Máquinas",
-      "progresso": 100,
-      "status": "Entregue",
+      "progresso": 50,
+      "status": "Em andamento",
       "prazo": "2026-05-12",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 17,
-      "updated_at": "2026-05-08T14:48:48",
+      "updated_at": "2026-05-08T14:50:20",
       "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
-      "id": 4,
+      "id": 18,
       "nome": "PDV - TOTVS x Omni (Integração)",
       "projeto_pai": "",
       "unidade": "PDV - TOTVS x Omni (Integração)",
@@ -290,7 +290,7 @@
       "assigned_to": ""
     },
     {
-      "id": 71,
+      "id": 19,
       "nome": "Telefonia Sorocaba",
       "projeto_pai": "",
       "unidade": "Telefonia Sorocaba",
@@ -306,7 +306,7 @@
       "assigned_to": ""
     },
     {
-      "id": 18,
+      "id": 20,
       "nome": "Financeiro Giullias",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -322,7 +322,7 @@
       "assigned_to": ""
     },
     {
-      "id": 19,
+      "id": 21,
       "nome": "Financeiro Empresas",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -338,7 +338,7 @@
       "assigned_to": ""
     },
     {
-      "id": 75,
+      "id": 22,
       "nome": "ITSM - Znuny - MKT",
       "projeto_pai": "",
       "unidade": "ITSM - Znuny",
@@ -354,7 +354,7 @@
       "assigned_to": ""
     },
     {
-      "id": 77,
+      "id": 23,
       "nome": "Codely - OSSEL Ensina",
       "projeto_pai": "",
       "unidade": "Codely - OSSEL Ensina",
@@ -370,7 +370,7 @@
       "assigned_to": ""
     },
     {
-      "id": 7,
+      "id": 24,
       "nome": "PDV - VarejoOnline X TOTVS",
       "projeto_pai": "",
       "unidade": "PDV - VarejoOnline X TOTVS",
@@ -386,7 +386,7 @@
       "assigned_to": ""
     },
     {
-      "id": 8,
+      "id": 25,
       "nome": "Microsoft 365 - TEAMS E E-MAILS",
       "projeto_pai": "",
       "unidade": "Microsoft 365 - TEAMS E E-MAILS",
@@ -402,7 +402,7 @@
       "assigned_to": ""
     },
     {
-      "id": 20,
+      "id": 26,
       "nome": "Atendimento",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -418,7 +418,7 @@
       "assigned_to": ""
     },
     {
-      "id": 21,
+      "id": 27,
       "nome": "Tesouraria",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -434,7 +434,7 @@
       "assigned_to": ""
     },
     {
-      "id": 15,
+      "id": 28,
       "nome": "Troca de maquinas - SA - ADM",
       "projeto_pai": "",
       "unidade": "SA - ADM",
@@ -450,7 +450,7 @@
       "assigned_to": ""
     },
     {
-      "id": 22,
+      "id": 29,
       "nome": "Controladoria",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -466,7 +466,7 @@
       "assigned_to": ""
     },
     {
-      "id": 60,
+      "id": 30,
       "nome": "Troca de maquinas - Sorocaba Central",
       "projeto_pai": "",
       "unidade": "Sorocaba Central",
@@ -482,7 +482,7 @@
       "assigned_to": ""
     },
     {
-      "id": 24,
+      "id": 31,
       "nome": "Recorrencia",
       "projeto_pai": "Troca de maquinas - SA - PERI 179",
       "unidade": "SA - PERI 179",
@@ -498,7 +498,7 @@
       "assigned_to": ""
     },
     {
-      "id": 1,
+      "id": 32,
       "nome": "TOTVS - DeathCare - Fune",
       "projeto_pai": "",
       "unidade": "TOTVS - DeathCare",
@@ -514,7 +514,7 @@
       "assigned_to": ""
     },
     {
-      "id": 25,
+      "id": 33,
       "nome": "Antecipação",
       "projeto_pai": "Troca de maquinas - SA - PERI 179",
       "unidade": "SA - PERI 179",
@@ -530,7 +530,7 @@
       "assigned_to": ""
     },
     {
-      "id": 73,
+      "id": 34,
       "nome": "TOTVS Chefe x TOTVS - Mont Cristo",
       "projeto_pai": "",
       "unidade": "TOTVS Chefe x TOTVS - Mont Cristo",
@@ -546,7 +546,7 @@
       "assigned_to": ""
     },
     {
-      "id": 74,
+      "id": 35,
       "nome": "ITSM - Znuny - Processos",
       "projeto_pai": "",
       "unidade": "ITSM - Znuny",
@@ -562,7 +562,7 @@
       "assigned_to": ""
     },
     {
-      "id": 79,
+      "id": 36,
       "nome": "Refazer estrutura logica de rede grupo unifor",
       "projeto_pai": "",
       "unidade": "Refazer estrutura logica de rede grupo unifor",
@@ -578,7 +578,7 @@
       "assigned_to": ""
     },
     {
-      "id": 81,
+      "id": 37,
       "nome": "Captive Portal das antenas",
       "projeto_pai": "",
       "unidade": "Captive Portal das antenas",
@@ -594,7 +594,7 @@
       "assigned_to": ""
     },
     {
-      "id": 82,
+      "id": 38,
       "nome": "Troca das antenas - SA - INOVA",
       "projeto_pai": "",
       "unidade": "SA - INOVA",
@@ -610,7 +610,7 @@
       "assigned_to": ""
     },
     {
-      "id": 102,
+      "id": 39,
       "nome": "Troca das antenas - Sorocaba Central",
       "projeto_pai": "",
       "unidade": "Sorocaba Central",
@@ -626,7 +626,7 @@
       "assigned_to": ""
     },
     {
-      "id": 61,
+      "id": 40,
       "nome": "Troca de maquinas - Vila Assis",
       "projeto_pai": "",
       "unidade": "Vila Assis",
@@ -642,7 +642,7 @@
       "assigned_to": ""
     },
     {
-      "id": 26,
+      "id": 41,
       "nome": "Atendimento",
       "projeto_pai": "Troca de maquinas - SA - PERI 179",
       "unidade": "SA - PERI 179",
@@ -658,7 +658,7 @@
       "assigned_to": ""
     },
     {
-      "id": 83,
+      "id": 42,
       "nome": "Troca das antenas - SA - ADM",
       "projeto_pai": "",
       "unidade": "SA - ADM",
@@ -674,7 +674,7 @@
       "assigned_to": ""
     },
     {
-      "id": 103,
+      "id": 43,
       "nome": "Troca das antenas - Vila Assis",
       "projeto_pai": "",
       "unidade": "Vila Assis",
@@ -690,7 +690,7 @@
       "assigned_to": ""
     },
     {
-      "id": 27,
+      "id": 44,
       "nome": "Almoxarifado",
       "projeto_pai": "Troca de maquinas - SA - PERI 179",
       "unidade": "SA - PERI 179",
@@ -706,7 +706,7 @@
       "assigned_to": ""
     },
     {
-      "id": 68,
+      "id": 45,
       "nome": "Parque de impressoras Alugadas - Simpress",
       "projeto_pai": "",
       "unidade": "Parque de impressoras Alugadas - Simpress",
@@ -722,7 +722,7 @@
       "assigned_to": ""
     },
     {
-      "id": 84,
+      "id": 46,
       "nome": "Troca das antenas - SA - PERI 179",
       "projeto_pai": "",
       "unidade": "SA - PERI 179",
@@ -738,7 +738,7 @@
       "assigned_to": ""
     },
     {
-      "id": 104,
+      "id": 47,
       "nome": "Troca das antenas - Millenium",
       "projeto_pai": "",
       "unidade": "Millenium",
@@ -754,7 +754,7 @@
       "assigned_to": ""
     },
     {
-      "id": 62,
+      "id": 48,
       "nome": "Troca de maquinas - Millenium",
       "projeto_pai": "",
       "unidade": "Millenium",
@@ -770,7 +770,7 @@
       "assigned_to": ""
     },
     {
-      "id": 28,
+      "id": 49,
       "nome": "Adm",
       "projeto_pai": "Troca de maquinas - SA - PERI 179",
       "unidade": "SA - PERI 179",
@@ -786,7 +786,7 @@
       "assigned_to": ""
     },
     {
-      "id": 85,
+      "id": 50,
       "nome": "Troca das antenas - SA - PERI 75",
       "projeto_pai": "",
       "unidade": "SA - PERI 75",
@@ -802,7 +802,7 @@
       "assigned_to": ""
     },
     {
-      "id": 105,
+      "id": 51,
       "nome": "Troca das antenas - Giullias SBA",
       "projeto_pai": "",
       "unidade": "Giullias SBA",
@@ -818,7 +818,7 @@
       "assigned_to": ""
     },
     {
-      "id": 23,
+      "id": 52,
       "nome": "Troca de maquinas - SA - PERI 179",
       "projeto_pai": "",
       "unidade": "SA - PERI 179",
@@ -834,7 +834,7 @@
       "assigned_to": ""
     },
     {
-      "id": 29,
+      "id": 53,
       "nome": "Novos Negocios",
       "projeto_pai": "Troca de maquinas - SA - PERI 179",
       "unidade": "SA - PERI 179",
@@ -850,7 +850,7 @@
       "assigned_to": ""
     },
     {
-      "id": 86,
+      "id": 54,
       "nome": "Troca das antenas - SCS - FUNE",
       "projeto_pai": "",
       "unidade": "SCS - FUNE",
@@ -866,7 +866,7 @@
       "assigned_to": ""
     },
     {
-      "id": 106,
+      "id": 55,
       "nome": "Troca das antenas - Salto",
       "projeto_pai": "",
       "unidade": "Salto",
@@ -882,7 +882,7 @@
       "assigned_to": ""
     },
     {
-      "id": 63,
+      "id": 56,
       "nome": "Troca de maquinas - Giullias SBA",
       "projeto_pai": "",
       "unidade": "Giullias SBA",
@@ -898,7 +898,7 @@
       "assigned_to": ""
     },
     {
-      "id": 87,
+      "id": 57,
       "nome": "Troca das antenas - SCS - VEL GOIÁS",
       "projeto_pai": "",
       "unidade": "SCS - VEL GOIÁS",
@@ -914,7 +914,7 @@
       "assigned_to": ""
     },
     {
-      "id": 107,
+      "id": 58,
       "nome": "Troca das antenas - Votorantim",
       "projeto_pai": "",
       "unidade": "Votorantim",
@@ -930,7 +930,7 @@
       "assigned_to": ""
     },
     {
-      "id": 31,
+      "id": 59,
       "nome": "Rh",
       "projeto_pai": "Troca de maquinas - SA - PERI 75",
       "unidade": "SA - PERI 75",
@@ -946,7 +946,7 @@
       "assigned_to": ""
     },
     {
-      "id": 88,
+      "id": 60,
       "nome": "Troca das antenas - MAUA I",
       "projeto_pai": "",
       "unidade": "MAUA I",
@@ -962,7 +962,7 @@
       "assigned_to": ""
     },
     {
-      "id": 108,
+      "id": 61,
       "nome": "Troca das antenas - Araçoiaba",
       "projeto_pai": "",
       "unidade": "Araçoiaba",
@@ -978,7 +978,7 @@
       "assigned_to": ""
     },
     {
-      "id": 32,
+      "id": 62,
       "nome": "Recrutamento",
       "projeto_pai": "Troca de maquinas - SA - PERI 75",
       "unidade": "SA - PERI 75",
@@ -994,7 +994,7 @@
       "assigned_to": ""
     },
     {
-      "id": 64,
+      "id": 63,
       "nome": "Troca de maquinas - Salto",
       "projeto_pai": "",
       "unidade": "Salto",
@@ -1010,7 +1010,7 @@
       "assigned_to": ""
     },
     {
-      "id": 89,
+      "id": 64,
       "nome": "Troca das antenas - MAUA II",
       "projeto_pai": "",
       "unidade": "MAUA II",
@@ -1026,7 +1026,7 @@
       "assigned_to": ""
     },
     {
-      "id": 109,
+      "id": 65,
       "nome": "Troca das antenas - São Roque",
       "projeto_pai": "",
       "unidade": "São Roque",
@@ -1042,7 +1042,7 @@
       "assigned_to": ""
     },
     {
-      "id": 33,
+      "id": 66,
       "nome": "Treinamento",
       "projeto_pai": "Troca de maquinas - SA - PERI 75",
       "unidade": "SA - PERI 75",
@@ -1058,7 +1058,7 @@
       "assigned_to": ""
     },
     {
-      "id": 90,
+      "id": 67,
       "nome": "Troca das antenas - SP - FUNE JARDIM AVELINO",
       "projeto_pai": "",
       "unidade": "SP - FUNE JARDIM AVELINO",
@@ -1074,7 +1074,7 @@
       "assigned_to": ""
     },
     {
-      "id": 2,
+      "id": 68,
       "nome": "TOTVS - Planos Funerarios",
       "projeto_pai": "",
       "unidade": "TOTVS - Planos Funerarios",
@@ -1090,7 +1090,7 @@
       "assigned_to": ""
     },
     {
-      "id": 30,
+      "id": 69,
       "nome": "Troca de maquinas - SA - PERI 75",
       "projeto_pai": "",
       "unidade": "SA - PERI 75",
@@ -1106,7 +1106,7 @@
       "assigned_to": ""
     },
     {
-      "id": 34,
+      "id": 70,
       "nome": "Vendas",
       "projeto_pai": "Troca de maquinas - SA - PERI 75",
       "unidade": "SA - PERI 75",
@@ -1122,7 +1122,7 @@
       "assigned_to": ""
     },
     {
-      "id": 91,
+      "id": 71,
       "nome": "Troca das antenas - SP - OSSEL HELIOPOLIS",
       "projeto_pai": "",
       "unidade": "SP - OSSEL HELIOPOLIS",
@@ -1138,7 +1138,7 @@
       "assigned_to": ""
     },
     {
-      "id": 65,
+      "id": 72,
       "nome": "Troca de maquinas - Votorantim",
       "projeto_pai": "",
       "unidade": "Votorantim",
@@ -1154,7 +1154,7 @@
       "assigned_to": ""
     },
     {
-      "id": 36,
+      "id": 73,
       "nome": "Atendimento",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1170,7 +1170,7 @@
       "assigned_to": ""
     },
     {
-      "id": 92,
+      "id": 74,
       "nome": "Troca das antenas - SA - COMFLORES",
       "projeto_pai": "",
       "unidade": "SA - COMFLORES",
@@ -1186,7 +1186,7 @@
       "assigned_to": ""
     },
     {
-      "id": 37,
+      "id": 75,
       "nome": "Mesa Seguro",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1202,7 +1202,7 @@
       "assigned_to": ""
     },
     {
-      "id": 93,
+      "id": 76,
       "nome": "Troca das antenas - SCS - GIULLIAS",
       "projeto_pai": "",
       "unidade": "SCS - GIULLIAS",
@@ -1218,7 +1218,7 @@
       "assigned_to": ""
     },
     {
-      "id": 66,
+      "id": 77,
       "nome": "Troca de maquinas - Araçoiaba",
       "projeto_pai": "",
       "unidade": "Araçoiaba",
@@ -1234,7 +1234,7 @@
       "assigned_to": ""
     },
     {
-      "id": 38,
+      "id": 78,
       "nome": "Adm",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1250,7 +1250,7 @@
       "assigned_to": ""
     },
     {
-      "id": 94,
+      "id": 79,
       "nome": "Troca das antenas - SP - FLOR DO SOL",
       "projeto_pai": "",
       "unidade": "SP - FLOR DO SOL",
@@ -1266,7 +1266,7 @@
       "assigned_to": ""
     },
     {
-      "id": 39,
+      "id": 80,
       "nome": "Financeiro Fune",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1282,7 +1282,7 @@
       "assigned_to": ""
     },
     {
-      "id": 95,
+      "id": 81,
       "nome": "Troca das antenas - SP - GIULLIAS",
       "projeto_pai": "",
       "unidade": "SP - GIULLIAS",
@@ -1298,7 +1298,7 @@
       "assigned_to": ""
     },
     {
-      "id": 67,
+      "id": 82,
       "nome": "Troca de maquinas - São Roque",
       "projeto_pai": "",
       "unidade": "São Roque",
@@ -1314,7 +1314,7 @@
       "assigned_to": ""
     },
     {
-      "id": 40,
+      "id": 83,
       "nome": "Giullias",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1330,7 +1330,7 @@
       "assigned_to": ""
     },
     {
-      "id": 96,
+      "id": 84,
       "nome": "Troca das antenas - SA - ABAVILLI JARDIM",
       "projeto_pai": "",
       "unidade": "SA - ABAVILLI JARDIM",
@@ -1346,7 +1346,7 @@
       "assigned_to": ""
     },
     {
-      "id": 41,
+      "id": 85,
       "nome": "Supervisão Operacional",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1362,7 +1362,7 @@
       "assigned_to": ""
     },
     {
-      "id": 97,
+      "id": 86,
       "nome": "Troca das antenas - SA - ABAVILLI BOSQUE",
       "projeto_pai": "",
       "unidade": "SA - ABAVILLI BOSQUE",
@@ -1378,7 +1378,7 @@
       "assigned_to": ""
     },
     {
-      "id": 42,
+      "id": 87,
       "nome": "OSSEL Ensina",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1394,7 +1394,7 @@
       "assigned_to": ""
     },
     {
-      "id": 98,
+      "id": 88,
       "nome": "Troca das antenas - SA - QUADRO",
       "projeto_pai": "",
       "unidade": "SA - QUADRO",
@@ -1410,7 +1410,7 @@
       "assigned_to": ""
     },
     {
-      "id": 43,
+      "id": 89,
       "nome": "Mesa Operacional",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1426,7 +1426,7 @@
       "assigned_to": ""
     },
     {
-      "id": 99,
+      "id": 90,
       "nome": "Troca das antenas - SA - QUADRO ADM",
       "projeto_pai": "",
       "unidade": "SA - QUADRO ADM",
@@ -1442,7 +1442,7 @@
       "assigned_to": ""
     },
     {
-      "id": 35,
+      "id": 91,
       "nome": "Troca de maquinas - SCS - FUNE",
       "projeto_pai": "",
       "unidade": "SCS - FUNE",
@@ -1458,7 +1458,7 @@
       "assigned_to": ""
     },
     {
-      "id": 44,
+      "id": 92,
       "nome": "Buscadores",
       "projeto_pai": "Troca de maquinas - SCS - FUNE",
       "unidade": "SCS - FUNE",
@@ -1474,7 +1474,7 @@
       "assigned_to": ""
     },
     {
-      "id": 100,
+      "id": 93,
       "nome": "Troca das antenas - SA - LEONI",
       "projeto_pai": "",
       "unidade": "SA - LEONI",
@@ -1490,7 +1490,7 @@
       "assigned_to": ""
     },
     {
-      "id": 45,
+      "id": 94,
       "nome": "Troca de maquinas - SCS - VEL GOIÁS",
       "projeto_pai": "",
       "unidade": "SCS - VEL GOIÁS",
@@ -1506,7 +1506,7 @@
       "assigned_to": ""
     },
     {
-      "id": 46,
+      "id": 95,
       "nome": "Troca de maquinas - MAUA I",
       "projeto_pai": "",
       "unidade": "MAUA I",
@@ -1522,7 +1522,7 @@
       "assigned_to": ""
     },
     {
-      "id": 47,
+      "id": 96,
       "nome": "Troca de maquinas - MAUA II",
       "projeto_pai": "",
       "unidade": "MAUA II",
@@ -1538,7 +1538,7 @@
       "assigned_to": ""
     },
     {
-      "id": 48,
+      "id": 97,
       "nome": "Troca de maquinas - SP - FUNE JARDIM AVELINO",
       "projeto_pai": "",
       "unidade": "SP - FUNE JARDIM AVELINO",
@@ -1554,7 +1554,7 @@
       "assigned_to": ""
     },
     {
-      "id": 49,
+      "id": 98,
       "nome": "Troca de maquinas - SP - OSSEL HELIOPOLIS",
       "projeto_pai": "",
       "unidade": "SP - OSSEL HELIOPOLIS",
@@ -1570,7 +1570,7 @@
       "assigned_to": ""
     },
     {
-      "id": 50,
+      "id": 99,
       "nome": "Troca de maquinas - SA - COMFLORES",
       "projeto_pai": "",
       "unidade": "SA - COMFLORES",
@@ -1586,7 +1586,7 @@
       "assigned_to": ""
     },
     {
-      "id": 51,
+      "id": 100,
       "nome": "Troca de maquinas - SCS - GIULLIAS",
       "projeto_pai": "",
       "unidade": "SCS - GIULLIAS",
@@ -1602,7 +1602,7 @@
       "assigned_to": ""
     },
     {
-      "id": 52,
+      "id": 101,
       "nome": "Troca de maquinas - SP - FLOR DO SOL",
       "projeto_pai": "",
       "unidade": "SP - FLOR DO SOL",
@@ -1618,7 +1618,7 @@
       "assigned_to": ""
     },
     {
-      "id": 53,
+      "id": 102,
       "nome": "Troca de maquinas - SP - GIULLIAS",
       "projeto_pai": "",
       "unidade": "SP - GIULLIAS",
@@ -1634,7 +1634,7 @@
       "assigned_to": ""
     },
     {
-      "id": 13,
+      "id": 103,
       "nome": "Parque de Maquinas Alugadas - VIVO",
       "projeto_pai": "",
       "unidade": "Parque de Maquinas Alugadas - VIVO",
@@ -1650,7 +1650,7 @@
       "assigned_to": ""
     },
     {
-      "id": 54,
+      "id": 104,
       "nome": "Troca de maquinas - SA - ABAVILLI JARDIM",
       "projeto_pai": "",
       "unidade": "SA - ABAVILLI JARDIM",
@@ -1666,7 +1666,7 @@
       "assigned_to": ""
     },
     {
-      "id": 55,
+      "id": 105,
       "nome": "Troca de maquinas - SA - ABAVILLI BOSQUE",
       "projeto_pai": "",
       "unidade": "SA - ABAVILLI BOSQUE",
@@ -1682,7 +1682,7 @@
       "assigned_to": ""
     },
     {
-      "id": 56,
+      "id": 106,
       "nome": "Troca de maquinas - SA - QUADRO",
       "projeto_pai": "",
       "unidade": "SA - QUADRO",
@@ -1698,7 +1698,7 @@
       "assigned_to": ""
     },
     {
-      "id": 57,
+      "id": 107,
       "nome": "Troca de maquinas - SA - QUADRO ADM",
       "projeto_pai": "",
       "unidade": "SA - QUADRO ADM",
@@ -1714,7 +1714,7 @@
       "assigned_to": ""
     },
     {
-      "id": 58,
+      "id": 108,
       "nome": "Troca de maquinas - SA - LEONI",
       "projeto_pai": "",
       "unidade": "SA - LEONI",
@@ -1730,7 +1730,7 @@
       "assigned_to": ""
     },
     {
-      "id": 80,
+      "id": 109,
       "nome": "Refazer infraestrutura de rede grupo unifor",
       "projeto_pai": "",
       "unidade": "Refazer infraestrutura de rede grupo unifor",
