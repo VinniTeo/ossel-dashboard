@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-08T16:44:10",
+  "updated_at": "2026-05-08T16:44:11",
   "projects": [
     {
       "id": 1,
@@ -296,12 +296,12 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Plano",
       "categoria": "Troca de Máquinas",
-      "progresso": 56,
-      "status": "Em andamento",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-05-12",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 17,
-      "updated_at": "2026-05-08T16:44:10",
+      "updated_at": "2026-05-08T16:44:11",
       "updated_by": "Administrador",
       "assigned_to": "",
       "evidencias": "[]",
@@ -1965,6 +1965,36 @@
     }
   ],
   "history": [
+    {
+      "id": 5,
+      "project_id": 17,
+      "action": "alteracao",
+      "field": "updated_at",
+      "old_value": "2026-05-08T16:44:10",
+      "new_value": "2026-05-08T16:44:11",
+      "user_name": "Administrador",
+      "created_at": "2026-05-08T16:44:11"
+    },
+    {
+      "id": 4,
+      "project_id": 17,
+      "action": "alteracao",
+      "field": "status",
+      "old_value": "Em andamento",
+      "new_value": "Entregue",
+      "user_name": "Administrador",
+      "created_at": "2026-05-08T16:44:11"
+    },
+    {
+      "id": 3,
+      "project_id": 17,
+      "action": "alteracao",
+      "field": "progresso",
+      "old_value": "56",
+      "new_value": "100",
+      "user_name": "Administrador",
+      "created_at": "2026-05-08T16:44:11"
+    },
     {
       "id": 2,
       "project_id": 17,
