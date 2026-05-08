@@ -169,6 +169,30 @@ def github_enabled():
     return bool(github_repo() and github_token())
 
 
+# Notificações opcionais por Microsoft Teams / Webhook.
+# Configure TEAMS_WEBHOOK_URL no Render se quiser receber alertas quando projetos forem atualizados.
+def teams_webhook_url():
+    return (os.environ.get("TEAMS_WEBHOOK_URL") or "").strip()
+
+
+def send_teams_notification(title, message):
+    if not teams_webhook_url():
+        return False
+    try:
+        payload = {"text": f"**{title}**\n\n{message}"}
+        req = urllib.request.Request(
+            teams_webhook_url(),
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=10).read()
+        return True
+    except Exception as e:
+        print("Teams notification error:", e)
+        return False
+
+
 def github_request(method, url, payload=None):
     data = None
     headers = {
@@ -192,7 +216,11 @@ def github_content_url():
     return f"https://api.github.com/repos/{github_repo()}/contents/{path}"
 
 
+LAST_GITHUB_HISTORY = []
+
 def load_projects_from_github():
+    global LAST_GITHUB_HISTORY
+    LAST_GITHUB_HISTORY = []
     if not github_enabled():
         return None
     try:
@@ -200,6 +228,7 @@ def load_projects_from_github():
         content = base64.b64decode(data.get("content", "")).decode("utf-8")
         parsed = json.loads(content)
         if isinstance(parsed, dict):
+            LAST_GITHUB_HISTORY = parsed.get("history") or []
             return parsed.get("projects") or []
         if isinstance(parsed, list):
             return parsed
@@ -217,16 +246,50 @@ def serialize_projects_for_backup(conn):
     return [dict(r) for r in rows]
 
 
+def serialize_history_for_backup(conn):
+    try:
+        rows = conn.execute("SELECT * FROM history ORDER BY id DESC LIMIT 500").fetchall()
+        return [dict(r) for r in rows]
+    except Exception:
+        return []
+
+
+def restore_history_from_github(history_items, cur):
+    if not isinstance(history_items, list):
+        return
+    existing = cur.execute("SELECT COUNT(*) FROM history").fetchone()[0]
+    if existing:
+        return
+    for h in history_items[:500]:
+        cur.execute(
+            """
+            INSERT INTO history (project_id, action, field, old_value, new_value, user_name, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                h.get("project_id") or 0,
+                h.get("action") or "importado",
+                h.get("field") or "",
+                h.get("old_value") or "",
+                h.get("new_value") or "",
+                h.get("user_name") or "",
+                h.get("created_at") or datetime.now().isoformat(timespec="seconds"),
+            ),
+        )
+
+
 def backup_projects_to_github():
     if not github_enabled():
         return False
     try:
         conn = connect()
         projects = serialize_projects_for_backup(conn)
+        history = serialize_history_for_backup(conn)
         conn.close()
         payload_json = json.dumps({
             "updated_at": datetime.now().isoformat(timespec="seconds"),
             "projects": projects,
+            "history": history,
         }, ensure_ascii=False, indent=2)
         content = base64.b64encode(payload_json.encode("utf-8")).decode("ascii")
         sha = None
@@ -253,8 +316,8 @@ def insert_project_row(cur, item, ordem_fallback=999):
     cur.execute(
         """
         INSERT INTO projects
-        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by, assigned_to)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by, assigned_to, evidencias, sla_dias)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             item.get("nome") or "Novo item",
@@ -270,6 +333,8 @@ def insert_project_row(cur, item, ordem_fallback=999):
             item.get("updated_at") or datetime.now().isoformat(timespec="seconds"),
             item.get("updated_by") or "",
             item.get("assigned_to") or "",
+            item.get("evidencias") or "[]",
+            int(item.get("sla_dias") or 21),
         ),
     )
 
@@ -321,6 +386,25 @@ def init_db():
     project_cols = [r[1] for r in cur.execute("PRAGMA table_info(projects)").fetchall()]
     if "assigned_to" not in project_cols:
         cur.execute("ALTER TABLE projects ADD COLUMN assigned_to TEXT")
+    if "evidencias" not in project_cols:
+        cur.execute("ALTER TABLE projects ADD COLUMN evidencias TEXT DEFAULT '[]'")
+    if "sla_dias" not in project_cols:
+        cur.execute("ALTER TABLE projects ADD COLUMN sla_dias INTEGER DEFAULT 21")
+
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            project_id INTEGER NOT NULL,
+            action TEXT NOT NULL,
+            field TEXT,
+            old_value TEXT,
+            new_value TEXT,
+            user_name TEXT,
+            created_at TEXT
+        )
+        """
+    )
 
     for username, display_name, role in DEFAULT_USERS:
         now = datetime.now().isoformat(timespec="seconds")
@@ -379,6 +463,12 @@ def init_db():
                         "ordem": ordem,
                     }, ordem)
                     ordem += 1
+    # Restaura histórico salvo no GitHub, quando disponível.
+    try:
+        restore_history_from_github(LAST_GITHUB_HISTORY, cur)
+    except Exception as e:
+        print("History restore error:", e)
+
     # Corrige nomes de unidades antigas ou abreviadas sem apagar dados existentes.
     for row in cur.execute("SELECT id, nome, projeto_pai, unidade FROM projects").fetchall():
         fixed = normalize_unidade(row["unidade"], row["nome"], row["projeto_pai"])
@@ -503,6 +593,24 @@ def get_user_by_username(username):
     return row
 
 
+def log_history(conn, project_id, action, field="", old_value="", new_value=""):
+    conn.execute(
+        """
+        INSERT INTO history (project_id, action, field, old_value, new_value, user_name, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            project_id,
+            action,
+            field,
+            str(old_value or ""),
+            str(new_value or ""),
+            session.get("display_name") or session.get("username") or "Sistema",
+            datetime.now().isoformat(timespec="seconds"),
+        ),
+    )
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Autenticacao sem gravar senha no SQLite.
@@ -604,7 +712,7 @@ def api_update_project(project_id):
 
     data = request.get_json(force=True) or {}
     if session.get("role") == "admin":
-        allowed = ["nome", "projeto_pai", "unidade", "setor", "categoria", "progresso", "status", "prazo", "obs", "ordem", "assigned_to"]
+        allowed = ["nome", "projeto_pai", "unidade", "setor", "categoria", "progresso", "status", "prazo", "obs", "ordem", "assigned_to", "sla_dias"]
     else:
         # Usuários operacionais podem atualizar somente andamento e observações das trocas de máquinas.
         allowed = ["progresso", "obs"]
@@ -623,6 +731,10 @@ def api_update_project(project_id):
     if not updates:
         conn.close()
         return jsonify({"ok": True})
+    for field, new_value in updates.items():
+        old_value = row[field] if field in row.keys() else ""
+        if str(old_value or "") != str(new_value or ""):
+            log_history(conn, project_id, "alteracao", field, old_value, new_value)
     cols = ", ".join([f"{k}=?" for k in updates])
     values = list(updates.values()) + [project_id]
     conn.execute(f"UPDATE projects SET {cols} WHERE id=?", values)
@@ -645,8 +757,8 @@ def api_create_project():
     cur = conn.cursor()
     cur.execute(
         """
-        INSERT INTO projects (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by, assigned_to)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO projects (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by, assigned_to, evidencias, sla_dias)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             data.get("nome") or "Novo item",
@@ -662,8 +774,11 @@ def api_create_project():
             datetime.now().isoformat(timespec="seconds"),
             session.get("display_name") or session.get("username") or "",
             data.get("assigned_to") or "",
+            data.get("evidencias") or "[]",
+            int(data.get("sla_dias") or 21),
         ),
     )
+    log_history(conn, cur.lastrowid, "criacao", "projeto", "", data.get("nome") or "Novo item")
     conn.commit()
     row = conn.execute("SELECT * FROM projects WHERE id=?", (cur.lastrowid,)).fetchone()
     conn.close()
@@ -678,6 +793,8 @@ def api_delete_project(project_id):
     if not require_admin():
         return jsonify({"error": "Apenas ADM pode excluir projetos"}), 403
     conn = connect()
+    old = conn.execute("SELECT nome FROM projects WHERE id=?", (project_id,)).fetchone()
+    log_history(conn, project_id, "exclusao", "projeto", old["nome"] if old else "", "")
     conn.execute("DELETE FROM projects WHERE id=?", (project_id,))
     conn.commit()
     conn.close()
@@ -701,6 +818,87 @@ def api_reseed():
     total = conn.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     conn.close()
     return jsonify({"ok": True, "total": total})
+
+
+@app.route("/api/projects/<int:project_id>/evidence", methods=["POST"])
+def api_add_evidence(project_id):
+    if not require_auth():
+        return jsonify({"error": "unauthorized"}), 401
+    conn = connect()
+    row = conn.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
+    if not row:
+        conn.close()
+        return jsonify({"error": "Projeto não encontrado"}), 404
+    if not can_edit_project_row(row):
+        conn.close()
+        return jsonify({"error": "Sem permissão para adicionar evidência"}), 403
+    data = request.get_json(force=True) or {}
+    name = (data.get("name") or "evidencia").strip()[:120]
+    content = data.get("content") or ""
+    if not content.startswith("data:"):
+        conn.close()
+        return jsonify({"error": "Formato de evidência inválido"}), 400
+    if len(content) > 900000:
+        conn.close()
+        return jsonify({"error": "Arquivo muito grande. Use imagem leve de até ~600 KB."}), 400
+    try:
+        evidencias = json.loads(row["evidencias"] or "[]")
+        if not isinstance(evidencias, list):
+            evidencias = []
+    except Exception:
+        evidencias = []
+    item = {
+        "name": name,
+        "content": content,
+        "uploaded_by": session.get("display_name") or session.get("username") or "",
+        "uploaded_at": datetime.now().isoformat(timespec="seconds"),
+    }
+    evidencias.append(item)
+    evidencias = evidencias[-6:]
+    conn.execute("UPDATE projects SET evidencias=?, updated_at=?, updated_by=? WHERE id=?", (
+        json.dumps(evidencias, ensure_ascii=False),
+        datetime.now().isoformat(timespec="seconds"),
+        session.get("display_name") or session.get("username") or "",
+        project_id,
+    ))
+    log_history(conn, project_id, "evidencia", "evidencias", "", name)
+    conn.commit()
+    row = conn.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
+    conn.close()
+    backup_projects_to_github()
+    return jsonify(rows_to_dict([row])[0])
+
+
+@app.route("/api/history")
+def api_history():
+    if not require_auth():
+        return jsonify({"error": "unauthorized"}), 401
+    conn = connect()
+    rows = conn.execute(
+        """
+        SELECT h.*, p.nome AS project_name, p.categoria AS project_category
+        FROM history h
+        LEFT JOIN projects p ON p.id = h.project_id
+        ORDER BY h.id DESC
+        LIMIT 300
+        """
+    ).fetchall()
+    conn.close()
+    return jsonify([dict(r) for r in rows])
+
+
+@app.route("/tv")
+def tv_mode():
+    if not require_auth():
+        return redirect(url_for("login"))
+    return render_template("index.html", user=current_user(), tv_mode=True)
+
+
+@app.route("/report")
+def report_page():
+    if not require_auth():
+        return redirect(url_for("login"))
+    return render_template("index.html", user=current_user(), report_mode=True)
 
 @app.route("/export.csv")
 def export_csv():
