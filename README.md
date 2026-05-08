@@ -1,58 +1,27 @@
-# OSSEL Dashboard Profissional V16
+# OSSEL Dashboard - V15
 
-Versão com upgrades executivos e operacionais:
+## Login
+As senhas dos usuários são lidas pelas variáveis de ambiente do Render:
 
-- Timeline / Gantt dos projetos por prazo.
-- Filtros avançados por categoria, status, responsável e risco.
-- Dashboard executivo por unidade.
-- Ranking de produtividade por responsável.
-- Evidências por projeto com upload de imagens leves.
-- Histórico de alterações.
-- SLA visual por projeto.
-- Exportação CSV e impressão/salvar em PDF pelo navegador.
-- Modo TV/monitor.
-- Kanban operacional.
-- Layout mobile melhorado.
-- Backup persistente no GitHub via runtime_projects.json.
-- Login por Environment Variables do Render.
-
-## Variáveis obrigatórias no Render
-
-Senhas:
 - ADM_PASSWORD
 - THIAGO_PASSWORD
 - DENIS_PASSWORD
 - FILIPE_PASSWORD
 - EDUARDO_PASSWORD
 
-Persistência gratuita via GitHub:
-- GITHUB_REPO = usuario/repositorio
-- GITHUB_TOKEN = token classic com permissão repo
-- GITHUB_DATA_PATH = data/runtime_projects.json
+Usuários ADM: ADM, Thiago e Denis.
+Usuários operacionais: Filipe e Eduardo.
 
-Opcional para notificação no Teams:
-- TEAMS_WEBHOOK_URL
+## Como manter os dados mesmo sem Persistent Disk
 
-## Deploy
+No Render Free, o SQLite local pode ser recriado em novos deploys. Para não perder progresso, observações e responsáveis, esta versão pode salvar automaticamente os dados em um arquivo JSON dentro do próprio GitHub.
 
-1. Extraia este ZIP.
-2. Suba os arquivos na raiz do repositório GitHub.
-3. No Render, use:
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn app:app`
-4. Manual Deploy -> Deploy latest commit.
+Configure no Render:
 
-## Observação sobre evidências
+- GITHUB_REPO = VinniTeo/ossel-dashboard
+- GITHUB_TOKEN = token do GitHub com permissão de escrita no repositório
+- GITHUB_DATA_PATH = data/runtime_projects.json  (opcional)
 
-As evidências são salvas no backup do GitHub em base64. Use imagens leves para não deixar o arquivo runtime_projects.json muito grande.
+Com isso, a cada alteração de projeto o sistema atualiza o arquivo `data/runtime_projects.json` no GitHub. Quando o Render fizer um novo deploy e o banco local estiver vazio, o sistema restaura os dados a partir desse arquivo.
 
-
-## V17 - ajustes solicitados
-- Ranking visível somente para usuários ADM.
-- Timeline/Gantt reformulado: o marcador azul indica a data de entrega dentro do período da carteira; a barra fina inferior indica o percentual de andamento.
-- Visual geral atualizado com paleta corporativa azul escuro OSSEL Assistência.
-- Cards e controles mais compactos para melhor leitura executiva.
-
-
-## V18
-Reforma visual completa: menu lateral, timeline clara, cards compactos, paleta OSSEL em azul escuro e controles de progresso revisados. Mantém login por variáveis de ambiente e backup GitHub.
+Se você não configurar GITHUB_TOKEN e GITHUB_REPO, o sistema continua funcionando, mas os dados alterados podem ser perdidos em deploys, porque o banco local do Render Free não é persistente.
