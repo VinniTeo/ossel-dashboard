@@ -30,37 +30,17 @@ button.submit{background:linear-gradient(135deg,#0b5fc6,#06356f);box-shadow:0 18
     <div class="miniBrand"><img src="https://www.ossel.com.br/wp-content/uploads/elementor/thumbs/OSSEL_BRANCO_PNG-q7mlxajooelkxycx86x2jp48z32d1np8o29zq4jn3m.png" alt="OSSEL"><div><b>OSSEL Assistência</b><span>Centro Tecnológico</span></div></div>
     <div class="lock">🔐</div>
     <h2>Acesso ao painel</h2>
-    <p>Entre com sua senha já cadastrada ou use a aba de primeiro acesso para ativar seu usuário.</p>
+    <p>Entre com seu usuário corporativo e a senha informada pelo administrador do painel.</p>
     {% if erro %}<div class="err">{{ erro }}</div>{% endif %}
-    {% if sucesso %}<div class="ok">{{ sucesso }}</div>{% endif %}
-    <div class="tabs">
-      <button type="button" class="tab {% if mode != 'first_access' %}active{% endif %}" onclick="showTab('login')">Entrar</button>
-      <button type="button" class="tab {% if mode == 'first_access' %}active{% endif %}" onclick="showTab('first_access')">Primeiro acesso</button>
-    </div>
-    <form class="panel {% if mode != 'first_access' %}active{% endif %}" id="panel-login" method="post" autocomplete="off">
-      <input type="hidden" name="mode" value="login">
+    <form method="post" autocomplete="off">
       <label>Usuário</label><input name="username" placeholder="Digite seu usuário" value="{{ username or '' }}" required autofocus>
       <label>Senha</label><input name="password" type="password" placeholder="Digite sua senha" required>
       <button class="submit">Entrar com segurança</button>
-      <div class="hint">Use esta opção quando sua senha já foi criada.</div>
-    </form>
-    <form class="panel {% if mode == 'first_access' %}active{% endif %}" id="panel-first_access" method="post" autocomplete="off">
-      <input type="hidden" name="mode" value="first_access">
-      <label>Usuário</label><input name="username" placeholder="Digite seu usuário" value="{{ username or '' }}" required>
-      <label>Criar senha</label><input name="password" type="password" placeholder="Crie uma senha com pelo menos 6 caracteres" required>
-      <label>Confirmar senha</label><input name="confirm_password" type="password" placeholder="Repita a nova senha" required>
-      <button class="submit">Ativar usuário</button>
-      <div class="hint">A ativação só é necessária uma vez. Depois use a aba Entrar.</div>
+      <div class="hint">As credenciais são gerenciadas com segurança nas variáveis de ambiente do Render.</div>
     </form>
     <div class="security"><span>🛡️</span><div><b>Acesso protegido</b><br>As permissões são aplicadas automaticamente conforme o perfil do usuário.</div></div>
   </div>
 </section>
-<script>
-function showTab(name){
-  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(name==='login'&&i===0)||(name==='first_access'&&i===1)));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-}
-</script>
+
 </body>
 </html>

@@ -30,6 +30,39 @@ DEFAULT_USERS = [
     ("Eduardo", "Eduardo", "troca"),
 ]
 
+
+# Login sem banco persistente: as senhas ficam nas variaveis de ambiente do Render.
+# Configure no Render, em Environment Variables:
+# ADM_PASSWORD, THIAGO_PASSWORD, DENIS_PASSWORD, FILIPE_PASSWORD, EDUARDO_PASSWORD
+# Se nao configurar, o sistema usa senhas temporarias abaixo. Troque no Render antes de liberar para a equipe.
+DEFAULT_ENV_PASSWORDS = {
+    "ADM": "Ossel@Adm2026",
+    "Thiago": "Ossel@Thiago2026",
+    "Denis": "Ossel@Denis2026",
+    "Filipe": "Ossel@Filipe2026",
+    "Eduardo": "Ossel@Eduardo2026",
+}
+
+
+def env_key_for_user(username):
+    return f"{str(username or '').strip().upper()}_PASSWORD".replace(" ", "_")
+
+
+def get_login_user(username):
+    normalized = (username or "").strip()
+    for u, display_name, role in DEFAULT_USERS:
+        if u.lower() == normalized.lower():
+            return {"username": u, "display_name": display_name, "role": role}
+    return None
+
+
+def get_env_password(username):
+    user = get_login_user(username)
+    if not user:
+        return None
+    return os.environ.get(env_key_for_user(user["username"]), DEFAULT_ENV_PASSWORDS.get(user["username"]))
+
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "ossel-dashboard-secret-change-me")
 
@@ -356,57 +389,48 @@ def get_user_by_username(username):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    """Autenticacao sem gravar senha no SQLite.
+    Ideal para Render Free, pois as credenciais ficam em Environment Variables,
+    que permanecem entre deploys sem Persistent Disk.
+    """
     if request.method == "POST":
-        mode = request.form.get("mode") or "login"
         username = (request.form.get("username") or "").strip()
         password = request.form.get("password") or ""
-        confirm = request.form.get("confirm_password") or ""
-        user = get_user_by_username(username)
-        if not user:
-            return render_template("login.html", erro="Usuário não encontrado.", username=username, mode=mode)
+        login_user = get_login_user(username)
+        expected_password = get_env_password(username)
 
-        needs_first_access = (not user["password_hash"] or int(user["must_set_password"] or 0) == 1)
+        if not login_user or not expected_password:
+            return render_template("login.html", erro="Usuário ou senha inválidos.", username=username)
 
-        if mode == "first_access":
-            if not needs_first_access:
-                return render_template(
-                    "login.html",
-                    erro="Este usuário já possui senha cadastrada. Use a aba Entrar.",
-                    username=username,
-                    mode="login",
-                )
-            if len(password) < 6:
-                return render_template("login.html", erro="Crie uma senha com pelo menos 6 caracteres.", username=username, mode="first_access")
-            if password != confirm:
-                return render_template("login.html", erro="As senhas não conferem.", username=username, mode="first_access")
+        if not hmac.compare_digest(str(expected_password), str(password)):
+            return render_template("login.html", erro="Usuário ou senha inválidos.", username=username)
+
+        # Garante que o usuario exista no banco apenas para APIs/listas de responsaveis.
+        db_user = get_user_by_username(login_user["username"])
+        if not db_user:
             conn = connect()
+            now = datetime.now().isoformat(timespec="seconds")
             conn.execute(
-                "UPDATE users SET password_hash=?, must_set_password=0, updated_at=? WHERE id=?",
-                (make_password_hash(password), datetime.now().isoformat(timespec="seconds"), user["id"]),
+                """
+                INSERT INTO users
+                (username, display_name, role, password_hash, must_set_password, created_at, updated_at)
+                VALUES (?, ?, ?, NULL, 0, ?, ?)
+                """,
+                (login_user["username"], login_user["display_name"], login_user["role"], now, now),
             )
             conn.commit()
             conn.close()
-            user = get_user_by_username(username)
-        else:
-            if needs_first_access:
-                return render_template(
-                    "login.html",
-                    erro="Este usuário ainda não possui senha cadastrada. Use a aba Primeiro acesso.",
-                    username=username,
-                    mode="first_access",
-                )
-            if not verify_password(user["password_hash"], password):
-                return render_template("login.html", erro="Senha inválida.", username=username, mode="login")
+            db_user = get_user_by_username(login_user["username"])
 
         session.clear()
         session["auth"] = True
-        session["user_id"] = user["id"]
-        session["username"] = user["username"]
-        session["display_name"] = user["display_name"]
-        session["role"] = user["role"]
+        session["user_id"] = db_user["id"] if db_user else 0
+        session["username"] = login_user["username"]
+        session["display_name"] = login_user["display_name"]
+        session["role"] = login_user["role"]
         return redirect(url_for("index"))
 
-    return render_template("login.html", mode="login")
+    return render_template("login.html")
 
 
 @app.route("/logout")
