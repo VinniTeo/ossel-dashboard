@@ -52,3 +52,7 @@ As evidências são salvas no backup do GitHub em base64. Use imagens leves para
 - Timeline/Gantt reformulado: o marcador azul indica a data de entrega dentro do período da carteira; a barra fina inferior indica o percentual de andamento.
 - Visual geral atualizado com paleta corporativa azul escuro OSSEL Assistência.
 - Cards e controles mais compactos para melhor leitura executiva.
+
+
+## V18
+Reforma visual completa: menu lateral, timeline clara, cards compactos, paleta OSSEL em azul escuro e controles de progresso revisados. Mantém login por variáveis de ambiente e backup GitHub.
