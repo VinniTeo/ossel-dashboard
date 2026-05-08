@@ -45,3 +45,10 @@ Opcional para notificação no Teams:
 ## Observação sobre evidências
 
 As evidências são salvas no backup do GitHub em base64. Use imagens leves para não deixar o arquivo runtime_projects.json muito grande.
+
+
+## V17 - ajustes solicitados
+- Ranking visível somente para usuários ADM.
+- Timeline/Gantt reformulado: o marcador azul indica a data de entrega dentro do período da carteira; a barra fina inferior indica o percentual de andamento.
+- Visual geral atualizado com paleta corporativa azul escuro OSSEL Assistência.
+- Cards e controles mais compactos para melhor leitura executiva.
