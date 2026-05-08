@@ -1,44 +1,27 @@
-# OSSEL Dashboard TI - Versão 11
+# OSSEL Dashboard - V15
 
-## Alterações principais
+## Login
+As senhas dos usuários são lidas pelas variáveis de ambiente do Render:
 
-- Login separado em duas abas:
-  - **Entrar**: para usuários que já criaram senha.
-  - **Primeiro acesso**: para ativar usuário e criar senha.
-- Evita o erro visual de "senhas não conferem" para usuário já cadastrado.
-- Mantém usuários padrão:
-  - ADM: administrador
-  - Thiago: administrador
-  - Denis: administrador
-  - Filipe: operação de Troca de Máquinas
-  - Eduardo: operação de Troca de Máquinas
-- Senhas criptografadas no SQLite.
-- Mantém múltiplos responsáveis por projeto.
-- Mantém barra única de percentual, sem botões rápidos.
+- ADM_PASSWORD
+- THIAGO_PASSWORD
+- DENIS_PASSWORD
+- FILIPE_PASSWORD
+- EDUARDO_PASSWORD
 
-## Persistência de senhas no Render
+Usuários ADM: ADM, Thiago e Denis.
+Usuários operacionais: Filipe e Eduardo.
 
-Para as senhas continuarem salvas após novos deploys, configure no Render:
+## Como manter os dados mesmo sem Persistent Disk
 
-1. **Disk / Persistent Disk**
-   - Mount path: `/var/data`
+No Render Free, o SQLite local pode ser recriado em novos deploys. Para não perder progresso, observações e responsáveis, esta versão pode salvar automaticamente os dados em um arquivo JSON dentro do próprio GitHub.
 
-2. **Environment Variable**
-   - Key: `DATA_DIR`
-   - Value: `/var/data`
+Configure no Render:
 
-Sem Persistent Disk, o Render pode recriar o banco SQLite a cada deploy e as senhas precisarão ser cadastradas novamente.
+- GITHUB_REPO = VinniTeo/ossel-dashboard
+- GITHUB_TOKEN = token do GitHub com permissão de escrita no repositório
+- GITHUB_DATA_PATH = data/runtime_projects.json  (opcional)
 
-## Deploy
+Com isso, a cada alteração de projeto o sistema atualiza o arquivo `data/runtime_projects.json` no GitHub. Quando o Render fizer um novo deploy e o banco local estiver vazio, o sistema restaura os dados a partir desse arquivo.
 
-Build Command:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start Command:
-
-```bash
-gunicorn app:app
-```
+Se você não configurar GITHUB_TOKEN e GITHUB_REPO, o sistema continua funcionando, mas os dados alterados podem ser perdidos em deploys, porque o banco local do Render Free não é persistente.

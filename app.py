@@ -3,6 +3,9 @@ import io
 import json
 import os
 import sqlite3
+import base64
+import urllib.error
+import urllib.request
 from functools import wraps
 import hashlib
 import hmac
@@ -143,6 +146,133 @@ def verify_password(stored_hash, password):
         return False
 
 
+
+# Persistência gratuita opcional via GitHub.
+# Use quando o Render Free não puder ter Persistent Disk.
+# Configure no Render:
+#   GITHUB_TOKEN = token com permissão de escrita no repositório
+#   GITHUB_REPO = usuario/repositorio  (ex.: VinniTeo/ossel-dashboard)
+# Opcional:
+#   GITHUB_DATA_PATH = data/runtime_projects.json
+GITHUB_DATA_PATH = os.environ.get("GITHUB_DATA_PATH", "data/runtime_projects.json")
+
+
+def github_repo():
+    return (os.environ.get("GITHUB_REPO") or "").strip()
+
+
+def github_token():
+    return (os.environ.get("GITHUB_TOKEN") or "").strip()
+
+
+def github_enabled():
+    return bool(github_repo() and github_token())
+
+
+def github_request(method, url, payload=None):
+    data = None
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "ossel-dashboard",
+    }
+    if github_token():
+        headers["Authorization"] = f"Bearer {github_token()}"
+    if payload is not None:
+        data = json.dumps(payload).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(url, data=data, headers=headers, method=method)
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        raw = resp.read().decode("utf-8")
+        return json.loads(raw) if raw else {}
+
+
+def github_content_url():
+    path = GITHUB_DATA_PATH.strip("/")
+    return f"https://api.github.com/repos/{github_repo()}/contents/{path}"
+
+
+def load_projects_from_github():
+    if not github_enabled():
+        return None
+    try:
+        data = github_request("GET", github_content_url())
+        content = base64.b64decode(data.get("content", "")).decode("utf-8")
+        parsed = json.loads(content)
+        if isinstance(parsed, dict):
+            return parsed.get("projects") or []
+        if isinstance(parsed, list):
+            return parsed
+    except urllib.error.HTTPError as e:
+        # 404 significa que ainda não existe backup; o seed local será usado.
+        if getattr(e, "code", None) != 404:
+            print("GitHub restore error:", e)
+    except Exception as e:
+        print("GitHub restore error:", e)
+    return None
+
+
+def serialize_projects_for_backup(conn):
+    rows = conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), ordem, id").fetchall()
+    return [dict(r) for r in rows]
+
+
+def backup_projects_to_github():
+    if not github_enabled():
+        return False
+    try:
+        conn = connect()
+        projects = serialize_projects_for_backup(conn)
+        conn.close()
+        payload_json = json.dumps({
+            "updated_at": datetime.now().isoformat(timespec="seconds"),
+            "projects": projects,
+        }, ensure_ascii=False, indent=2)
+        content = base64.b64encode(payload_json.encode("utf-8")).decode("ascii")
+        sha = None
+        try:
+            current = github_request("GET", github_content_url())
+            sha = current.get("sha")
+        except urllib.error.HTTPError as e:
+            if getattr(e, "code", None) != 404:
+                raise
+        body = {
+            "message": "Atualiza dados do painel OSSEL",
+            "content": content,
+        }
+        if sha:
+            body["sha"] = sha
+        github_request("PUT", github_content_url(), body)
+        return True
+    except Exception as e:
+        print("GitHub backup error:", e)
+        return False
+
+
+def insert_project_row(cur, item, ordem_fallback=999):
+    cur.execute(
+        """
+        INSERT INTO projects
+        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, updated_by, assigned_to)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            item.get("nome") or "Novo item",
+            item.get("projeto_pai") or "",
+            item.get("unidade") or normalize_unidade("", item.get("nome", ""), item.get("projeto_pai", "")),
+            item.get("setor") or "",
+            item.get("categoria") or "Outros",
+            int(item.get("progresso") or 0),
+            item.get("status") or status_from_progress(item.get("progresso") or 0),
+            item.get("prazo") or parse_date_br(item.get("prazo_br")),
+            item.get("obs") or "",
+            item.get("ordem") or ordem_fallback,
+            item.get("updated_at") or datetime.now().isoformat(timespec="seconds"),
+            item.get("updated_by") or "",
+            item.get("assigned_to") or "",
+        ),
+    )
+
 def connect():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -211,58 +341,44 @@ def init_db():
                 (username, display_name, role, now, now),
             )
     count = cur.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
-    if count == 0 and SEED_PATH.exists():
-        seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
-        ordem = 1
-        for p in seed:
-            subs = p.get("subprojetos") or []
-            if subs:
-                for sp in subs:
-                    cur.execute(
-                        """
-                        INSERT INTO projects
-                        (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, assigned_to)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            sp.get("nome", ""),
-                            p.get("nome", ""),
-                            infer_unidade(p.get("nome", "")),
-                            sp.get("nome", ""),
-                            p.get("categoria", "Outros"),
-                            int(sp.get("progresso") or 0),
-                            status_from_progress(sp.get("progresso") or 0),
-                            parse_date_br(sp.get("prazo")),
-                            sp.get("obs") or p.get("obs") or "",
-                            ordem,
-                            datetime.now().isoformat(timespec="seconds"),
-                            "",
-                        ),
-                    )
-                    ordem += 1
-            else:
-                cur.execute(
-                    """
-                    INSERT INTO projects
-                    (nome, projeto_pai, unidade, setor, categoria, progresso, status, prazo, obs, ordem, updated_at, assigned_to)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        p.get("nome", ""),
-                        "",
-                        infer_unidade(p.get("nome", "")) if p.get("categoria") in ["Troca de Máquinas", "Antenas"] else "",
-                        "",
-                        p.get("categoria", "Outros"),
-                        int(p.get("progresso") or 0),
-                        status_from_progress(p.get("progresso") or 0),
-                        parse_date_br(p.get("prazo")),
-                        p.get("obs") or "",
-                        ordem,
-                        datetime.now().isoformat(timespec="seconds"),
-                            "",
-                    ),
-                )
+    if count == 0:
+        restored = load_projects_from_github()
+        if restored:
+            for idx, item in enumerate(restored, start=1):
+                insert_project_row(cur, item, idx)
+        elif SEED_PATH.exists():
+            seed = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+            ordem = 1
+            for p in seed:
+                subs = p.get("subprojetos") or []
+                # Grava também o projeto pai para manter a visão executiva completa.
+                insert_project_row(cur, {
+                    "nome": p.get("nome", ""),
+                    "projeto_pai": "",
+                    "unidade": infer_unidade(p.get("nome", "")) if p.get("categoria") in ["Troca de Máquinas", "Antenas"] else "",
+                    "setor": "",
+                    "categoria": p.get("categoria", "Outros"),
+                    "progresso": int(p.get("progresso") or 0),
+                    "status": status_from_progress(p.get("progresso") or 0),
+                    "prazo": parse_date_br(p.get("prazo")),
+                    "obs": p.get("obs") or "",
+                    "ordem": ordem,
+                }, ordem)
                 ordem += 1
+                for sp in subs:
+                    insert_project_row(cur, {
+                        "nome": sp.get("nome", ""),
+                        "projeto_pai": p.get("nome", ""),
+                        "unidade": infer_unidade(p.get("nome", "")),
+                        "setor": sp.get("nome", ""),
+                        "categoria": p.get("categoria", "Outros"),
+                        "progresso": int(sp.get("progresso") or 0),
+                        "status": status_from_progress(sp.get("progresso") or 0),
+                        "prazo": parse_date_br(sp.get("prazo")),
+                        "obs": sp.get("obs") or p.get("obs") or "",
+                        "ordem": ordem,
+                    }, ordem)
+                    ordem += 1
     # Corrige nomes de unidades antigas ou abreviadas sem apagar dados existentes.
     for row in cur.execute("SELECT id, nome, projeto_pai, unidade FROM projects").fetchall():
         fixed = normalize_unidade(row["unidade"], row["nome"], row["projeto_pai"])
@@ -513,6 +629,7 @@ def api_update_project(project_id):
     conn.commit()
     row = conn.execute("SELECT * FROM projects WHERE id=?", (project_id,)).fetchone()
     conn.close()
+    backup_projects_to_github()
     return jsonify(rows_to_dict([row])[0])
 
 
@@ -550,6 +667,7 @@ def api_create_project():
     conn.commit()
     row = conn.execute("SELECT * FROM projects WHERE id=?", (cur.lastrowid,)).fetchone()
     conn.close()
+    backup_projects_to_github()
     return jsonify(rows_to_dict([row])[0]), 201
 
 
@@ -563,6 +681,7 @@ def api_delete_project(project_id):
     conn.execute("DELETE FROM projects WHERE id=?", (project_id,))
     conn.commit()
     conn.close()
+    backup_projects_to_github()
     return jsonify({"ok": True})
 
 
@@ -577,6 +696,7 @@ def api_reseed():
     if data.get("confirm") != "IMPORTAR_BASE_COMPLETA":
         return jsonify({"error": "Confirmação inválida"}), 400
     seed_projects(clear_existing=True)
+    backup_projects_to_github()
     conn = connect()
     total = conn.execute("SELECT COUNT(*) FROM projects").fetchone()[0]
     conn.close()
