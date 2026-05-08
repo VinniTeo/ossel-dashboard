@@ -57,8 +57,122 @@
     @media(max-width:700px){.topbar{position:static;align-items:flex-start;flex-direction:column}.content{padding:0 16px 32px}.hero{padding:26px 16px 72px}.filters{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}.panelMini{grid-template-columns:1fr}.formGrid{grid-template-columns:1fr}}
     @media print{.sidebar,.topbar,.filters,.controlActions,.primaryBtn,.ghostBtn,.chipBtn{display:none!important}.app{display:block}.content{margin:0}.hero{padding:20px;color:#000;background:#fff}.view{display:block!important;page-break-after:always}}
   </style>
+
+<style id="sidebar-drawer-fix">
+/* V23 - Sidebar drawer estável: recolhe para fora da tela, sem comprimir layout */
+body.sidebar-closed .sidebar,
+body.sidebar-collapsed .sidebar,
+.app.sidebarCollapsed .sidebar {
+  transform: translateX(-104%) !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 286px !important;
+  min-width: 286px !important;
+  overflow: hidden !important;
+}
+body.sidebar-closed .app,
+body.sidebar-collapsed .app,
+.app.sidebarCollapsed {
+  grid-template-columns: 1fr !important;
+}
+body.sidebar-closed .main,
+body.sidebar-collapsed .main,
+.app.sidebarCollapsed .main {
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+.sidebar {
+  transition: transform .25s ease, opacity .2s ease !important;
+  overflow-x: hidden !important;
+}
+.sidebar * {
+  max-width: 100%;
+}
+.sidebarToggle,
+.sidebar-toggle,
+#sidebarToggle,
+#sidebarDrawerToggle {
+  position: fixed !important;
+  left: 268px !important;
+  top: 84px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+  background: linear-gradient(135deg,#0b63ce,#35c7f4) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-shadow: 0 14px 34px rgba(2,8,23,.28) !important;
+  z-index: 99999 !important;
+}
+.sidebarToggle::before,
+.sidebar-toggle::before,
+#sidebarToggle::before,
+#sidebarDrawerToggle::before {
+  content: "‹";
+  font-size: 28px;
+  font-weight: 900;
+  transform: translateY(-1px);
+}
+body.sidebar-closed .sidebarToggle,
+body.sidebar-closed .sidebar-toggle,
+body.sidebar-closed #sidebarToggle,
+body.sidebar-closed #sidebarDrawerToggle,
+body.sidebar-collapsed .sidebarToggle,
+body.sidebar-collapsed .sidebar-toggle,
+body.sidebar-collapsed #sidebarToggle,
+body.sidebar-collapsed #sidebarDrawerToggle,
+.app.sidebarCollapsed .sidebarToggle,
+.app.sidebarCollapsed .sidebar-toggle,
+.app.sidebarCollapsed #sidebarToggle,
+.app.sidebarCollapsed #sidebarDrawerToggle {
+  left: 18px !important;
+}
+body.sidebar-closed .sidebarToggle::before,
+body.sidebar-closed .sidebar-toggle::before,
+body.sidebar-closed #sidebarToggle::before,
+body.sidebar-closed #sidebarDrawerToggle::before,
+body.sidebar-collapsed .sidebarToggle::before,
+body.sidebar-collapsed .sidebar-toggle::before,
+body.sidebar-collapsed #sidebarToggle::before,
+body.sidebar-collapsed #sidebarDrawerToggle::before,
+.app.sidebarCollapsed .sidebarToggle::before,
+.app.sidebarCollapsed .sidebar-toggle::before,
+.app.sidebarCollapsed #sidebarToggle::before,
+.app.sidebarCollapsed #sidebarDrawerToggle::before {
+  content: "›";
+}
+@media (max-width: 920px) {
+  .app { grid-template-columns: 1fr !important; }
+  .sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(86vw, 320px) !important;
+    min-width: unset !important;
+    z-index: 9999 !important;
+  }
+  body:not(.sidebar-closed):not(.sidebar-collapsed) .sidebar {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .sidebarToggle,
+  .sidebar-toggle,
+  #sidebarToggle,
+  #sidebarDrawerToggle {
+    left: 18px !important;
+    top: 18px !important;
+  }
+}
+</style>
+
 </head>
 <body class="{{ 'isAdmin' if user.is_admin else '' }}">
+<button id="sidebarDrawerToggle" title="Mostrar/Ocultar navegação" aria-label="Mostrar/Ocultar navegação"></button>
 <div class="app">
   <aside class="sidebar">
     <button class="sidebarCollapse" onclick="toggleSidebar()" title="Recolher / expandir navegação">❮</button>
@@ -160,5 +274,31 @@ function toggleTheme(){document.body.dataset.theme=document.body.dataset.theme==
 ['search','cat','st','resp','risk','order'].forEach(id=>$(id).addEventListener('input',renderViews));
 setupNav(); load().catch(e=>{$('views').innerHTML='<div class="empty">Erro ao carregar dados. Verifique o deploy e as variáveis do Render.</div>'; console.error(e)});
 </script>
+
+<script id="sidebar-drawer-script">
+(function(){
+  function setState(closed){
+    document.body.classList.toggle('sidebar-closed', closed);
+    document.body.classList.remove('sidebar-collapsed');
+    const app = document.querySelector('.app');
+    if(app) app.classList.remove('sidebarCollapsed');
+    localStorage.setItem('osselSidebarClosed', closed ? '1' : '0');
+  }
+  window.toggleSidebar = function(){
+    setState(!document.body.classList.contains('sidebar-closed'));
+  };
+  document.addEventListener('DOMContentLoaded', function(){
+    const saved = localStorage.getItem('osselSidebarClosed') === '1';
+    setState(saved);
+    document.querySelectorAll('.sidebarToggle,.sidebar-toggle,#sidebarToggle,#sidebarDrawerToggle').forEach(function(btn){
+      btn.onclick = function(e){
+        e.preventDefault();
+        window.toggleSidebar();
+      };
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
