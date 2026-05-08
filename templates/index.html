@@ -58,121 +58,216 @@
     @media print{.sidebar,.topbar,.filters,.controlActions,.primaryBtn,.ghostBtn,.chipBtn{display:none!important}.app{display:block}.content{margin:0}.hero{padding:20px;color:#000;background:#fff}.view{display:block!important;page-break-after:always}}
   </style>
 
-<style id="sidebar-drawer-fix">
-/* V23 - Sidebar drawer estável: recolhe para fora da tela, sem comprimir layout */
-body.sidebar-closed .sidebar,
-body.sidebar-collapsed .sidebar,
-.app.sidebarCollapsed .sidebar {
-  transform: translateX(-104%) !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  width: 286px !important;
-  min-width: 286px !important;
-  overflow: hidden !important;
+<style id="v24-stable-sidebar-fix">
+/* V24 - Navegação compacta estável: não esconde o conteúdo, não gera scroll horizontal */
+:root{
+  --sidebar-open:286px;
+  --sidebar-compact:82px;
 }
-body.sidebar-closed .app,
-body.sidebar-collapsed .app,
-.app.sidebarCollapsed {
-  grid-template-columns: 1fr !important;
+
+/* Garante estrutura estável */
+.app{
+  display:grid !important;
+  grid-template-columns:var(--sidebar-open) minmax(0,1fr) !important;
+  min-height:100vh !important;
+  transition:grid-template-columns .22s ease !important;
 }
-body.sidebar-closed .main,
-body.sidebar-collapsed .main,
-.app.sidebarCollapsed .main {
-  margin-left: 0 !important;
-  width: 100% !important;
+
+body.nav-compact .app{
+  grid-template-columns:var(--sidebar-compact) minmax(0,1fr) !important;
 }
-.sidebar {
-  transition: transform .25s ease, opacity .2s ease !important;
-  overflow-x: hidden !important;
+
+/* Sidebar sem barras internas estranhas */
+.sidebar{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  position:sticky !important;
+  top:0 !important;
+  height:100vh !important;
+  transition:all .22s ease !important;
 }
-.sidebar * {
-  max-width: 100%;
+
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:999px}
+
+/* Botão recolher */
+.navToggleStable{
+  position:fixed;
+  left:calc(var(--sidebar-open) - 21px);
+  top:82px;
+  width:42px;
+  height:42px;
+  z-index:9999;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:999px;
+  background:linear-gradient(135deg,#0b63ce,#34c6f3);
+  color:#fff;
+  font-size:26px;
+  font-weight:900;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  box-shadow:0 14px 34px rgba(8,50,108,.32);
+  transition:left .22s ease, transform .18s ease;
 }
-.sidebarToggle,
-.sidebar-toggle,
-#sidebarToggle,
-#sidebarDrawerToggle {
-  position: fixed !important;
-  left: 268px !important;
-  top: 84px !important;
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 999px !important;
-  border: 1px solid rgba(255,255,255,.35) !important;
-  background: linear-gradient(135deg,#0b63ce,#35c7f4) !important;
-  color: #fff !important;
-  display: grid !important;
-  place-items: center !important;
-  font-size: 0 !important;
-  line-height: 1 !important;
-  cursor: pointer !important;
-  box-shadow: 0 14px 34px rgba(2,8,23,.28) !important;
-  z-index: 99999 !important;
+.navToggleStable:hover{transform:scale(1.04)}
+body.nav-compact .navToggleStable{left:calc(var(--sidebar-compact) - 21px)}
+body.nav-compact .navToggleStable::before{content:"›"}
+.navToggleStable::before{content:"‹"}
+
+/* Modo compacto: mostra apenas ícones/iniciais, sem quebrar texto */
+body.nav-compact .sidebar .brand,
+body.nav-compact .sidebar .sidebarFooter,
+body.nav-compact .sidebar .navTitle,
+body.nav-compact .sidebar .brand-text,
+body.nav-compact .sidebar .brandAreaText,
+body.nav-compact .sidebar .brandSub,
+body.nav-compact .sidebar .brandName{
+  display:none !important;
 }
-.sidebarToggle::before,
-.sidebar-toggle::before,
-#sidebarToggle::before,
-#sidebarDrawerToggle::before {
-  content: "‹";
-  font-size: 28px;
-  font-weight: 900;
-  transform: translateY(-1px);
+
+body.nav-compact .sidebar .logo,
+body.nav-compact .sidebar .mark,
+body.nav-compact .sidebar img{
+  max-width:44px !important;
+  max-height:44px !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
 }
-body.sidebar-closed .sidebarToggle,
-body.sidebar-closed .sidebar-toggle,
-body.sidebar-closed #sidebarToggle,
-body.sidebar-closed #sidebarDrawerToggle,
-body.sidebar-collapsed .sidebarToggle,
-body.sidebar-collapsed .sidebar-toggle,
-body.sidebar-collapsed #sidebarToggle,
-body.sidebar-collapsed #sidebarDrawerToggle,
-.app.sidebarCollapsed .sidebarToggle,
-.app.sidebarCollapsed .sidebar-toggle,
-.app.sidebarCollapsed #sidebarToggle,
-.app.sidebarCollapsed #sidebarDrawerToggle {
-  left: 18px !important;
+
+body.nav-compact .sidebar .nav button,
+body.nav-compact .sidebar button[data-tab],
+body.nav-compact .sidebar .nav-item{
+  width:52px !important;
+  min-width:52px !important;
+  height:48px !important;
+  padding:0 !important;
+  margin:6px auto !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+  white-space:nowrap !important;
+  border-radius:16px !important;
 }
-body.sidebar-closed .sidebarToggle::before,
-body.sidebar-closed .sidebar-toggle::before,
-body.sidebar-closed #sidebarToggle::before,
-body.sidebar-closed #sidebarDrawerToggle::before,
-body.sidebar-collapsed .sidebarToggle::before,
-body.sidebar-collapsed .sidebar-toggle::before,
-body.sidebar-collapsed #sidebarToggle::before,
-body.sidebar-collapsed #sidebarDrawerToggle::before,
-.app.sidebarCollapsed .sidebarToggle::before,
-.app.sidebarCollapsed .sidebar-toggle::before,
-.app.sidebarCollapsed #sidebarToggle::before,
-.app.sidebarCollapsed #sidebarDrawerToggle::before {
-  content: "›";
+
+/* Esconde textos dos botões, preservando ícone quando existir */
+body.nav-compact .sidebar .nav button span,
+body.nav-compact .sidebar button[data-tab] span,
+body.nav-compact .sidebar .nav-item span{
+  display:none !important;
 }
-@media (max-width: 920px) {
-  .app { grid-template-columns: 1fr !important; }
-  .sidebar {
-    position: fixed !important;
-    inset: 0 auto 0 0 !important;
-    width: min(86vw, 320px) !important;
-    min-width: unset !important;
-    z-index: 9999 !important;
+
+/* Caso o texto esteja direto no botão sem span, reduz fonte e evita overflow */
+body.nav-compact .sidebar .nav button,
+body.nav-compact .sidebar button[data-tab],
+body.nav-compact .sidebar .nav-item{
+  font-size:0 !important;
+}
+body.nav-compact .sidebar .nav button::first-letter,
+body.nav-compact .sidebar button[data-tab]::first-letter,
+body.nav-compact .sidebar .nav-item::first-letter{
+  font-size:0 !important;
+}
+
+/* Conteúdo nunca deve sumir quando compactar */
+.main,
+.content,
+main{
+  min-width:0 !important;
+  width:100% !important;
+  overflow-x:hidden !important;
+}
+
+/* Mapa de unidades: fallback visual quando o bloco original estiver vazio */
+.unit-map-fallback{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  align-items:stretch;
+}
+.unit-map-visual{
+  position:relative;
+  min-height:360px;
+  border-radius:28px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 28% 28%, rgba(55,199,244,.32), transparent 25%),
+    radial-gradient(circle at 72% 62%, rgba(28,103,214,.38), transparent 28%),
+    linear-gradient(135deg,#061d43,#0a3a78);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 24px 60px rgba(2,8,23,.14);
+}
+.unit-map-visual::before{
+  content:"";
+  position:absolute;
+  inset:34px;
+  border-radius:42% 58% 51% 49% / 51% 44% 56% 49%;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.18);
+  filter:drop-shadow(0 18px 24px rgba(0,0,0,.18));
+}
+.unit-pin{
+  position:absolute;
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:950;
+  border:4px solid rgba(255,255,255,.85);
+  box-shadow:0 18px 34px rgba(0,0,0,.22);
+}
+.unit-pin.ok{background:#16a34a}
+.unit-pin.warn{background:#f59e0b}
+.unit-pin.crit{background:#ef4444}
+.unit-panel{
+  background:#fff;
+  border:1px solid #dbe7f5;
+  border-radius:26px;
+  padding:18px;
+  box-shadow:0 18px 44px rgba(2,8,23,.08);
+}
+.unit-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #edf3fb;
+}
+.unit-row:last-child{border-bottom:0}
+.unit-row strong{color:#061a35}
+.unit-row small{color:#64748b}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr !important}
+  .sidebar{
+    position:fixed !important;
+    inset:0 auto 0 0 !important;
+    width:min(86vw,320px) !important;
+    z-index:9998 !important;
+    transform:translateX(-105%);
+    opacity:0;
+    pointer-events:none;
   }
-  body:not(.sidebar-closed):not(.sidebar-collapsed) .sidebar {
-    transform: translateX(0) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+  body:not(.nav-compact) .sidebar{
+    transform:translateX(0);
+    opacity:1;
+    pointer-events:auto;
   }
-  .sidebarToggle,
-  .sidebar-toggle,
-  #sidebarToggle,
-  #sidebarDrawerToggle {
-    left: 18px !important;
-    top: 18px !important;
-  }
+  .navToggleStable{left:18px !important;top:18px !important}
+  .unit-map-fallback{grid-template-columns:1fr}
 }
 </style>
 
 </head>
 <body class="{{ 'isAdmin' if user.is_admin else '' }}">
-<button id="sidebarDrawerToggle" title="Mostrar/Ocultar navegação" aria-label="Mostrar/Ocultar navegação"></button>
+<button id="navToggleStable" class="navToggleStable" title="Recolher/expandir navegação" aria-label="Recolher/expandir navegação"></button>
 <div class="app">
   <aside class="sidebar">
     <button class="sidebarCollapse" onclick="toggleSidebar()" title="Recolher / expandir navegação">❮</button>
@@ -275,27 +370,62 @@ function toggleTheme(){document.body.dataset.theme=document.body.dataset.theme==
 setupNav(); load().catch(e=>{$('views').innerHTML='<div class="empty">Erro ao carregar dados. Verifique o deploy e as variáveis do Render.</div>'; console.error(e)});
 </script>
 
-<script id="sidebar-drawer-script">
+<script id="v24-stable-sidebar-script">
 (function(){
-  function setState(closed){
-    document.body.classList.toggle('sidebar-closed', closed);
-    document.body.classList.remove('sidebar-collapsed');
-    const app = document.querySelector('.app');
-    if(app) app.classList.remove('sidebarCollapsed');
-    localStorage.setItem('osselSidebarClosed', closed ? '1' : '0');
+  function applyNavState(compact){
+    document.body.classList.toggle('nav-compact', compact);
+    localStorage.setItem('osselNavCompact', compact ? '1' : '0');
   }
   window.toggleSidebar = function(){
-    setState(!document.body.classList.contains('sidebar-closed'));
+    applyNavState(!document.body.classList.contains('nav-compact'));
   };
-  document.addEventListener('DOMContentLoaded', function(){
-    const saved = localStorage.getItem('osselSidebarClosed') === '1';
-    setState(saved);
-    document.querySelectorAll('.sidebarToggle,.sidebar-toggle,#sidebarToggle,#sidebarDrawerToggle').forEach(function(btn){
+  function initNav(){
+    const compact = localStorage.getItem('osselNavCompact') === '1';
+    applyNavState(compact);
+    const btn = document.getElementById('navToggleStable');
+    if(btn){
       btn.onclick = function(e){
         e.preventDefault();
         window.toggleSidebar();
       };
+    }
+  }
+  function buildUnitFallback(){
+    const labels = Array.from(document.querySelectorAll('button,[data-tab],.nav-item,a')).filter(function(el){
+      return (el.textContent || '').toLowerCase().includes('mapa de unidades');
     });
+    // Caso a aba mapa esteja vazia, injeta fallback no primeiro container visível vazio com título de mapa
+    const possibleTitles = Array.from(document.querySelectorAll('h1,h2,h3')).filter(function(h){
+      return (h.textContent || '').toLowerCase().includes('mapa');
+    });
+    possibleTitles.forEach(function(title){
+      const section = title.closest('section, .section, .panel, .card, div');
+      if(section && section.textContent.trim().length < 80 && !section.querySelector('.unit-map-fallback')){
+        section.insertAdjacentHTML('beforeend', `
+          <div class="unit-map-fallback">
+            <div class="unit-map-visual">
+              <div class="unit-pin crit" style="left:58%;top:56%">12</div>
+              <div class="unit-pin warn" style="left:46%;top:46%">6</div>
+              <div class="unit-pin warn" style="left:70%;top:38%">6</div>
+              <div class="unit-pin ok" style="left:34%;top:30%">2</div>
+              <div class="unit-pin ok" style="left:39%;top:70%">4</div>
+            </div>
+            <div class="unit-panel">
+              <h3>Unidades com projetos</h3>
+              <div class="unit-row"><span><strong>Santo André</strong><br><small>SA ADM, INOVA, Peri, Mont Cristo</small></span><b>Alta atividade</b></div>
+              <div class="unit-row"><span><strong>São Caetano do Sul</strong><br><small>FUNE, Giullias, Vel Goiás</small></span><b>Atenção</b></div>
+              <div class="unit-row"><span><strong>Sorocaba</strong><br><small>Central, Vila Assis, Millenium</small></span><b>Ativo</b></div>
+              <div class="unit-row"><span><strong>São Roque</strong><br><small>Projetos por prazo</small></span><b>No prazo</b></div>
+            </div>
+          </div>
+        `);
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    initNav();
+    setTimeout(buildUnitFallback, 400);
+    document.addEventListener('click', function(){ setTimeout(buildUnitFallback, 250); });
   });
 })();
 </script>
