@@ -616,8 +616,15 @@ def api_update_project(project_id):
         progress = max(0, min(100, int(float(updates["progresso"] or 0))))
         updates["progresso"] = progress
         updates["status"] = status_from_progress(progress)
-    if "prazo" in updates and updates["prazo"] and "/" in str(updates["prazo"]):
-        updates["prazo"] = parse_date_br(updates["prazo"])
+    if "prazo" in updates:
+        raw_prazo = str(updates.get("prazo") or "").strip()
+        if raw_prazo and "/" in raw_prazo:
+            updates["prazo"] = parse_date_br(raw_prazo)
+        elif raw_prazo:
+            # input date do navegador envia ISO yyyy-mm-dd; mantemos no banco.
+            updates["prazo"] = raw_prazo[:10]
+        else:
+            updates["prazo"] = None
     updates["updated_at"] = datetime.now().isoformat(timespec="seconds")
     updates["updated_by"] = session.get("display_name") or session.get("username") or ""
     if not updates:
@@ -656,7 +663,7 @@ def api_create_project():
             data.get("categoria") or "Troca de Máquinas",
             progresso,
             status_from_progress(progresso),
-            parse_date_br(data.get("prazo")) if data.get("prazo") else data.get("prazo_iso"),
+            (parse_date_br(data.get("prazo")) if data.get("prazo") and "/" in str(data.get("prazo")) else (str(data.get("prazo") or data.get("prazo_iso") or "")[:10] or None)),
             data.get("obs") or "",
             data.get("ordem") or 999,
             datetime.now().isoformat(timespec="seconds"),

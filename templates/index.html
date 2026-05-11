@@ -265,6 +265,95 @@ main{
 }
 </style>
 
+
+<style id="v25-admin-date-polish">
+/* V25 - ajustes visuais sem alterar estrutura */
+.projectCard{
+  border:1px solid rgba(15,82,157,.13) !important;
+  box-shadow:0 18px 48px rgba(4,26,52,.075) !important;
+}
+.projectCard:hover{
+  transform:translateY(-2px);
+  box-shadow:0 24px 62px rgba(4,26,52,.12) !important;
+}
+.adminDateEdit{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#f8fbff,#eef6ff);
+  border:1px solid #d9e6f3;
+  max-width:390px;
+}
+.adminDateEdit span{
+  font-size:.74rem;
+  font-weight:1000;
+  color:#64748b;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.adminDateEdit input{
+  border:1px solid #cfe0f3;
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:800;
+  color:#071b34;
+  background:#fff;
+}
+.adminDateEdit button{
+  border:0;
+  border-radius:12px;
+  padding:9px 12px;
+  background:#0b63ce;
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+.adminDateEdit small{
+  color:#64748b;
+  font-weight:800;
+}
+.dateInlineBtn{
+  appearance:none;
+  border:1px solid #cfe0f3;
+  background:#fff;
+  color:#07366e;
+  border-radius:999px;
+  padding:7px 10px;
+  font-weight:900;
+  cursor:pointer;
+}
+.dateInlineBtn:hover{background:#eef6ff}
+.formGrid input[type="date"]{font-weight:800}
+.modalBox{
+  border:1px solid rgba(217,230,243,.95);
+}
+.kpi, .card, .projectCard{
+  backdrop-filter:saturate(140%) blur(3px);
+}
+.rangeTrack{overflow:hidden}
+.rangeFill{min-width:0}
+select,input,textarea,button{font-family:inherit}
+button:disabled,input:disabled{opacity:.55;cursor:not-allowed}
+.auditHint{
+  margin:12px 0;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#f1f7ff;
+  border:1px solid #d8e8fb;
+  color:#27496d;
+  font-weight:750;
+}
+@media(max-width:760px){
+  .projectCard{grid-template-columns:1fr!important}
+  .control{width:100%!important}
+  .adminDateEdit{max-width:none}
+}
+</style>
+
 </head>
 <body class="{{ 'isAdmin' if user.is_admin else '' }}">
 <button id="navToggleStable" class="navToggleStable" title="Recolher/expandir navegação" aria-label="Recolher/expandir navegação"></button>
@@ -300,7 +389,7 @@ main{
     </section>
   </main>
 </div>
-<div class="modal" id="modal"><div class="modalBox"><h2 id="modalTitle">Editar projeto</h2><div class="formGrid"><label>Projeto<input id="fNome"></label><label>Categoria<select id="fCategoria"></select></label><label>Unidade<input id="fUnidade"></label><label>Setor<input id="fSetor"></label><label>Prazo<input id="fPrazo" placeholder="dd/mm/aaaa"></label><label>Progresso<input id="fProgresso" type="number" min="0" max="100"></label><label style="grid-column:1/-1">Responsáveis<div class="checks" id="fResponsaveis"></div></label><label style="grid-column:1/-1">Observações<textarea id="fObs" rows="4"></textarea></label></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="ghostBtn" onclick="closeModal()">Cancelar</button><button class="primaryBtn" onclick="saveModal()">Salvar</button></div></div></div>
+<div class="modal" id="modal"><div class="modalBox"><h2 id="modalTitle">Editar projeto</h2><div class="formGrid"><label>Projeto<input id="fNome"></label><label>Categoria<select id="fCategoria"></select></label><label>Unidade<input id="fUnidade"></label><label>Setor<input id="fSetor"></label><label>Prazo <small id="fPrazoHint">somente ADM</small><input id="fPrazo" type="date"></label><label>Progresso<input id="fProgresso" type="number" min="0" max="100"></label><label style="grid-column:1/-1">Responsáveis<div class="checks" id="fResponsaveis"></div></label><label style="grid-column:1/-1">Observações<textarea id="fObs" rows="4"></textarea></label></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="ghostBtn" onclick="closeModal()">Cancelar</button><button class="primaryBtn" onclick="saveModal()">Salvar</button></div></div></div>
 <script>
 const USER={{ user|tojson }};
 let projects=[], users=[], currentView='resumo', editingId=null;
@@ -325,7 +414,23 @@ function filtered(){let q=$('search').value.toLowerCase().trim(),cat=$('cat').va
 function renderKpis(){const all=projects,total=all.length,done=all.filter(p=>p.progresso>=100).length,doing=all.filter(p=>p.progresso>0&&p.progresso<100).length,todo=all.filter(p=>p.progresso<=0).length,att=all.filter(p=>p.progresso<100&&(p.progresso<=30||days(p)<=21)).length,avg=Math.round(all.reduce((a,p)=>a+Number(p.progresso||0),0)/Math.max(total,1)); $('heroPct').textContent=avg+'%'; $('miniRisk').textContent=att; $('mini21').textContent=all.filter(p=>p.progresso<100&&days(p)<=21).length; $('miniDone').textContent=done; $('kpis').innerHTML=[['TOTAL',total,'Projetos cadastrados'],['ENTREGUES',done,'100% concluídos'],['EM ANDAMENTO',doing,'1% a 99%'],['PENDENTES',todo,'0% iniciado'],['ATENÇÃO',att,'Baixo avanço / próximos']].map(x=>`<div class="kpi"><small>${x[0]}</small><b>${x[1]}</b><span>${x[2]}</span></div>`).join('')}
 function viewWrap(id,title,subtitle,body){return `<section class="view ${currentView===id?'active':''}" id="v_${id}"><div class="sectionHead"><h2>${title}</h2><p>${subtitle||''}</p></div>${body}</section>`}
 function renderViews(){const list=filtered(); const html=[renderResumo(list),renderDash(list),renderGantt(list),renderKanban(list),renderUnidade(list),USER.is_admin?renderRanking(list):'',renderHistorico(list),renderCronologica(list),renderTroca(list),renderMapa(list),renderTodos(list),renderEntregues(list),renderTabela(list),USER.is_admin?renderNovo():'' ].join(''); $('views').innerHTML=html}
-function projectCard(p,idx){const r=risk(p); return `<article class="projectCard ${r==='vencido'||r==='7'?'riskHigh':r==='21'?'riskMed':''}"><div><div class="meta"><span class="pill info">#${idx||p.id}</span><span class="pill ${status(p)==='Entregue'?'ok':status(p)==='Pendente'?'bad':'info'}">${status(p)}</span><span class="pill info">${esc(p.categoria)}</span>${riskLabel(p)}${assignedHtml(p)}</div><div class="pTitle">${esc(p.projeto_pai? p.projeto_pai+' > '+p.nome:p.nome)}</div><div style="color:var(--muted);font-weight:700">Unidade: ${esc(p.unidade||'-')} | Setor: ${esc(p.setor||'-')} | Prazo: ${esc(br(p)||'-')}</div><div class="obsBox"><b>Observações</b>${esc(p.obs||'Sem observação registrada.')}</div><div style="margin-top:10px;color:var(--muted);font-size:.78rem">Atualizado por ${esc(p.updated_by||'-')} em ${esc(p.updated_at||'-')}</div></div><div class="control"><div class="controlTop"><span>ANDAMENTO</span><b>${p.progresso}%</b></div><div class="rangeWrap"><div class="rangeTrack"><div class="rangeFill" style="--w:${p.progresso}%"></div></div><input type="range" min="0" max="100" value="${p.progresso}" ${canEdit(p)?'':'disabled'} oninput="rangePreview(this)" onchange="updateProject(${p.id},{progresso:this.value})"></div><div class="controlActions"><button class="done" ${canEdit(p)?'':'disabled'} onclick="updateProject(${p.id},{progresso:100})">Concluir</button><button ${canEdit(p)?'':'disabled'} onclick="openModal(${p.id})">Editar / OBS</button></div></div></article>`}
+
+function isoToDateInput(p){return (p && p.prazo) ? String(p.prazo).slice(0,10) : ''}
+async function updatePrazoAdmin(id, value){
+  if(!USER.is_admin){ alert('Apenas ADM pode alterar prazos.'); return; }
+  if(!value){ if(!confirm('Salvar este projeto sem data de prazo?')) return; }
+  await updateProject(id,{prazo:value});
+}
+function adminDateControl(p){
+  if(!USER.is_admin) return '';
+  return `<div class="adminDateEdit">
+    <span>Prazo ADM</span>
+    <input type="date" value="${esc(isoToDateInput(p))}" onchange="updatePrazoAdmin(${p.id}, this.value)">
+    <small>salva ao alterar</small>
+  </div>`;
+}
+
+function projectCard(p,idx){const r=risk(p); return `<article class="projectCard ${r==='vencido'||r==='7'?'riskHigh':r==='21'?'riskMed':''}"><div><div class="meta"><span class="pill info">#${idx||p.id}</span><span class="pill ${status(p)==='Entregue'?'ok':status(p)==='Pendente'?'bad':'info'}">${status(p)}</span><span class="pill info">${esc(p.categoria)}</span>${riskLabel(p)}${assignedHtml(p)}</div><div class="pTitle">${esc(p.projeto_pai? p.projeto_pai+' > '+p.nome:p.nome)}</div><div style="color:var(--muted);font-weight:700">Unidade: ${esc(p.unidade||'-')} | Setor: ${esc(p.setor||'-')} | Prazo: ${esc(br(p)||'-')} ${USER.is_admin?`<button class="dateInlineBtn" onclick="openModal(${p.id})">editar prazo</button>`:''}</div>${adminDateControl(p)}<div class="obsBox"><b>Observações</b>${esc(p.obs||'Sem observação registrada.')}</div><div style="margin-top:10px;color:var(--muted);font-size:.78rem">Atualizado por ${esc(p.updated_by||'-')} em ${esc(p.updated_at||'-')}</div></div><div class="control"><div class="controlTop"><span>ANDAMENTO</span><b>${p.progresso}%</b></div><div class="rangeWrap"><div class="rangeTrack"><div class="rangeFill" style="--w:${p.progresso}%"></div></div><input type="range" min="0" max="100" value="${p.progresso}" ${canEdit(p)?'':'disabled'} oninput="rangePreview(this)" onchange="updateProject(${p.id},{progresso:this.value})"></div><div class="controlActions"><button class="done" ${canEdit(p)?'':'disabled'} onclick="updateProject(${p.id},{progresso:100})">Concluir</button><button ${canEdit(p)?'':'disabled'} onclick="openModal(${p.id})">Editar / OBS</button></div></div></article>`}
 function rangePreview(el){el.previousElementSibling.firstElementChild.style.setProperty('--w',el.value+'%'); el.closest('.control').querySelector('.controlTop b').textContent=el.value+'%'}
 async function updateProject(id,data){let r=await fetch('/api/projects/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); if(!r.ok){alert((await r.json()).error||'Erro ao salvar'); return} await load()}
 function renderResumo(list){const next=list.filter(p=>p.progresso<100).slice(0,6); const att=projects.filter(p=>p.progresso<100&&(days(p)<=21||p.progresso<=30)).sort((a,b)=>days(a)-days(b)).slice(0,6); return viewWrap('resumo','Resumo executivo','Leitura rápida da carteira',`<div class="grid two"><div class="card"><h3>Próximas entregas</h3>${next.map((p,i)=>`<div class="miniRow"><div><b>${esc(p.nome)}</b><br><span>${esc(p.unidade||p.categoria)} • ${esc(br(p))}</span></div>${riskLabel(p)}</div>`).join('')||'<div class="empty">Sem itens.</div>'}</div><div class="card"><h3>Pontos de atenção</h3>${att.map(p=>`<div class="miniRow"><div><b>${esc(p.nome)}</b><br><span>${p.progresso}% • ${esc(br(p))}</span></div>${riskLabel(p)}</div>`).join('')||'<div class="empty">Sem pontos críticos.</div>'}</div></div>`)}
@@ -362,9 +467,9 @@ function renderTabela(list){return viewWrap('tabela','Tabela geral','Consulta co
 function renderNovo(){return viewWrap('novo','Novo item','Cadastro administrativo',`<div class="card"><button class="primaryBtn" onclick="openModal(null)">+ Criar novo projeto</button></div>`)}
 function countBy(arr,key){let m={}; arr.forEach(p=>{let k=p[key]||'Sem informação'; m[k]=(m[k]||0)+1}); return Object.entries(m).sort((a,b)=>b[1]-a[1])}
 function renderAll(){setupNav(); renderKpis(); renderViews()}
-function openModal(id){editingId=id; let p=id?projects.find(x=>x.id===id):{nome:'',categoria:'Troca de Máquinas',unidade:'',setor:'',prazo_br:'',progresso:0,obs:'',assigned_to:''}; $('modalTitle').textContent=id?'Editar projeto':'Novo projeto'; $('fNome').value=p.nome||'';$('fCategoria').value=p.categoria||'Troca de Máquinas';$('fUnidade').value=p.unidade||'';$('fSetor').value=p.setor||'';$('fPrazo').value=p.prazo_br||'';$('fProgresso').value=p.progresso||0;$('fObs').value=p.obs||''; let selected=assignedList(p); $('fResponsaveis').innerHTML=users.map(u=>`<label><input type="checkbox" value="${esc(u.display_name)}" ${selected.includes(u.display_name)?'checked':''}> ${esc(u.display_name)}</label>`).join(''); $('modal').classList.add('open')}
+function openModal(id){editingId=id; let p=id?projects.find(x=>x.id===id):{nome:'',categoria:'Troca de Máquinas',unidade:'',setor:'',prazo:'',prazo_br:'',progresso:0,obs:'',assigned_to:''}; $('modalTitle').textContent=id?'Editar projeto':'Novo projeto'; $('fNome').value=p.nome||'';$('fCategoria').value=p.categoria||'Troca de Máquinas';$('fUnidade').value=p.unidade||'';$('fSetor').value=p.setor||'';$('fPrazo').value=isoToDateInput(p);$('fProgresso').value=p.progresso||0;$('fObs').value=p.obs||''; ['fNome','fCategoria','fUnidade','fSetor','fPrazo'].forEach(fid=>{ if($(fid)) $(fid).disabled=!USER.is_admin; }); if($('fPrazoHint')) $('fPrazoHint').textContent=USER.is_admin?'editável':'somente ADM'; let selected=assignedList(p); $('fResponsaveis').innerHTML=users.map(u=>`<label><input type="checkbox" value="${esc(u.display_name)}" ${selected.includes(u.display_name)?'checked':''} ${USER.is_admin?'':'disabled'}> ${esc(u.display_name)}</label>`).join(''); $('modal').classList.add('open')}
 function closeModal(){$('modal').classList.remove('open')}
-async function saveModal(){const assigned=[...document.querySelectorAll('#fResponsaveis input:checked')].map(x=>x.value).join(', '); const data={nome:$('fNome').value,categoria:$('fCategoria').value,unidade:$('fUnidade').value,setor:$('fSetor').value,prazo:$('fPrazo').value,progresso:$('fProgresso').value,obs:$('fObs').value,assigned_to:assigned}; let url=editingId?'/api/projects/'+editingId:'/api/projects', method=editingId?'PATCH':'POST'; let r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); if(!r.ok){alert((await r.json()).error||'Erro ao salvar');return} closeModal(); await load()}
+async function saveModal(){const assigned=[...document.querySelectorAll('#fResponsaveis input:checked')].map(x=>x.value).join(', '); let data=USER.is_admin?{nome:$('fNome').value,categoria:$('fCategoria').value,unidade:$('fUnidade').value,setor:$('fSetor').value,prazo:$('fPrazo').value,progresso:$('fProgresso').value,obs:$('fObs').value,assigned_to:assigned}:{progresso:$('fProgresso').value,obs:$('fObs').value}; let url=editingId?'/api/projects/'+editingId:'/api/projects', method=editingId?'PATCH':'POST'; let r=await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); if(!r.ok){alert((await r.json()).error||'Erro ao salvar');return} closeModal(); await load()}
 function toggleTheme(){document.body.dataset.theme=document.body.dataset.theme==='dark'?'':'dark'}
 ['search','cat','st','resp','risk','order'].forEach(id=>$(id).addEventListener('input',renderViews));
 setupNav(); load().catch(e=>{$('views').innerHTML='<div class="empty">Erro ao carregar dados. Verifique o deploy e as variáveis do Render.</div>'; console.error(e)});
