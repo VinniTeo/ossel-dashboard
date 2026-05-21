@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T12:34:34",
+  "updated_at": "2026-05-21T12:34:40",
   "projects": [
     {
       "id": 6,
@@ -328,13 +328,13 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Empresas",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-05-26",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 19,
-      "updated_at": "2026-05-21T12:25:43",
-      "updated_by": "",
+      "updated_at": "2026-05-21T12:34:40",
+      "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
