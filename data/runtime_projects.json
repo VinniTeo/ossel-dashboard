@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T20:14:51",
+  "updated_at": "2026-05-21T20:15:03",
   "projects": [
     {
       "id": 6,
@@ -424,13 +424,13 @@
       "unidade": "SA - ADM",
       "setor": "Tesouraria",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-06-09",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 21,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-21T20:15:03",
+      "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
