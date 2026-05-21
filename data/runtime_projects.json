@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T20:14:43",
+  "updated_at": "2026-05-21T20:14:49",
   "projects": [
     {
       "id": 6,
@@ -312,13 +312,13 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Giullias",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-05-19",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 18,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-21T20:14:49",
+      "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
