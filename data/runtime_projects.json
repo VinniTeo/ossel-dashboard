@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T20:15:47",
+  "updated_at": "2026-05-21T20:16:28",
   "projects": [
     {
       "id": 6,
@@ -776,13 +776,13 @@
       "unidade": "SA - PERI 179",
       "setor": "Adm",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-07-21",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 28,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-21T20:16:28",
+      "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
