@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T19:28:27",
+  "updated_at": "2026-05-21T19:28:30",
   "projects": [
     {
       "id": 6,
@@ -280,12 +280,12 @@
       "unidade": "PDV - TOTVS x Omni (Integração)",
       "setor": "",
       "categoria": "TOTVS",
-      "progresso": 91,
+      "progresso": 90,
       "status": "Em andamento",
       "prazo": "2026-05-15",
       "obs": "Pendente revisão dos produtos da lanchonete, recontagem e agendar um dia para Go live",
       "ordem": 4,
-      "updated_at": "2026-05-21T19:28:27",
+      "updated_at": "2026-05-21T19:28:28",
       "updated_by": "Administrador",
       "assigned_to": ""
     },
@@ -312,13 +312,13 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Giullias",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-05-19",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 18,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-21T19:28:30",
+      "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
