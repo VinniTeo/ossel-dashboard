@@ -3,42 +3,30 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OSSEL Assistência | Acesso</title>
+  <title>OSSEL Assistência | Login</title>
   <style>
-    :root{--navy:#051b39;--navy2:#082b59;--blue:#0b63ce;--cyan:#37c7f4;--ink:#071b34;--muted:#64748b;--line:#dbe7f3;--bg:#eef7fd;--card:#ffffff;--danger:#dc2626;--shadow:0 30px 90px rgba(3,20,43,.22)}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);min-height:100vh;background:radial-gradient(circle at 12% 20%,rgba(55,199,244,.32),transparent 28%),linear-gradient(135deg,#eef8ff 0%,#d9effa 45%,#f8fbff 100%);display:grid;place-items:center;padding:28px}
-    .shell{width:min(1080px,100%);display:grid;grid-template-columns:1.05fr .95fr;border-radius:38px;overflow:hidden;box-shadow:var(--shadow);background:#fff;border:1px solid rgba(255,255,255,.8)}
-    .brand{position:relative;min-height:650px;background:linear-gradient(140deg,var(--navy),var(--navy2) 58%,#105da9);color:#fff;padding:46px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}
-    .brand:before{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:999px;background:rgba(55,199,244,.22);filter:blur(3px)}
-    .brand:after{content:"";position:absolute;left:-80px;bottom:-100px;width:360px;height:360px;border-radius:999px;background:rgba(255,255,255,.08)}
-    .logo{position:relative;z-index:1;display:flex;gap:16px;align-items:center}.mark{width:74px;height:74px;border-radius:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;font-weight:1000;font-size:1.6rem;box-shadow:0 18px 44px rgba(0,0,0,.18)}
-    .logo h1{margin:0;font-size:1.25rem}.logo p{margin:4px 0 0;color:#b9d7f5;font-weight:700}.headline{position:relative;z-index:1}.headline small{display:inline-flex;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-weight:900;color:#d7efff}.headline h2{font-size:clamp(2.6rem,5vw,4.7rem);line-height:.98;letter-spacing:-.07em;margin:18px 0}.headline p{max-width:520px;line-height:1.75;color:#dcecff;font-size:1.03rem}
-    .points{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.point{padding:15px;border-radius:20px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.17)}.point b{display:block;font-size:1.15rem}.point span{display:block;color:#c7def5;font-size:.8rem;margin-top:4px}
-    .panel{padding:54px;display:flex;align-items:center}.box{width:100%;max-width:440px;margin:auto}.lock{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#0b63ce,#073b7a);color:#fff;font-size:1.5rem;box-shadow:0 14px 36px rgba(11,99,206,.28)}
-    h3{font-size:2rem;letter-spacing:-.045em;margin:22px 0 10px}.lead{color:#536985;line-height:1.6;margin-bottom:22px}label{display:block;margin:14px 0 7px;font-weight:900;font-size:.9rem}input{width:100%;border:1px solid var(--line);border-radius:18px;padding:16px 17px;font-size:1rem;outline:none;background:#fff;box-shadow:0 8px 20px rgba(10,35,70,.04)}input:focus{border-color:#68b8ff;box-shadow:0 0 0 4px rgba(11,99,206,.12)}button{width:100%;border:0;border-radius:18px;background:linear-gradient(135deg,#0b63ce,#074b9a);color:#fff;font-weight:1000;padding:17px;margin-top:20px;font-size:1rem;cursor:pointer;box-shadow:0 16px 34px rgba(11,99,206,.22)}.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;padding:14px;border-radius:16px;margin:12px 0;font-weight:700}.safe{margin-top:18px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:20px;padding:16px;color:#315371;line-height:1.55}.safe b{color:#073b7a}
-    @media(max-width:900px){.shell{grid-template-columns:1fr}.brand{min-height:auto}.points{grid-template-columns:1fr}.panel{padding:34px}.headline h2{font-size:2.4rem}}
+    :root{--navy:#061a33;--blue:#0f66c9;--cyan:#0db2d7;--bg:#f4f8fc;--card:#fff;--text:#0f1f33;--muted:#64748b;--line:#d8e5f2;--danger:#dc2626;--shadow:0 24px 80px rgba(6,26,51,.16)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 12% 10%,rgba(15,102,201,.22),transparent 30%),radial-gradient(circle at 85% 20%,rgba(13,178,215,.18),transparent 28%),linear-gradient(135deg,#eef7ff,#f9fcff);color:var(--text);display:grid;place-items:center;padding:22px}.shell{width:min(1040px,100%);display:grid;grid-template-columns:1.05fr .95fr;background:rgba(255,255,255,.70);border:1px solid rgba(216,229,242,.9);border-radius:34px;overflow:hidden;box-shadow:var(--shadow);backdrop-filter:blur(18px)}.brandPane{background:linear-gradient(135deg,var(--navy),#0b3d78 68%,var(--blue));color:#fff;padding:46px;position:relative;overflow:hidden}.brandPane:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.10);right:-120px;bottom:-140px}.logo{width:76px;height:76px;border-radius:24px;background:#fff;display:grid;place-items:center;margin-bottom:28px;box-shadow:0 20px 50px rgba(0,0,0,.2)}.logo img{width:64px;height:64px;object-fit:contain}.brandPane h1{font-size:2.25rem;line-height:1.02;margin:0 0 14px;font-weight:950;letter-spacing:-.05em}.brandPane p{margin:0;color:#cde6fb;font-weight:750;max-width:440px}.bullets{display:grid;gap:12px;margin-top:34px;position:relative;z-index:2}.bullet{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:14px;font-weight:850}.formPane{padding:46px;background:var(--card)}.formPane h2{margin:0 0 8px;font-size:1.65rem;font-weight:950;letter-spacing:-.04em}.formPane p{margin:0 0 26px;color:var(--muted);font-weight:700}.field{margin-bottom:16px}.field label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:950;margin:0 0 7px 4px}.field input,.field select{width:100%;border:1px solid var(--line);background:#f9fcff;color:var(--text);border-radius:16px;padding:14px 15px;font:inherit;font-weight:750;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(15,102,201,.12)}.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:16px;padding:12px 14px;margin-bottom:16px;font-weight:850}.btn{width:100%;border:0;border-radius:17px;padding:15px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-weight:950;font-size:1rem;box-shadow:0 18px 40px rgba(15,102,201,.24);cursor:pointer}.hint{margin-top:18px;padding:14px;border:1px dashed var(--line);border-radius:16px;background:#f8fbff;color:var(--muted);font-size:.86rem;font-weight:700}@media(max-width:860px){.shell{grid-template-columns:1fr}.brandPane{padding:32px}.formPane{padding:32px}.brandPane h1{font-size:1.75rem}}
   </style>
 </head>
 <body>
   <main class="shell">
-    <section class="brand">
-      <div class="logo"><div class="mark">OS</div><div><h1>OSSEL Assistência</h1><p>Centro Tecnológico</p></div></div>
-      <div class="headline"><small>Dashboard Executivo • Gestão de Projetos</small><h2>Controle operacional com visão executiva.</h2><p>Acompanhe progresso, prazos, riscos, responsáveis e entregas em um painel corporativo seguro.</p></div>
-      <div class="points"><div class="point"><b>Projetos</b><span>Carteira consolidada</span></div><div class="point"><b>Riscos</b><span>Prazos e SLA</span></div><div class="point"><b>Operação</b><span>Atualização online</span></div></div>
+    <section class="brandPane">
+      <div class="logo"><img src="/static/logo-ossel.svg" alt="OSSEL Assistência"></div>
+      <h1>Central de Projetos OSSEL Assistência</h1>
+      <p>Acompanhe dashboards, prazos, responsáveis, progresso e indicadores operacionais em uma plataforma executiva.</p>
+      <div class="bullets"><div class="bullet">Dashboards modernos e indicadores em tempo real</div><div class="bullet">Prazos recalculados automaticamente</div><div class="bullet">Gestão de projetos, tarefas e responsáveis</div></div>
     </section>
-    <section class="panel">
-      <form method="post" class="box" autocomplete="off">
-        <div class="lock">🔒</div>
-        <h3>Acesso ao painel</h3>
-        <p class="lead">Entre com seu usuário corporativo e senha de acesso.</p>
-        {% if erro %}<div class="error">{{ erro }}</div>{% endif %}
-        <label for="username">Usuário</label>
-        <input id="username" name="username" value="{{ username or '' }}" placeholder="Digite seu usuário" required autofocus>
-        <label for="password">Senha</label>
-        <input id="password" name="password" type="password" placeholder="Digite sua senha" required>
-        <button type="submit">Entrar com segurança</button>
-        <div class="safe"><b>Acesso protegido</b><br>As permissões são aplicadas automaticamente conforme o perfil configurado.</div>
+    <section class="formPane">
+      <h2>Acessar plataforma</h2>
+      <p>Informe seu usuário e senha para continuar.</p>
+      {% if erro %}<div class="error">{{ erro }}</div>{% endif %}
+      <form method="post">
+        <div class="field"><label>Usuário</label><input name="username" autocomplete="username" value="{{ username or '' }}" required autofocus></div>
+        <div class="field"><label>Senha</label><input name="password" type="password" autocomplete="current-password" required></div>
+        <button class="btn" type="submit">Entrar</button>
       </form>
+      <div class="hint">As permissões são aplicadas conforme o perfil do usuário: administração geral ou atualização operacional de trocas.</div>
     </section>
   </main>
 </body>

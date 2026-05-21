@@ -461,9 +461,14 @@ def seed_projects(clear_existing=False):
     conn.commit()
     conn.close()
 
+DB_INITIALIZED = False
+
 @app.before_request
 def ensure_db():
-    init_db()
+    global DB_INITIALIZED
+    if not DB_INITIALIZED:
+        init_db()
+        DB_INITIALIZED = True
 
 
 def current_user():
