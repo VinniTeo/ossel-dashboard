@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T15:33:00",
+  "updated_at": "2026-05-21T15:33:24",
   "projects": [
     {
       "id": 6,
@@ -13,8 +13,8 @@
       "prazo": "2026-02-01",
       "obs": "Sustentação e melhorias continuas na ferramenta",
       "ordem": 6,
-      "updated_at": "2026-05-21T15:31:53",
-      "updated_by": "Administrador",
+      "updated_at": "2026-05-21T13:55:20",
+      "updated_by": "",
       "assigned_to": ""
     },
     {
@@ -264,13 +264,13 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Plano",
       "categoria": "Troca de Máquinas",
-      "progresso": 100,
-      "status": "Entregue",
+      "progresso": 10,
+      "status": "Em andamento",
       "prazo": "2026-05-12",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 17,
-      "updated_at": "2026-05-21T15:32:28",
-      "updated_by": "Administrador",
+      "updated_at": "2026-05-21T13:55:20",
+      "updated_by": "",
       "assigned_to": ""
     },
     {
@@ -312,13 +312,13 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Giullias",
       "categoria": "Troca de Máquinas",
-      "progresso": 100,
-      "status": "Entregue",
+      "progresso": 0,
+      "status": "Pendente",
       "prazo": "2026-05-19",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 18,
-      "updated_at": "2026-05-21T15:32:38",
-      "updated_by": "Administrador",
+      "updated_at": "2026-05-21T13:55:20",
+      "updated_by": "",
       "assigned_to": ""
     },
     {
@@ -328,13 +328,29 @@
       "unidade": "SA - ADM",
       "setor": "Financeiro Empresas",
       "categoria": "Troca de Máquinas",
-      "progresso": 100,
-      "status": "Entregue",
+      "progresso": 0,
+      "status": "Pendente",
       "prazo": "2026-05-26",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 19,
-      "updated_at": "2026-05-21T15:32:49",
-      "updated_by": "Administrador",
+      "updated_at": "2026-05-21T13:55:20",
+      "updated_by": "",
+      "assigned_to": ""
+    },
+    {
+      "id": 75,
+      "nome": "ITSM - Znuny - MKT",
+      "projeto_pai": "",
+      "unidade": "ITSM - Znuny",
+      "setor": "",
+      "categoria": "ITSM",
+      "progresso": 90,
+      "status": "Em andamento",
+      "prazo": "2026-05-31",
+      "obs": "Pendente algun ajustes por parte da ServiceUp e realização de testes por lado do setor de MKT",
+      "ordem": 75,
+      "updated_at": "2026-05-21T13:55:20",
+      "updated_by": "",
       "assigned_to": ""
     },
     {
@@ -376,13 +392,13 @@
       "unidade": "Microsoft 365 - TEAMS E E-MAILS",
       "setor": "",
       "categoria": "Microsoft 365",
-      "progresso": 80,
-      "status": "Em andamento",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-06-01",
       "obs": "Pendente migração dos e-mails e configuração para os usuarios.",
       "ordem": 8,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-21T15:33:24",
+      "updated_by": "Administrador",
       "assigned_to": ""
     },
     {
