@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T15:32:49",
+  "updated_at": "2026-05-21T15:33:00",
   "projects": [
     {
       "id": 6,
@@ -335,22 +335,6 @@
       "ordem": 19,
       "updated_at": "2026-05-21T15:32:49",
       "updated_by": "Administrador",
-      "assigned_to": ""
-    },
-    {
-      "id": 75,
-      "nome": "ITSM - Znuny - MKT",
-      "projeto_pai": "",
-      "unidade": "ITSM - Znuny",
-      "setor": "",
-      "categoria": "ITSM",
-      "progresso": 90,
-      "status": "Em andamento",
-      "prazo": "2026-05-31",
-      "obs": "Pendente algun ajustes por parte da ServiceUp e realização de testes por lado do setor de MKT",
-      "ordem": 75,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
       "assigned_to": ""
     },
     {
