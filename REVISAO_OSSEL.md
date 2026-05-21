@@ -1,50 +1,46 @@
-# Revisão OSSEL Assistência - Correção de logo e progresso
+# Revisão OSSEL Assistência - Correção solicitada
 
-## Plano executado por etapas
-1. Analisei a tela apontada pelo usuário e a estrutura do projeto Flask.
-2. Revisei o template principal `templates/index.html`, os assets em `static/` e a renderização dos cards de projetos.
-3. Corrigi a marca lateral para usar o logo real da OSSEL Assistência com fundo removido, evitando o bloco quadrado azul dentro da sidebar.
-4. Reforcei a barra de progresso dos cards para ficar visível, única e funcional.
-5. Removi a duplicidade visual de status/concluído dentro do painel de andamento.
-6. Reempacotei o projeto para entrega.
+## Plano executado
+1. Reabri a versão mais recente do site.
+2. Localizei o cabeçalho lateral, o bloco de logo e o card de progresso dos projetos.
+3. Apliquei correções específicas sem gerar imagem/mockup.
+4. Reempacotei o projeto final em ZIP.
 
 ## O que foi revisado
-- Sidebar e área de marca.
-- Componente de card de projeto.
-- Painel de andamento/progresso.
-- Estados de status e prazo exibidos nos cards.
-- Arquivos estáticos de logo.
+- Sidebar e bloco de identidade visual.
+- Logo da OSSEL Assistência.
+- Card de andamento/progresso dos projetos.
+- Mensagem auxiliar abaixo do progresso.
+- Controle de atualização de percentual.
 
 ## O que foi corrigido
-- O logo quadrado foi substituído por uma versão PNG recortada, com transparência, usando a identidade visual real da OSSEL Assistência.
-- A sidebar mantém “OSSEL Assistência” e “Governança de Projetos” abaixo da marca.
-- A barra de progresso voltou a aparecer de forma clara no painel “ANDAMENTO”.
-- A barra agora é única, mais grossa, legível e ligada ao percentual salvo do projeto.
-- A duplicidade de “Concluído” no painel de progresso foi reduzida: projetos 100% exibem apenas um estado de conclusão no painel de andamento.
+- Removido o texto duplicado “OSSEL Assistência” abaixo do logo.
+- Mantido apenas o logo oficial na sidebar.
+- Removida a frase: “Progresso sincronizado com o percentual salvo do projeto. Para alterar, use Editar.”
+- Substituída a barra estática por uma barra rolável funcional (`range`).
+- A barra agora permite aumentar/diminuir o progresso diretamente no card.
 
 ## O que foi melhorado
-- Visual da marca na sidebar, sem bloco quadrado destoando do layout.
-- Progresso com melhor contraste, altura maior, sombra interna e preenchimento mais evidente.
-- Status de progresso mais limpo e menos repetitivo.
-- Aparência mais profissional e coerente com a identidade OSSEL.
+- Logo ficou mais limpo e integrado ao layout.
+- Card de andamento ficou mais objetivo.
+- Progresso agora é editável sem depender do botão Editar.
+- Interface ficou menos poluída e mais funcional.
 
 ## Arquivos alterados
 - `templates/index.html`
-- `static/logo-ossel-assistencia.png`
 - `REVISAO_OSSEL.md`
 
 ## Bugs encontrados
-- Logo anterior era uma imagem quadrada com fundo azul, causando aparência de “bloco” e destoando da sidebar.
-- O painel de andamento estava visualmente fraco, fazendo a barra parecer ausente.
-- Em projetos concluídos, o painel podia mostrar estados repetidos de conclusão.
+- Duplicidade visual da marca: logo já continha “OSSEL Assistência” e havia texto repetido abaixo.
+- Barra de progresso estava apenas visual, sem controle rolável direto.
+- Texto explicativo desnecessário deixava o card mais pesado.
 
 ## Melhorias visuais aplicadas
-- Logo tratado com transparência e drop-shadow leve.
-- Área de marca mais limpa.
-- Barra de progresso mais alta, moderna e visível.
-- Chips de status menos redundantes.
+- Sidebar com logo único.
+- Remoção de texto duplicado.
+- Barra de progresso com aparência moderna e controle deslizante.
 
 ## Melhorias funcionais aplicadas
-- Uma única barra de progresso funcional por card.
-- Percentual exibido no topo e preenchimento sincronizado pelo valor `progresso` do projeto.
-- Estado “Concluído” simplificado quando o progresso está em 100%.
+- Controle de progresso por slider no próprio card.
+- Atualização visual instantânea do percentual ao arrastar.
+- Salvamento do novo progresso ao soltar/alterar a barra.
