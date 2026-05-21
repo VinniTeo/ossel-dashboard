@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-21T15:31:52",
+  "updated_at": "2026-05-21T15:31:54",
   "projects": [
     {
       "id": 6,
@@ -8,12 +8,12 @@
       "unidade": "PDV - VarejoOnline",
       "setor": "",
       "categoria": "PDV",
-      "progresso": 62,
-      "status": "Em andamento",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-02-01",
       "obs": "Sustentação e melhorias continuas na ferramenta",
       "ordem": 6,
-      "updated_at": "2026-05-21T15:31:52",
+      "updated_at": "2026-05-21T15:31:53",
       "updated_by": "Administrador",
       "assigned_to": ""
     },
