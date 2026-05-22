@@ -3,31 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OSSEL Assistência | Login</title>
-  <style>
-    :root{--navy:#061a33;--blue:#0f66c9;--cyan:#0db2d7;--bg:#f4f8fc;--card:#fff;--text:#0f1f33;--muted:#64748b;--line:#d8e5f2;--danger:#dc2626;--shadow:0 24px 80px rgba(6,26,51,.16)}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at 12% 10%,rgba(15,102,201,.22),transparent 30%),radial-gradient(circle at 85% 20%,rgba(13,178,215,.18),transparent 28%),linear-gradient(135deg,#eef7ff,#f9fcff);color:var(--text);display:grid;place-items:center;padding:22px}.shell{width:min(1040px,100%);display:grid;grid-template-columns:1.05fr .95fr;background:rgba(255,255,255,.70);border:1px solid rgba(216,229,242,.9);border-radius:34px;overflow:hidden;box-shadow:var(--shadow);backdrop-filter:blur(18px)}.brandPane{background:linear-gradient(135deg,var(--navy),#0b3d78 68%,var(--blue));color:#fff;padding:46px;position:relative;overflow:hidden}.brandPane:after{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:rgba(255,255,255,.10);right:-120px;bottom:-140px}.logo{width:76px;height:76px;border-radius:24px;background:#fff;display:grid;place-items:center;margin-bottom:28px;box-shadow:0 20px 50px rgba(0,0,0,.2)}.logo img{width:64px;height:64px;object-fit:contain}.brandPane h1{font-size:2.25rem;line-height:1.02;margin:0 0 14px;font-weight:950;letter-spacing:-.05em}.brandPane p{margin:0;color:#cde6fb;font-weight:750;max-width:440px}.bullets{display:grid;gap:12px;margin-top:34px;position:relative;z-index:2}.bullet{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:14px;font-weight:850}.formPane{padding:46px;background:var(--card)}.formPane h2{margin:0 0 8px;font-size:1.65rem;font-weight:950;letter-spacing:-.04em}.formPane p{margin:0 0 26px;color:var(--muted);font-weight:700}.field{margin-bottom:16px}.field label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:950;margin:0 0 7px 4px}.field input,.field select{width:100%;border:1px solid var(--line);background:#f9fcff;color:var(--text);border-radius:16px;padding:14px 15px;font:inherit;font-weight:750;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(15,102,201,.12)}.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:16px;padding:12px 14px;margin-bottom:16px;font-weight:850}.btn{width:100%;border:0;border-radius:17px;padding:15px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-weight:950;font-size:1rem;box-shadow:0 18px 40px rgba(15,102,201,.24);cursor:pointer}.hint{margin-top:18px;padding:14px;border:1px dashed var(--line);border-radius:16px;background:#f8fbff;color:var(--muted);font-size:.86rem;font-weight:700}@media(max-width:860px){.shell{grid-template-columns:1fr}.brandPane{padding:32px}.formPane{padding:32px}.brandPane h1{font-size:1.75rem}}
-  </style>
+  <title>Login | OSSEL Assistência</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/logo-ossel.jpeg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
-  <main class="shell">
-    <section class="brandPane">
-      <div class="logo"><img src="/static/logo-ossel.svg" alt="OSSEL Assistência"></div>
-      <h1>Central de Projetos OSSEL Assistência</h1>
-      <p>Acompanhe dashboards, prazos, responsáveis, progresso e indicadores operacionais em uma plataforma executiva.</p>
-      <div class="bullets"><div class="bullet">Dashboards modernos e indicadores em tempo real</div><div class="bullet">Prazos recalculados automaticamente</div><div class="bullet">Gestão de projetos, tarefas e responsáveis</div></div>
+<body class="login-page">
+  <main class="login-shell" aria-label="Área de login OSSEL">
+    <section class="login-brand" aria-hidden="true">
+      <div class="brand-glow"></div>
+      <img class="login-logo-large" src="{{ url_for('static', filename='img/logo-ossel.jpeg') }}" alt="">
+      <div class="login-brand-copy">
+        <span class="eyebrow">Dashboard corporativo</span>
+        <h1>Gestão de projetos com persistência segura</h1>
+        <p>Progresso, responsáveis e observações sincronizados com o GitHub para não perder dados após deploy.</p>
+      </div>
     </section>
-    <section class="formPane">
-      <h2>Acessar plataforma</h2>
-      <p>Informe seu usuário e senha para continuar.</p>
-      {% if erro %}<div class="error">{{ erro }}</div>{% endif %}
-      <form method="post">
-        <div class="field"><label>Usuário</label><input name="username" autocomplete="username" value="{{ username or '' }}" required autofocus></div>
-        <div class="field"><label>Senha</label><input name="password" type="password" autocomplete="current-password" required></div>
-        <button class="btn" type="submit">Entrar</button>
+
+    <section class="login-card" aria-label="Entrar no sistema">
+      <img class="login-logo" src="{{ url_for('static', filename='img/logo-ossel.jpeg') }}" alt="OSSEL Assistência">
+      <div class="login-title">
+        <span class="eyebrow">Acesso restrito</span>
+        <h2>Entrar no painel</h2>
+        <p>Use seu usuário autorizado para acessar o dashboard.</p>
+      </div>
+
+      {% if erro %}
+      <div class="alert alert-error" role="alert">{{ erro }}</div>
+      {% endif %}
+
+      <form method="post" class="form-stack" id="loginForm" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label class="field">
+          <span>Usuário</span>
+          <input name="username" autocomplete="username" placeholder="ADM, Thiago, Denis, Filipe ou Eduardo" value="{{ username or '' }}" required autofocus>
+        </label>
+        <label class="field">
+          <span>Senha</span>
+          <input name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required>
+        </label>
+        <button class="btn btn-primary btn-full" type="submit" data-loading-text="Entrando...">Entrar com segurança</button>
       </form>
-      <div class="hint">As permissões são aplicadas conforme o perfil do usuário: administração geral ou atualização operacional de trocas.</div>
+
+      <div class="login-help">
+        <strong>Importante:</strong> as senhas devem estar configuradas nas variáveis de ambiente do Render.
+      </div>
     </section>
   </main>
+  <script src="{{ url_for('static', filename='js/login.js') }}" defer></script>
 </body>
 </html>

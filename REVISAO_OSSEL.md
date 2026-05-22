@@ -1,46 +1,68 @@
-# Revisão OSSEL Assistência - Correção solicitada
+# Revisão OSSEL Assistência - versão final melhorada
 
-## Plano executado
-1. Reabri a versão mais recente do site.
-2. Localizei o cabeçalho lateral, o bloco de logo e o card de progresso dos projetos.
-3. Apliquei correções específicas sem gerar imagem/mockup.
-4. Reempacotei o projeto final em ZIP.
+## Arquivos principais alterados/criados
 
-## O que foi revisado
-- Sidebar e bloco de identidade visual.
-- Logo da OSSEL Assistência.
-- Card de andamento/progresso dos projetos.
-- Mensagem auxiliar abaixo do progresso.
-- Controle de atualização de percentual.
+- `app.py`: backend Flask revisado, segurança, login, APIs, persistência GitHub robusta e tratamento de falhas.
+- `templates/login.html`: nova tela de login com a logo oficial e visual institucional.
+- `templates/index.html`: novo dashboard responsivo com cards, filtros, modal e área de status da persistência.
+- `static/css/styles.css`: novo visual moderno, responsivo e alinhado à marca.
+- `static/js/dashboard.js`: carregamento do painel, filtros, slider de progresso, modal de edição, feedbacks e chamadas seguras às APIs.
+- `static/js/login.js`: estado de carregamento no botão de login.
+- `static/img/logo-ossel.jpeg`: logo oficial enviada.
+- `render.yaml`: configuração de deploy com variáveis de ambiente necessárias.
+- `README.md`: instruções atualizadas de deploy, persistência e testes.
 
-## O que foi corrigido
-- Removido o texto duplicado “OSSEL Assistência” abaixo do logo.
-- Mantido apenas o logo oficial na sidebar.
-- Removida a frase: “Progresso sincronizado com o percentual salvo do projeto. Para alterar, use Editar.”
-- Substituída a barra estática por uma barra rolável funcional (`range`).
-- A barra agora permite aumentar/diminuir o progresso diretamente no card.
+## Melhorias funcionais
 
-## O que foi melhorado
-- Logo ficou mais limpo e integrado ao layout.
-- Card de andamento ficou mais objetivo.
-- Progresso agora é editável sem depender do botão Editar.
-- Interface ficou menos poluída e mais funcional.
+- Progresso editável por slider diretamente no card.
+- Observações editáveis no card para quem tem permissão.
+- Modal para criação e edição de projetos.
+- Busca por projeto, unidade, setor, categoria, responsável e observação.
+- Filtros por status, categoria e responsável.
+- Exportação CSV mantida.
+- Feedback visual para salvar, erro e sucesso.
+- Tela de estado vazio.
+- Status visível da persistência GitHub.
 
-## Arquivos alterados
-- `templates/index.html`
-- `REVISAO_OSSEL.md`
+## Persistência após deploy
 
-## Bugs encontrados
-- Duplicidade visual da marca: logo já continha “OSSEL Assistência” e havia texto repetido abaixo.
-- Barra de progresso estava apenas visual, sem controle rolável direto.
-- Texto explicativo desnecessário deixava o card mais pesado.
+A persistência foi reforçada para usar as variáveis:
 
-## Melhorias visuais aplicadas
-- Sidebar com logo único.
-- Remoção de texto duplicado.
-- Barra de progresso com aparência moderna e controle deslizante.
+- `GITHUB_REPO`
+- `GITHUB_TOKEN`
+- `GITHUB_DATA_PATH`
 
-## Melhorias funcionais aplicadas
-- Controle de progresso por slider no próprio card.
-- Atualização visual instantânea do percentual ao arrastar.
-- Salvamento do novo progresso ao soltar/alterar a barra.
+Agora, quando uma alteração é feita, o backend salva o JSON remoto no GitHub antes de confirmar a transação local. Se o GitHub falhar, a alteração é cancelada e o usuário recebe erro. Isso evita o problema de parecer salvo localmente e depois perder o progresso em um novo deploy.
+
+## Segurança
+
+- Senhas lidas por variáveis de ambiente.
+- Sem senha fixa em produção.
+- Token do GitHub usado somente no backend.
+- CSRF em ações de alteração.
+- Cookies de sessão com boas práticas.
+- Rotas privadas protegidas.
+- Permissões aplicadas também no backend.
+- Headers básicos de segurança.
+- Debug desativado em produção.
+
+## Visual e UX
+
+- Login redesenhado com identidade OSSEL.
+- Dashboard moderno, limpo e responsivo.
+- Cards com hierarquia visual melhor.
+- Badges de status.
+- Barra e slider de progresso integrados.
+- Mensagens claras quando o GitHub não está configurado.
+- Mobile e desktop revisados.
+
+## Testes recomendados
+
+- Login com todos os usuários.
+- Acesso sem login bloqueado.
+- Criação de projeto por administrador.
+- Alteração de progresso pelo slider.
+- Edição de observação.
+- Exclusão de projeto.
+- Falha simulada de GitHub.
+- Novo deploy no Render com restauração via `data/runtime_projects.json`.

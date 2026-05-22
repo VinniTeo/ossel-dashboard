@@ -4,10 +4,24 @@ services:
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
-    disk:
-      name: ossel-dashboard-data
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
-      - key: DATA_DIR
-        value: /var/data
+      - key: APP_ENV
+        value: production
+      - key: GITHUB_DATA_PATH
+        value: data/runtime_projects.json
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GITHUB_REPO
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: ADM_PASSWORD
+        sync: false
+      - key: THIAGO_PASSWORD
+        sync: false
+      - key: DENIS_PASSWORD
+        sync: false
+      - key: FILIPE_PASSWORD
+        sync: false
+      - key: EDUARDO_PASSWORD
+        sync: false
