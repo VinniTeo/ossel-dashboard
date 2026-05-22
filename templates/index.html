@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>OSSEL Dashboard</title>
+  <title>Centro de Tecnologia | Governança de Projetos</title>
   <link rel="icon" href="{{ url_for('static', filename='img/logo-ossel.jpeg') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
@@ -12,8 +12,12 @@
   <div class="app-layout">
     <aside class="sidebar" aria-label="Navegação principal">
       <a class="sidebar-logo" href="{{ url_for('index') }}" aria-label="OSSEL Dashboard">
-        <img src="{{ url_for('static', filename='img/logo-ossel.jpeg') }}" alt="OSSEL Assistência">
+        <img src="{{ url_for('static', filename='img/logo-ossel-white-transparent.png') }}" alt="OSSEL Assistência">
       </a>
+      <div class="brand-text">
+        <span>Centro de Tecnologia</span>
+        <strong>Governança de Projetos</strong>
+      </div>
 
       <div class="user-card">
         <span class="user-avatar">{{ (user.display_name or user.username or 'U')[:1] }}</span>
@@ -50,6 +54,7 @@
         <a class="side-link" href="{{ url_for('export_csv') }}">Exportar CSV</a>
         {% if user.is_admin %}
         <button class="side-link side-button" id="openCreateBtn" type="button">Novo projeto</button>
+        <button class="side-link side-button" id="syncFromGithubBtn" type="button">Sincronizar GitHub</button>
         <button class="side-link side-button danger" id="reseedBtn" type="button">Importar seed</button>
         {% endif %}
       </nav>
@@ -66,6 +71,13 @@
     <main class="main-content">
       <header class="topbar">
         <div class="topbar-copy">
+          <div class="governance-heading">
+            <img src="{{ url_for('static', filename='img/logo-ossel-blue-transparent.png') }}" alt="OSSEL Assistência">
+            <div>
+              <span>Centro de Tecnologia</span>
+              <strong>Governança de Projetos</strong>
+            </div>
+          </div>
           <span class="eyebrow" id="pageEyebrow">Central OSSEL</span>
           <h1 id="pageTitle">Visão executiva</h1>
           <p id="pageDescription">Indicadores vivos de prazo, progresso, entregas e riscos com dados persistentes no GitHub após deploy.</p>

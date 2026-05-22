@@ -1933,3 +1933,438 @@ input[type="range"]:disabled {
   border-color: rgba(10, 117, 187, 0.28);
   background: #ffffff;
 }
+
+/* Profissionalização V2: identidade CTI, logo horizontal, cartões com sinal executivo e botão concluir */
+.sidebar-logo {
+  display: grid;
+  place-items: center;
+  padding: 16px 14px;
+  min-height: 104px;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05)),
+    rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-logo img {
+  width: 100%;
+  height: auto;
+  max-height: 92px;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+.brand-text {
+  display: grid;
+  gap: 4px;
+  margin-top: -8px;
+  padding: 0 4px 2px;
+}
+
+.brand-text span {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brand-text strong {
+  color: #ffffff;
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+
+.governance-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 16px;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid rgba(0, 59, 112, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: var(--shadow-xs);
+}
+
+.governance-heading img {
+  width: 154px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.governance-heading div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.governance-heading span {
+  color: var(--brand-3);
+  font-size: 0.68rem;
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.governance-heading strong {
+  color: var(--ink);
+  font-size: 0.92rem;
+  line-height: 1.1;
+}
+
+.login-logo-large,
+.login-logo {
+  object-fit: contain;
+  aspect-ratio: auto;
+  background: transparent;
+  box-shadow: none;
+}
+
+.login-logo-large {
+  width: min(640px, 86%);
+  max-height: 220px;
+  border-radius: 22px;
+}
+
+.login-logo {
+  width: min(260px, 78%);
+  height: auto;
+  max-height: 86px;
+  border-radius: 14px;
+}
+
+.project-card {
+  isolation: isolate;
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--line));
+}
+
+.project-card::before {
+  width: 8px;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 36%, transparent);
+}
+
+.project-card.overdue::after,
+.project-card.dueToday::after,
+.project-card.dueSoon::after {
+  animation: soft-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes soft-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.08; }
+  50% { transform: scale(1.12); opacity: 0.16; }
+}
+
+.project-signal {
+  display: grid;
+  gap: 4px;
+  padding: 11px 12px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, white), #ffffff);
+}
+
+.project-signal strong {
+  color: color-mix(in srgb, var(--accent) 84%, var(--ink));
+  font-size: 0.82rem;
+  font-weight: 1000;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.project-signal span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.project-signal.overdue strong,
+.project-signal.dueToday strong {
+  color: var(--danger);
+}
+
+.project-signal.dueSoon strong {
+  color: var(--warning);
+}
+
+.project-signal.delivered strong,
+.project-signal.onTime strong {
+  color: var(--success);
+}
+
+.card-button.conclude {
+  border-color: rgba(18, 183, 106, 0.34);
+  background: linear-gradient(135deg, var(--success), var(--success-2));
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(18, 183, 106, 0.22);
+}
+
+.card-button.conclude:hover:not(:disabled) {
+  background: linear-gradient(135deg, #02623b, var(--success-2));
+  box-shadow: 0 14px 28px rgba(18, 183, 106, 0.28);
+}
+
+.completed-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 13px;
+  border-radius: 999px;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid rgba(18, 183, 106, 0.22);
+  font-size: 0.8rem;
+  font-weight: 1000;
+}
+
+.completed-pill::before {
+  content: "✓";
+  margin-right: 6px;
+}
+
+.progress-box {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.86)),
+    color-mix(in srgb, var(--accent) 8%, white);
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 80%, var(--brand)), var(--accent));
+}
+
+.topbar h1 {
+  text-wrap: balance;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar-logo img {
+    aspect-ratio: auto;
+    max-height: 74px;
+  }
+
+  .brand-text {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+
+  .governance-heading {
+    border-radius: 22px;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 700px) {
+  .governance-heading {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    border-radius: 22px;
+  }
+
+  .governance-heading img {
+    width: 100%;
+    height: 58px;
+  }
+
+  .login-logo {
+    width: min(280px, 92%);
+  }
+}
+
+/* V3 - persistência verificada, identidade visual mais limpa e governança de TI */
+.sidebar {
+  padding: 18px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(18, 183, 106, 0.10), transparent 24%),
+    radial-gradient(circle at 85% 18%, rgba(255, 255, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, #003b70 0%, #002f5e 48%, #06192f 100%);
+}
+
+.sidebar-logo {
+  min-height: auto;
+  padding: 8px 10px 6px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 18px;
+}
+
+.sidebar-logo:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-logo img {
+  width: 100%;
+  max-height: 76px;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18));
+}
+
+.brand-text {
+  margin-top: 0;
+  padding: 13px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045));
+}
+
+.brand-text span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.brand-text strong {
+  font-size: 1.02rem;
+}
+
+.governance-heading {
+  padding: 12px 16px 12px 12px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 59, 112, 0.10);
+}
+
+.governance-heading img {
+  width: 184px;
+  height: 62px;
+  border-radius: 0;
+  background: transparent;
+  object-fit: contain;
+}
+
+.governance-heading strong {
+  font-size: 1rem;
+}
+
+.login-logo-large,
+.login-logo {
+  background: transparent !important;
+  border-radius: 0;
+}
+
+.login-logo-large {
+  width: min(560px, 82%);
+  max-height: 200px;
+  filter: drop-shadow(0 22px 35px rgba(0, 0, 0, 0.20));
+}
+
+.login-logo {
+  width: min(270px, 82%);
+  max-height: 104px;
+}
+
+.sync-card.ok strong::after {
+  content: " verificado";
+  display: inline-flex;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(84, 227, 156, 0.16);
+  color: #b9f8d2;
+  font-size: 0.66rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.progress-box {
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+}
+
+.progress-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 38px;
+}
+
+.progress-save-button {
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(0, 59, 112, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 1000;
+  cursor: default;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.progress-save-button.is-dirty:not(:disabled) {
+  cursor: pointer;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-3));
+  box-shadow: 0 10px 22px rgba(0, 59, 112, 0.20);
+}
+
+.progress-save-button.is-dirty:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(0, 59, 112, 0.28);
+}
+
+.project-card {
+  min-height: 430px;
+}
+
+.project-card.delivered {
+  --accent: var(--success-2);
+  background: linear-gradient(180deg, #ffffff 0%, #f2fff8 100%);
+}
+
+.card-button.conclude::before {
+  content: "✓";
+  font-weight: 1000;
+}
+
+.side-button#syncFromGithubBtn {
+  border-color: rgba(84, 227, 156, 0.20);
+  color: #dfffea;
+  background: rgba(18, 183, 106, 0.10);
+}
+
+.side-button#syncFromGithubBtn:hover:not(:disabled) {
+  background: rgba(18, 183, 106, 0.18);
+}
+
+.analytics-card,
+.stat-card,
+.priority-panel,
+.toolbar,
+.quick-tabs,
+.timeline-group,
+.risk-hero {
+  border-color: rgba(0, 59, 112, 0.09);
+}
+
+@media (max-width: 900px) {
+  .sidebar-logo img {
+    max-height: 66px;
+  }
+  .governance-heading img {
+    width: 172px;
+    height: 58px;
+  }
+}
+
+@media (max-width: 700px) {
+  .governance-heading img {
+    width: 210px;
+    max-width: 100%;
+    height: 70px;
+  }
+  .progress-actions {
+    justify-content: stretch;
+  }
+  .progress-save-button {
+    width: 100%;
+  }
+}

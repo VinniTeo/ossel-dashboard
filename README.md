@@ -1,126 +1,58 @@
-# OSSEL Dashboard - versão melhorada
+# OSSEL Dashboard - Centro de Tecnologia / Governança de Projetos
 
-Dashboard Flask para acompanhamento de projetos da OSSEL Assistência, com interface moderna, login por variáveis de ambiente e persistência dos projetos via GitHub para evitar perda de dados após deploy no Render.
+Painel Flask para governança de projetos da OSSEL Assistência, com dashboard executivo, abas de análise, cronograma, riscos, edição de progresso, conclusão de projetos e persistência externa via GitHub.
 
-## O que mudou nesta versão
+## Login
 
-- Interface redesenhada para login e dashboard.
-- Logo oficial em `static/img/logo-ossel.jpeg`.
-- Slider de progresso direto no card do projeto.
-- Salvamento de observações no card ao sair do campo.
-- Modal moderno para criar/editar projetos.
-- Busca e filtros por status, categoria e responsável.
-- Feedback visual de salvando, sucesso e erro.
-- Proteção de rotas privadas e APIs.
-- Sessão Flask com cookies `HttpOnly`, `SameSite` e `Secure` em produção.
-- CSRF para login e rotas de alteração.
-- Cabeçalhos de segurança.
-- Persistência GitHub mais robusta.
-- Se o backup remoto falhar, a alteração é cancelada para evitar falsa sensação de salvamento.
+As senhas dos usuários são lidas pelas variáveis de ambiente do Render:
 
-## Variáveis obrigatórias no Render
+- `ADM_PASSWORD`
+- `THIAGO_PASSWORD`
+- `DENIS_PASSWORD`
+- `FILIPE_PASSWORD`
+- `EDUARDO_PASSWORD`
 
-Configure em **Environment Variables**:
+Usuários administradores: ADM, Thiago e Denis.
+Usuários operacionais: Filipe e Eduardo.
 
-```text
-SECRET_KEY=<gerar valor forte>
-GITHUB_REPO=usuario/repositorio
-GITHUB_TOKEN=<token com permissão de escrita no repositório>
-GITHUB_DATA_PATH=data/runtime_projects.json
-ADM_PASSWORD=<senha do ADM>
-THIAGO_PASSWORD=<senha do Thiago>
-DENIS_PASSWORD=<senha do Denis>
-FILIPE_PASSWORD=<senha do Filipe>
-EDUARDO_PASSWORD=<senha do Eduardo>
-```
+Configure também uma `SECRET_KEY` fixa no Render. Sem ela, sessões podem ser invalidadas quando o serviço reiniciar.
 
-`GITHUB_DATA_PATH` é opcional; se não for informado, o sistema usa `data/runtime_projects.json`.
+## Persistência após login, reinício e deploy
 
-## Como a persistência após deploy funciona
+No Render Free, o SQLite local pode ser recriado ou ficar diferente do backup após reinício. Por isso, esta versão trata o GitHub como fonte de verdade quando as variáveis abaixo estão configuradas:
 
-O Render Free pode recriar o SQLite local em novos deploys. Por isso, o SQLite não deve ser a única fonte de verdade dos dados alterados pelos usuários.
+- `GITHUB_REPO = usuario/repositorio`
+- `GITHUB_TOKEN = token com permissão de escrita em contents`
+- `GITHUB_DATA_PATH = data/runtime_projects.json`
 
-Nesta versão:
+A cada alteração de projeto, o sistema:
 
-1. O usuário altera progresso, observação, responsável, status ou outro dado do projeto.
-2. O backend grava a alteração em uma transação SQLite local.
-3. Antes de confirmar a transação, o backend monta um JSON validado com todos os projetos.
-4. O backend salva esse JSON no GitHub usando `GITHUB_REPO`, `GITHUB_TOKEN` e `GITHUB_DATA_PATH`.
-5. Se o GitHub salvar com sucesso, a transação local é confirmada e o usuário recebe sucesso.
-6. Se o GitHub falhar, a transação local é desfeita e o usuário recebe erro claro.
-7. Depois de um novo deploy, se o banco local estiver vazio, o sistema restaura os projetos a partir do JSON remoto no GitHub.
+1. Atualiza o SQLite dentro de uma transação.
+2. Gera o JSON completo dos projetos.
+3. Salva no GitHub.
+4. Lê o GitHub novamente.
+5. Compara o conteúdo enviado com o conteúdo remoto.
+6. Só confirma a transação local se o GitHub estiver salvo e verificado.
 
-O arquivo remoto salvo possui esta estrutura:
+Se o GitHub falhar ou continuar com dados diferentes, a alteração é cancelada para evitar que a tela mostre sucesso e depois o projeto volte após login ou deploy.
 
-```json
-{
-  "schema_version": 1,
-  "app": "ossel-dashboard",
-  "source": "render",
-  "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-01-01T12:00:00Z",
-  "updated_by": "Thiago",
-  "action": "atualiza-projeto-1",
-  "project_count": 1,
-  "projects": []
-}
-```
+## Sincronização automática
 
-## Como testar antes de subir
+Ao fazer login e ao carregar `/api/projects`, o painel compara o SQLite local com `data/runtime_projects.json`. Se encontrar diferença, restaura o SQLite a partir do GitHub. Isso evita o problema de excluir um projeto, sair, entrar novamente e ele aparecer de volta por causa de banco local desatualizado.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-export SECRET_KEY="dev-secret"
-export ADM_PASSWORD="admin123"
-export THIAGO_PASSWORD="thiago123"
-export DENIS_PASSWORD="denis123"
-export FILIPE_PASSWORD="filipe123"
-export EDUARDO_PASSWORD="eduardo123"
-python app.py
-```
+Administradores também têm o botão **Sincronizar GitHub** no menu lateral para forçar a conferência manual.
 
-Acesse `http://localhost:5000/login`.
+## Funcionalidades visuais
 
-Para testar a persistência GitHub localmente, configure também:
+- Cabeçalho institucional: Centro de Tecnologia / Governança de Projetos.
+- Logo em PNG transparente para sidebar, login e cabeçalho.
+- Dashboard executivo com saúde do portfólio.
+- Abas: Visão geral, Projetos, Cronograma e Riscos.
+- Indicadores de projetos atrasados, perto de vencer, no prazo, sem prazo e entregues.
+- Botão **Concluir** em cada projeto editável.
+- Botão **Salvar progresso** junto ao slider.
+- Toasts informando se a alteração foi salva e verificada no GitHub.
 
-```bash
-export GITHUB_REPO="usuario/repositorio"
-export GITHUB_TOKEN="seu_token"
-export GITHUB_DATA_PATH="data/runtime_projects.json"
-```
+## Deploy no Render
 
-## Checklist para validar no Render
-
-1. Fazer deploy.
-2. Configurar todas as variáveis de ambiente.
-3. Fazer login como ADM.
-4. Criar ou editar um projeto.
-5. Alterar o progresso pelo slider.
-6. Confirmar a mensagem de sucesso.
-7. Conferir se `data/runtime_projects.json` foi atualizado no GitHub.
-8. Fazer novo deploy no Render.
-9. Abrir novamente o dashboard.
-10. Confirmar que progresso, observações e responsáveis continuam salvos.
-
-## Observações importantes
-
-- Não suba tokens ou senhas para o GitHub.
-- `GITHUB_TOKEN` é usado somente no backend.
-- O token nunca é enviado para HTML, JavaScript ou respostas de API.
-- O arquivo `data/runtime_projects.json` é criado/atualizado automaticamente pela aplicação no GitHub.
-- O ZIP não inclui `data/runtime_projects.json` para evitar sobrescrever dados reais já salvos.
-
-## Melhorias visuais desta versão
-
-Esta versão adiciona uma navegação mais moderna por abas:
-
-- Visão geral executiva.
-- Projetos com filtros rápidos.
-- Cronograma por vencimento.
-- Sala de riscos.
-- Indicadores de projetos atrasados, perto de vencer, no prazo, entregues e sem prazo.
-- Dashboards por categoria, responsável, prazo/status e próximos vencimentos.
-
-A persistência após deploy continua dependendo das variáveis `GITHUB_REPO`, `GITHUB_TOKEN` e `GITHUB_DATA_PATH`. Quando essas variáveis estão configuradas no Render, alterações de progresso, observações e responsáveis são sincronizadas com o arquivo remoto `data/runtime_projects.json`.
+Use o `render.yaml` incluído no projeto. Confirme as variáveis no Render antes de liberar para a equipe.

@@ -16,7 +16,7 @@ const state = {
   editingProject: null,
 };
 
-const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+let csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
 const isAdmin = document.body.dataset.isAdmin === 'true';
 
 const els = {
@@ -58,6 +58,7 @@ const els = {
   refreshBtn: document.getElementById('refreshBtn'),
   openCreateBtn: document.getElementById('openCreateBtn'),
   reseedBtn: document.getElementById('reseedBtn'),
+  syncFromGithubBtn: document.getElementById('syncFromGithubBtn'),
   toastContainer: document.getElementById('toastContainer'),
   dialog: document.getElementById('projectDialog'),
   form: document.getElementById('projectForm'),
@@ -126,23 +127,48 @@ function createEl(tag, options = {}, children = []) {
   return node;
 }
 
+async function refreshCsrfToken() {
+  const response = await fetch('/api/csrf', {
+    credentials: 'same-origin',
+    cache: 'no-store',
+    headers: { Accept: 'application/json' },
+  });
+  if (response.status === 401) {
+    window.location.href = '/login';
+    return null;
+  }
+  if (!response.ok) return null;
+  const data = await response.json();
+  if (data?.csrf_token) {
+    csrfToken = data.csrf_token;
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    if (meta) meta.setAttribute('content', csrfToken);
+  }
+  return csrfToken;
+}
+
 async function apiFetch(url, options = {}) {
-  const method = (options.method || 'GET').toUpperCase();
+  const retryCsrf = options.retryCsrf !== false;
+  const cleanOptions = { ...options };
+  delete cleanOptions.retryCsrf;
+  const method = (cleanOptions.method || 'GET').toUpperCase();
   const headers = {
     Accept: 'application/json',
-    ...(options.headers || {}),
+    ...(cleanOptions.headers || {}),
   };
   if (method !== 'GET') {
     headers['X-CSRF-Token'] = csrfToken;
   }
-  let body = options.body;
+  let body = cleanOptions.body;
   if (body && !(body instanceof FormData) && typeof body !== 'string') {
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(body);
   }
   const response = await fetch(url, {
-    ...options,
+    ...cleanOptions,
     method,
+    credentials: 'same-origin',
+    cache: 'no-store',
     headers,
     body,
   });
@@ -156,6 +182,16 @@ async function apiFetch(url, options = {}) {
   if (response.status === 401) {
     window.location.href = '/login';
     return null;
+  }
+  const csrfFailed = response.status === 400 && (
+    data?.error_code === 'csrf_invalid' || String(data?.error || '').toLowerCase().includes('csrf')
+  );
+  if (csrfFailed && retryCsrf) {
+    const refreshed = await refreshCsrfToken();
+    if (refreshed) {
+      toast('Sessão renovada. Tentando salvar novamente...', 'warning', 2400);
+      return apiFetch(url, { ...options, retryCsrf: false });
+    }
   }
   if (!response.ok) {
     const error = new Error(data?.error || 'Erro inesperado.');
@@ -179,7 +215,7 @@ function toast(message, type = 'success', timeout = 4200) {
 function syncToast(sync) {
   if (!sync) return;
   if (sync.enabled && sync.saved) {
-    toast('Salvo no GitHub. Os dados permanecem após deploy.', 'success');
+    toast(sync.verified ? 'Salvo e verificado no GitHub. Os dados permanecem após login e deploy.' : 'Salvo no GitHub. Os dados permanecem após deploy.', 'success');
   } else if (!sync.enabled) {
     toast('Salvo apenas localmente. Configure GITHUB_REPO e GITHUB_TOKEN para não perder dados após deploy.', 'warning', 6200);
   }
@@ -468,6 +504,20 @@ function metaChip(label, value) {
   ]);
 }
 
+function projectSignal(due, project) {
+  const progress = Number(project.progresso || 0);
+  const signals = {
+    overdue: ['Ação imediata', 'Projeto vencido. Priorize a regularização e registre o próximo passo.'],
+    dueToday: ['Vence hoje', 'Finalize, valide ou atualize o responsável ainda hoje.'],
+    dueSoon: ['Acompanhamento diário', `Faltam ${due.days} dia${due.days === 1 ? '' : 's'} para o prazo. Progresso atual: ${progress}%.`],
+    onTime: ['No planejamento', 'Prazo saudável. Continue acompanhando avanço e pendências.'],
+    noDate: ['Planejamento pendente', 'Defina um prazo para melhorar a previsibilidade do portfólio.'],
+    delivered: ['Entrega concluída', 'Projeto marcado como entregue e protegido na persistência.'],
+  };
+  const [title, detail] = signals[due.key] || signals.onTime;
+  return { title, detail };
+}
+
 function renderProjectCard(project) {
   const editable = canEdit(project);
   const due = dueInfo(project);
@@ -488,6 +538,12 @@ function renderProjectCard(project) {
   article.append(createEl('div', { className: 'card-title-block' }, [
     createEl('h2', { className: 'project-title', text: text(project.nome, 'Projeto sem nome') }),
     createEl('p', { className: 'project-subtitle', text: text(project.projeto_pai || project.unidade || project.setor, 'Sem unidade definida') }),
+  ]));
+
+  const signal = projectSignal(due, project);
+  article.append(createEl('div', { className: `project-signal ${due.className}` }, [
+    createEl('strong', { text: signal.title }),
+    createEl('span', { text: signal.detail }),
   ]));
 
   article.append(createEl('div', { className: 'meta-grid' }, [
@@ -514,28 +570,56 @@ function renderProjectCard(project) {
     },
   });
   slider.disabled = !editable;
-  progressBox.append(progressTop, progressTrack, slider);
+  const progressActions = createEl('div', { className: 'progress-actions' });
+  let saveProgressBtn = null;
+  if (editable) {
+    saveProgressBtn = createEl('button', {
+      className: 'progress-save-button',
+      text: 'Salvo',
+      attrs: { type: 'button', disabled: 'disabled' },
+    });
+    progressActions.append(saveProgressBtn);
+  }
+  progressBox.append(progressTop, progressTrack, slider, progressActions);
   article.append(progressBox);
   updateProgressVisual(progressBox, project.progresso || 0);
 
   if (editable) {
-    slider.addEventListener('input', () => updateProgressVisual(progressBox, slider.value));
-    slider.addEventListener('change', async () => {
-      const previous = project.progresso || 0;
+    let savingProgress = false;
+    const previous = Number(project.progresso || 0);
+    const updateSaveButton = () => {
+      const changed = Number(slider.value) !== previous;
+      saveProgressBtn.disabled = !changed || savingProgress;
+      saveProgressBtn.textContent = changed ? 'Salvar progresso' : 'Salvo';
+      saveProgressBtn.classList.toggle('is-dirty', changed);
+    };
+    const saveProgress = async () => {
       const nextValue = Number(slider.value);
-      if (nextValue === previous) return;
+      if (savingProgress || nextValue === previous) return;
+      savingProgress = true;
       slider.disabled = true;
-      toast('Salvando progresso...', 'warning', 1600);
+      saveProgressBtn.disabled = true;
+      saveProgressBtn.textContent = 'Salvando...';
+      toast('Salvando progresso no GitHub...', 'warning', 1600);
       try {
         await patchProject(project, { progresso: nextValue });
+        toast('Progresso salvo e verificado.', 'success');
       } catch (error) {
         slider.value = previous;
         updateProgressVisual(progressBox, previous);
         toast(error.payload?.error || error.message || 'Não foi possível salvar o progresso.', 'error', 7200);
       } finally {
+        savingProgress = false;
         slider.disabled = !editable;
+        updateSaveButton();
       }
+    };
+    slider.addEventListener('input', () => {
+      updateProgressVisual(progressBox, slider.value);
+      updateSaveButton();
     });
+    slider.addEventListener('change', saveProgress);
+    saveProgressBtn.addEventListener('click', saveProgress);
   }
 
   const notesLabel = createEl('label', {}, [
@@ -571,6 +655,13 @@ function renderProjectCard(project) {
   const footer = createEl('footer', { className: 'card-footer' });
   footer.append(createEl('div', { className: 'card-updated', text: updatedText || 'Sem atualização registrada' }));
   const actions = createEl('div', { className: 'card-actions' });
+  if (editable && Number(project.progresso || 0) < 100) {
+    const concludeBtn = createEl('button', { className: 'card-button conclude', text: 'Concluir', attrs: { type: 'button' } });
+    concludeBtn.addEventListener('click', () => completeProject(project));
+    actions.append(concludeBtn);
+  } else if (Number(project.progresso || 0) >= 100) {
+    actions.append(createEl('span', { className: 'completed-pill', text: 'Concluído' }));
+  }
   if (editable) {
     const editBtn = createEl('button', { className: 'card-button', text: 'Editar', attrs: { type: 'button' } });
     editBtn.addEventListener('click', () => openProjectDialog(project));
@@ -1002,17 +1093,44 @@ async function saveProjectFromDialog(event) {
   }
 }
 
+async function completeProject(project) {
+  const confirmed = window.confirm(`Concluir o projeto "${project.nome}"? O progresso será definido como 100% e salvo na persistência do GitHub.`);
+  if (!confirmed) return;
+  try {
+    toast('Concluindo projeto...', 'warning', 1800);
+    await patchProject(project, { progresso: 100, status: 'Entregue' });
+    toast('Projeto concluído com sucesso.', 'success');
+  } catch (error) {
+    toast(error.payload?.error || error.message || 'Não foi possível concluir o projeto.', 'error', 7800);
+  }
+}
+
 async function deleteProject(project) {
-  const confirmed = window.confirm(`Excluir o projeto "${project.nome}"? Essa ação só será concluída se o backup no GitHub também for salvo.`);
+  const confirmed = window.confirm(`Excluir o projeto "${project.nome}"? A exclusão será aceita somente depois de salvar e verificar o GitHub.`);
   if (!confirmed) return;
   try {
     const result = await apiFetch(`/api/projects/${project.id}`, { method: 'DELETE' });
-    state.projects = state.projects.filter((item) => item.id !== project.id);
-    renderAll();
     syncToast(result.remote_sync);
-    toast('Projeto excluído.', 'success');
+    await loadData(false);
+    toast('Projeto excluído e lista recarregada do backend.', 'success');
   } catch (error) {
     toast(error.payload?.error || error.message || 'Não foi possível excluir o projeto.', 'error', 7800);
+  }
+}
+
+async function syncFromGithub() {
+  if (!isAdmin) return;
+  const confirmed = window.confirm('Sincronizar agora com o arquivo data/runtime_projects.json do GitHub? Use quando quiser conferir se o painel local está idêntico ao backup.');
+  if (!confirmed) return;
+  els.syncFromGithubBtn.disabled = true;
+  try {
+    const result = await apiFetch('/api/admin/sync-from-github', { method: 'POST', body: { confirm: true } });
+    toast(result.changed ? 'Painel sincronizado a partir do GitHub.' : 'Painel já estava alinhado ao GitHub.', 'success');
+    await loadData(false);
+  } catch (error) {
+    toast(error.payload?.error || error.message || 'Não foi possível sincronizar do GitHub.', 'error', 8000);
+  } finally {
+    els.syncFromGithubBtn.disabled = false;
   }
 }
 
@@ -1102,6 +1220,7 @@ function bindEvents() {
     renderProjects();
   });
   els.openCreateBtn?.addEventListener('click', () => openProjectDialog(null));
+  els.syncFromGithubBtn?.addEventListener('click', syncFromGithub);
   els.reseedBtn?.addEventListener('click', reseed);
   els.closeDialogBtn.addEventListener('click', closeProjectDialog);
   els.cancelDialogBtn.addEventListener('click', closeProjectDialog);

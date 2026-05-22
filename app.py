@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import hmac
+import hashlib
 from flask import Flask, Response, jsonify, redirect, render_template, request, session, url_for
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -316,6 +317,9 @@ class SyncResult:
     data_path: str
     repo: str = ""
     updated_at: Optional[str] = None
+    verified: bool = False
+    project_count: Optional[int] = None
+    checksum: Optional[str] = None
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -325,6 +329,9 @@ class SyncResult:
             "data_path": self.data_path,
             "repo": self.repo,
             "updated_at": self.updated_at,
+            "verified": self.verified,
+            "project_count": self.project_count,
+            "checksum": self.checksum,
         }
 
 
@@ -439,6 +446,20 @@ def parse_github_backup(raw: Any) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]
     raise GitHubSyncError("Arquivo JSON remoto inválido")
 
 
+def canonical_projects_json(projects: Iterable[Dict[str, Any]]) -> str:
+    """Gera uma assinatura estável dos projetos para comparar SQLite x GitHub."""
+    cleaned = validate_projects_payload(projects)
+    return json.dumps(cleaned, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def projects_checksum(projects: Iterable[Dict[str, Any]]) -> str:
+    return hashlib.sha256(canonical_projects_json(projects).encode("utf-8")).hexdigest()
+
+
+def projects_match(left: Iterable[Dict[str, Any]], right: Iterable[Dict[str, Any]]) -> bool:
+    return canonical_projects_json(left) == canonical_projects_json(right)
+
+
 def load_projects_from_github() -> Tuple[Optional[List[Dict[str, Any]]], Dict[str, Any]]:
     if not github_enabled():
         return None, {"enabled": False, "message": "GitHub desativado"}
@@ -531,9 +552,21 @@ def backup_projects_to_github(conn: sqlite3.Connection, actor: str = "sistema", 
         )
     try:
         projects = serialize_projects_for_backup(conn)
+        checksum = projects_checksum(projects)
         payload = build_backup_payload(projects, actor, action)
+        payload["checksum"] = checksum
         put_backup_payload(payload)
-        return SyncResult(True, True, "Dados salvos no GitHub com segurança.", data_path, repo, payload["updated_at"])
+
+        # Verificação forte: depois de gravar, lê o arquivo remoto novamente.
+        # Isso evita o cenário de a tela mostrar sucesso, mas o GitHub continuar com dados antigos.
+        remote_projects, remote_info = load_projects_from_github()
+        if remote_projects is None:
+            raise GitHubSyncError("GitHub gravou a requisição, mas não foi possível validar o arquivo remoto.")
+        if not projects_match(projects, remote_projects):
+            raise GitHubSyncError("GitHub não confirmou os mesmos dados enviados. A alteração foi cancelada para evitar perda após login ou deploy.")
+
+        remember_remote_state(conn, payload["updated_at"], checksum, len(projects))
+        return SyncResult(True, True, "Dados salvos e verificados no GitHub.", data_path, repo, payload["updated_at"], True, len(projects), checksum)
     except GitHubSyncError as exc:
         logger.error("GitHub backup error: %s", exc)
         return SyncResult(True, False, str(exc), data_path, repo)
@@ -638,6 +671,75 @@ def replace_projects(conn: sqlite3.Connection, projects: List[Dict[str, Any]]) -
         insert_project_row(cur, item, idx)
 
 
+def get_state(conn: sqlite3.Connection, key: str, default: str = "") -> str:
+    try:
+        row = conn.execute("SELECT value FROM app_state WHERE key=?", (key,)).fetchone()
+        return str(row["value"] if row else default)
+    except sqlite3.Error:
+        return default
+
+
+def set_state(conn: sqlite3.Connection, key: str, value: Any) -> None:
+    now = utc_now_iso()
+    conn.execute(
+        """
+        INSERT INTO app_state (key, value, updated_at) VALUES (?, ?, ?)
+        ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at
+        """,
+        (key, "" if value is None else str(value), now),
+    )
+
+
+def remember_remote_state(conn: sqlite3.Connection, remote_updated_at: str, checksum: str, project_count: int) -> None:
+    set_state(conn, "remote_updated_at", remote_updated_at or "")
+    set_state(conn, "remote_checksum", checksum or "")
+    set_state(conn, "remote_project_count", project_count)
+    set_state(conn, "last_remote_check_at", utc_now_iso())
+
+
+def local_projects_checksum(conn: sqlite3.Connection) -> str:
+    return projects_checksum(serialize_projects_for_backup(conn))
+
+
+def sync_local_from_github_if_needed(conn: sqlite3.Connection, reason: str = "read", force: bool = False) -> Dict[str, Any]:
+    """Mantém o SQLite alinhado ao JSON remoto quando o GitHub está ativo.
+
+    O GitHub passa a ser a fonte de verdade em produção. Se outro processo, redeploy
+    ou sessão antiga deixou o SQLite desatualizado, esta função restaura o banco local
+    antes de mostrar a lista de projetos.
+    """
+    if not github_enabled():
+        return {"enabled": False, "changed": False, "message": "GitHub desativado"}
+    projects, info = load_projects_from_github()
+    if projects is None:
+        return {"enabled": True, "changed": False, "message": info.get("message", "Sem backup remoto"), "error": bool(info.get("error"))}
+
+    meta = info.get("meta") or {}
+    remote_updated_at = str(meta.get("updated_at") or "")
+    remote_count = len(projects)
+    remote_checksum = projects_checksum(projects)
+    local_count = int(conn.execute("SELECT COUNT(*) FROM projects").fetchone()[0])
+    local_checksum = local_projects_checksum(conn) if local_count else ""
+    known_checksum = get_state(conn, "remote_checksum")
+    known_updated_at = get_state(conn, "remote_updated_at")
+
+    should_replace = force or local_count == 0 or local_count != remote_count or local_checksum != remote_checksum
+    # Se a assinatura conhecida estiver vazia ou diferente, e o remoto tiver metadados, preferimos o remoto.
+    if remote_updated_at and remote_updated_at != known_updated_at:
+        should_replace = True
+    if known_checksum and known_checksum == remote_checksum and local_checksum == remote_checksum:
+        should_replace = force
+
+    if should_replace:
+        replace_projects(conn, projects)
+        remember_remote_state(conn, remote_updated_at or utc_now_iso(), remote_checksum, remote_count)
+        logger.info("SQLite sincronizado a partir do GitHub (%s): %s projeto(s)", reason, remote_count)
+        return {"enabled": True, "changed": True, "message": "SQLite restaurado a partir do GitHub", "project_count": remote_count}
+
+    remember_remote_state(conn, remote_updated_at or known_updated_at, remote_checksum, remote_count)
+    return {"enabled": True, "changed": False, "message": "SQLite já alinhado ao GitHub", "project_count": remote_count}
+
+
 def init_db() -> None:
     conn = connect()
     cur = conn.cursor()
@@ -673,6 +775,15 @@ def init_db() -> None:
         )
         """
     )
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS app_state (
+            key TEXT PRIMARY KEY,
+            value TEXT,
+            updated_at TEXT
+        )
+        """
+    )
     migrate_columns(cur)
     for username, display_name, role in DEFAULT_USERS:
         now = utc_now_iso()
@@ -692,6 +803,8 @@ def init_db() -> None:
         restored, restore_meta = load_projects_from_github()
         if restored is not None:
             replace_projects(conn, restored)
+            meta = restore_meta.get("meta") or {}
+            remember_remote_state(conn, str(meta.get("updated_at") or utc_now_iso()), projects_checksum(restored), len(restored))
         else:
             seed = load_seed_projects()
             if seed:
@@ -701,6 +814,10 @@ def init_db() -> None:
                     sync = backup_projects_to_github(conn, actor="sistema", action="seed-inicial")
                     if not sync.saved:
                         logger.warning("Seed carregado localmente, mas backup inicial falhou: %s", sync.message)
+    elif github_enabled():
+        # Em produção, o JSON remoto é a fonte de verdade. Isso corrige sessões
+        # em que o SQLite local ficou diferente do GitHub após logout, spin-down ou redeploy.
+        sync_local_from_github_if_needed(conn, reason="startup")
     for row in cur.execute("SELECT id, nome, projeto_pai, unidade, progresso FROM projects").fetchall():
         fixed = normalize_unidade(row["unidade"], row["nome"], row["projeto_pai"])
         fixed_status = status_from_progress(row["progresso"])
@@ -850,6 +967,23 @@ def login():
         session["username"] = login_user["username"]
         session["display_name"] = login_user["display_name"]
         session["role"] = login_user["role"]
+        # Ao entrar novamente, garante que o SQLite local reflita o JSON salvo no GitHub.
+        # Isso evita o problema de um projeto excluído/progresso alterado voltar após novo login.
+        if github_enabled():
+            try:
+                sync_conn = connect()
+                sync_conn.execute("BEGIN IMMEDIATE")
+                sync_local_from_github_if_needed(sync_conn, reason="login")
+                sync_conn.commit()
+            except Exception as exc:
+                logger.warning("Não foi possível sincronizar dados remotos no login: %s", exc)
+                try:
+                    sync_conn.rollback()
+                    sync_conn.close()
+                except Exception:
+                    pass
+            else:
+                sync_conn.close()
         get_csrf_token()
         clear_failed_login(key)
         return redirect(url_for("index"))
@@ -912,7 +1046,8 @@ def api_sync_status():
                     "sha": data.get("sha"),
                     "updated_at": meta.get("updated_at"),
                     "project_count": meta.get("project_count") if isinstance(meta, dict) else None,
-                    "message": "Persistência GitHub ativa",
+                    "checksum": meta.get("checksum") if isinstance(meta, dict) else None,
+                    "message": "Persistência GitHub ativa e legível",
                 }
             )
         except GitHubSyncError as exc:
@@ -920,6 +1055,28 @@ def api_sync_status():
         except Exception:
             status.update({"remote_file_exists": False, "message": "Não foi possível ler o status remoto", "error": True})
     return jsonify(status)
+
+
+@app.route("/api/admin/sync-from-github", methods=["POST"])
+def api_admin_sync_from_github():
+    if not require_auth():
+        return jsonify({"error": "unauthorized"}), 401
+    if not require_admin():
+        return jsonify({"error": "Apenas administradores podem sincronizar do GitHub"}), 403
+    if not github_enabled():
+        return jsonify({"error": "GitHub não configurado"}), 400
+    conn = connect()
+    try:
+        conn.execute("BEGIN IMMEDIATE")
+        info = sync_local_from_github_if_needed(conn, reason="admin-force", force=True)
+        conn.commit()
+        return jsonify({"ok": True, **info})
+    except Exception:
+        conn.rollback()
+        logger.exception("Erro ao sincronizar do GitHub")
+        return jsonify({"error": "Erro ao sincronizar do GitHub."}), 500
+    finally:
+        conn.close()
 
 
 @app.route("/api/users")
@@ -937,9 +1094,20 @@ def api_projects():
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
     conn = connect()
-    rows = conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), ordem, id").fetchall()
-    conn.close()
-    return jsonify(rows_to_dict(rows))
+    try:
+        if github_enabled():
+            conn.execute("BEGIN IMMEDIATE")
+            sync_local_from_github_if_needed(conn, reason="api-projects")
+            conn.commit()
+        rows = conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), ordem, id").fetchall()
+        return jsonify(rows_to_dict(rows))
+    except Exception as exc:
+        conn.rollback()
+        logger.warning("Falha ao sincronizar projetos antes da listagem: %s", exc)
+        rows = conn.execute("SELECT * FROM projects ORDER BY COALESCE(prazo,'9999-12-31'), ordem, id").fetchall()
+        return jsonify(rows_to_dict(rows))
+    finally:
+        conn.close()
 
 
 @app.route("/api/projects/<int:project_id>", methods=["PATCH"])

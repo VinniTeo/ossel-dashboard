@@ -1,93 +1,49 @@
-# Revisão OSSEL Assistência - Versão visual dinâmica
+# Revisão OSSEL - Versão Profissional V3
 
-## Foco da nova revisão
-Esta versão reforça a persistência já implementada via GitHub e melhora profundamente a experiência visual do dashboard. O painel deixou de ser uma lista estática de cards e passou a ter navegação por abas, visão executiva, indicadores de prazo, cronograma e sala de riscos.
+## Correção principal
 
-## Melhorias visuais e funcionais aplicadas
+O problema relatado foi que um projeto excluído reduzia o total temporariamente, mas voltava após novo login. Isso indica que a alteração não estava sendo confirmada de forma confiável no backup remoto usado para restaurar os dados.
 
-### 1. Navegação por abas
-- Criada navegação lateral por abas:
-  - Visão geral
-  - Projetos
-  - Cronograma
-  - Riscos
-- Cada aba possui contador dinâmico.
-- A aba de riscos destaca automaticamente a quantidade de projetos críticos.
-- O cabeçalho muda conforme a área selecionada.
+A versão V3 corrige isso com persistência verificada:
 
-### 2. Dashboards de análise
-- Criada tela de visão executiva com:
-  - Card principal de saúde do portfólio.
-  - Progresso médio em gráfico circular.
-  - Indicadores de total, críticos, no prazo e entregues.
-  - Gráfico por categoria.
-  - Gráfico por responsável.
-  - Donut de distribuição por prazo/status.
-  - Lista de próximos vencimentos.
+- Após qualquer alteração, o backend grava no GitHub.
+- Depois da gravação, o backend lê novamente o arquivo remoto.
+- O conteúdo remoto é comparado com o conteúdo enviado.
+- A transação local só é confirmada se a verificação passar.
+- Se falhar, a API retorna erro e a alteração é cancelada.
 
-### 3. Indicação de prazo
-- Implementada classificação visual dos projetos:
-  - Atrasado
-  - Vence hoje
-  - Perto de vencer
-  - No prazo
-  - Entregue
-  - Sem prazo
-- Os cards mudam cor e destaque conforme a situação.
-- Projetos críticos ficam mais visíveis.
+## Melhorias de sincronização
 
-### 4. Diferenciação dos projetos
-- Cards ganharam faixa lateral por categoria/situação.
-- Cada card mostra categoria, prazo, status, responsável e unidade de forma mais clara.
-- Cards de projetos vencidos, próximos do prazo, no prazo e entregues têm estilos diferentes.
+- O GitHub passa a ser tratado como fonte de verdade quando `GITHUB_REPO` e `GITHUB_TOKEN` estão configurados.
+- Login e listagem de projetos sincronizam o SQLite local com o JSON remoto.
+- Adicionada tabela `app_state` para guardar checksum, data remota e total de projetos.
+- Adicionado endpoint admin `/api/admin/sync-from-github`.
+- Adicionado botão **Sincronizar GitHub** no menu lateral.
 
-### 5. Filtros rápidos e navegação melhorada
-- Criadas abas rápidas dentro da área de projetos:
-  - Todos
-  - Críticos
-  - Perto de vencer
-  - No prazo
-  - Entregues
-- Adicionados filtros detalhados por:
-  - Status
-  - Categoria
-  - Responsável
-  - Prazo
-  - Ordenação
-- A busca continua funcionando por projeto, unidade, setor, responsável e observações.
+## Melhorias funcionais
 
-### 6. Cronograma
-- Criada aba específica de cronograma com agrupamento por vencimento:
-  - Atrasados
-  - Vence hoje ou em até 7 dias
-  - No prazo
-  - Sem prazo definido
-  - Entregues
+- Botão **Concluir** em cada projeto editável.
+- Botão **Salvar progresso** junto ao slider.
+- Slider continua salvando ao alterar, mas agora o usuário tem uma ação explícita de salvamento.
+- Exclusão recarrega a lista do backend depois do sucesso, evitando diferença entre tela e banco.
+- Toasts agora indicam quando o GitHub foi salvo e verificado.
 
-### 7. Sala de riscos
-- Criada aba específica para projetos que exigem atenção.
-- A lista inclui projetos vencidos, perto do prazo e projetos com progresso baixo para o prazo.
-- Cada risco exibe motivo, responsável, prazo e progresso.
+## Melhorias visuais
 
-### 8. Persistência após deploy
-- Mantida a lógica de persistência via GitHub usando:
-  - GITHUB_REPO
-  - GITHUB_TOKEN
-  - GITHUB_DATA_PATH
-- O progresso continua sendo salvo pelo backend e sincronizado com o GitHub quando configurado.
-- O sistema continua bloqueando sucesso falso quando o GitHub está configurado e o backup falha.
+- Logo transparente criada para tela inicial, menu e cabeçalho.
+- Sidebar mais limpa, sem bloco quadrado pesado para a marca.
+- Cabeçalho com Centro de Tecnologia e Governança de Projetos.
+- Cards e controles com acabamento mais profissional para governança de TI.
+- Destaques visuais melhores para progresso, riscos e entregas.
 
-## Arquivos alterados
+## Arquivos principais alterados
+
+- `app.py`
 - `templates/index.html`
-- `static/css/styles.css`
+- `templates/login.html`
 - `static/js/dashboard.js`
+- `static/css/styles.css`
+- `static/img/logo-ossel-white-transparent.png`
+- `static/img/logo-ossel-blue-transparent.png`
+- `README.md`
 - `REVISAO_OSSEL.md`
-
-## Validações realizadas
-- `python -m py_compile app.py`
-- `node --check static/js/dashboard.js`
-- Teste local de login.
-- Teste local de criação de projeto.
-- Teste local de atualização de progresso.
-- Teste local de carregamento das APIs principais.
-
