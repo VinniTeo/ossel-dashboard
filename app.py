@@ -98,7 +98,7 @@ app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
     SESSION_COOKIE_SECURE=is_production(),
-    PERMANENT_SESSION_LIFETIME=60 * 60 * 12,
+    PERMANENT_SESSION_LIFETIME=60 * 60 * 24 * 7,
     JSON_AS_ASCII=False,
 )
 if not os.environ.get("SECRET_KEY") and is_production():
@@ -275,8 +275,15 @@ def security_gate() -> Optional[Response]:
         return None
     ensure_db_once()
     if request.method in MUTATING_METHODS and not validate_csrf():
+        # Devolve um código estável para o frontend renovar o token automaticamente
+        # e repetir a ação sem obrigar o usuário a perder a alteração em andamento.
         if request.path.startswith("/api/"):
-            return jsonify({"error": "Sessão expirada ou token CSRF inválido. Recarregue a página e tente novamente."}), 400
+            session.modified = True
+            return jsonify({
+                "error": "Sessão expirada ou token CSRF inválido. Atualizando a sessão automaticamente.",
+                "error_code": "csrf_invalid",
+                "csrf_token": get_csrf_token(),
+            }), 400
         return render_template("login.html", erro="Sessão expirada. Recarregue a página e tente novamente."), 400
     return None
 
@@ -290,7 +297,7 @@ def add_security_headers(resp: Response) -> Response:
         "Content-Security-Policy",
         "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'self'; frame-ancestors 'none'",
     )
-    if request.path.startswith("/api/"):
+    if request.path.startswith("/api/") or request.path in {"/", "/login"}:
         resp.headers.setdefault("Cache-Control", "no-store")
     return resp
 
@@ -872,6 +879,14 @@ def api_me():
     if not require_auth():
         return jsonify({"error": "unauthorized"}), 401
     return jsonify(current_user())
+
+
+@app.route("/api/csrf")
+def api_csrf():
+    if not require_auth():
+        return jsonify({"error": "unauthorized"}), 401
+    session.modified = True
+    return jsonify({"csrf_token": get_csrf_token(), "user": current_user()})
 
 
 @app.route("/api/sync-status")
