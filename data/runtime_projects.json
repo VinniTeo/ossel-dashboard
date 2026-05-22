@@ -3,10 +3,10 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-22T19:58:11Z",
+  "updated_at": "2026-05-22T19:58:16Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-19",
-  "project_count": 109,
+  "action": "exclui-projeto-75",
+  "project_count": 108,
   "projects": [
     {
       "nome": "PDV - VarejoOnline",
@@ -343,22 +343,6 @@
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 19
-    },
-    {
-      "nome": "ITSM - Znuny - MKT",
-      "projeto_pai": "",
-      "unidade": "ITSM - Znuny",
-      "setor": "",
-      "categoria": "ITSM",
-      "progresso": 90,
-      "status": "Em andamento",
-      "prazo": "2026-05-31",
-      "obs": "Pendente algun ajustes por parte da ServiceUp e realização de testes por lado do setor de MKT",
-      "ordem": 75,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
-      "assigned_to": "",
-      "id": 75
     },
     {
       "nome": "Codely - OSSEL Ensina",
