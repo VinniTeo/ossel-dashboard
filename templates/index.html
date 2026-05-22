@@ -23,6 +23,29 @@
         </div>
       </div>
 
+      <nav class="app-nav" aria-label="Abas do painel">
+        <button class="nav-tab active" type="button" data-view="overview">
+          <span class="nav-ico">↗</span>
+          <span>Visão geral</span>
+          <strong id="navOverviewCount">0</strong>
+        </button>
+        <button class="nav-tab" type="button" data-view="projects">
+          <span class="nav-ico">▦</span>
+          <span>Projetos</span>
+          <strong id="navProjectsCount">0</strong>
+        </button>
+        <button class="nav-tab" type="button" data-view="timeline">
+          <span class="nav-ico">◷</span>
+          <span>Cronograma</span>
+          <strong id="navTimelineCount">0</strong>
+        </button>
+        <button class="nav-tab attention" type="button" data-view="risks">
+          <span class="nav-ico">!</span>
+          <span>Riscos</span>
+          <strong id="navRiskCount">0</strong>
+        </button>
+      </nav>
+
       <nav class="side-actions" aria-label="Ações rápidas">
         <a class="side-link" href="{{ url_for('export_csv') }}">Exportar CSV</a>
         {% if user.is_admin %}
@@ -42,54 +65,177 @@
 
     <main class="main-content">
       <header class="topbar">
-        <div>
-          <span class="eyebrow">OSSEL Assistência</span>
-          <h1>Dashboard de projetos</h1>
-          <p>Acompanhe progresso, responsáveis e observações com salvamento persistente após deploy.</p>
+        <div class="topbar-copy">
+          <span class="eyebrow" id="pageEyebrow">Central OSSEL</span>
+          <h1 id="pageTitle">Visão executiva</h1>
+          <p id="pageDescription">Indicadores vivos de prazo, progresso, entregas e riscos com dados persistentes no GitHub após deploy.</p>
         </div>
         <div class="topbar-actions">
-          <button class="btn btn-secondary" id="refreshBtn" type="button">Atualizar</button>
+          <button class="btn btn-secondary" id="refreshBtn" type="button">Atualizar painel</button>
           <a class="btn btn-ghost" href="{{ url_for('logout') }}">Sair</a>
         </div>
       </header>
 
-      <section class="stats-grid" id="statsGrid" aria-label="Indicadores do painel">
-        <article class="stat-card skeleton"><span>Total</span><strong>--</strong></article>
-        <article class="stat-card skeleton"><span>Em andamento</span><strong>--</strong></article>
-        <article class="stat-card skeleton"><span>Entregues</span><strong>--</strong></article>
-        <article class="stat-card skeleton"><span>Progresso médio</span><strong>--</strong></article>
-      </section>
-
-      <section class="toolbar" aria-label="Filtros">
-        <label class="search-field">
-          <span>Buscar</span>
-          <input id="searchInput" type="search" placeholder="Projeto, unidade, setor ou observação">
-        </label>
-        <label class="select-field">
-          <span>Status</span>
-          <select id="statusFilter">
-            <option value="">Todos</option>
-          </select>
-        </label>
-        <label class="select-field">
-          <span>Categoria</span>
-          <select id="categoryFilter">
-            <option value="">Todas</option>
-          </select>
-        </label>
-        <label class="select-field">
-          <span>Responsável</span>
-          <select id="ownerFilter">
-            <option value="">Todos</option>
-          </select>
-        </label>
-      </section>
-
       <section class="notice hidden" id="offlineNotice" role="status"></section>
-      <section class="projects-grid" id="projectsGrid" aria-live="polite"></section>
-      <section class="empty-state hidden" id="emptyState">
-        <h2>Nenhum projeto encontrado</h2>
-        <p>Ajuste os filtros ou cadastre um novo projeto.</p>
+
+      <section class="view-panel active" id="overviewView" data-view-panel="overview" aria-label="Visão geral">
+        <div class="command-center">
+          <article class="hero-card">
+            <div class="hero-copy">
+              <span class="eyebrow">Saúde do portfólio</span>
+              <h2 id="healthTitle">Carregando análise...</h2>
+              <p id="healthSummary">Assim que os dados forem carregados, o painel mostrará vencimentos, entregas e prioridades.</p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" type="button" data-jump-view="projects" data-quick-filter="critical">Ver críticos</button>
+                <button class="btn btn-light" type="button" data-jump-view="timeline">Abrir cronograma</button>
+              </div>
+            </div>
+            <div class="health-orbit" aria-label="Progresso médio dos projetos">
+              <div class="orbital-ring" id="overallRing"><span id="overallPercent">--</span></div>
+              <small>progresso médio</small>
+            </div>
+          </article>
+
+          <aside class="priority-panel" id="priorityPanel">
+            <header>
+              <span class="eyebrow">Prioridades agora</span>
+              <strong id="priorityCount">0</strong>
+            </header>
+            <div id="priorityList" class="priority-list"></div>
+          </aside>
+        </div>
+
+        <section class="stats-grid" id="statsGrid" aria-label="Indicadores do painel">
+          <article class="stat-card skeleton"><span>Total</span><strong>--</strong></article>
+          <article class="stat-card skeleton"><span>Vencendo</span><strong>--</strong></article>
+          <article class="stat-card skeleton"><span>No prazo</span><strong>--</strong></article>
+          <article class="stat-card skeleton"><span>Entregues</span><strong>--</strong></article>
+        </section>
+
+        <section class="analytics-grid" aria-label="Dashboards analíticos">
+          <article class="analytics-card wide">
+            <header class="section-head">
+              <div>
+                <span class="eyebrow">Análise por categoria</span>
+                <h2>Onde estão os projetos</h2>
+              </div>
+            </header>
+            <div class="bar-chart" id="categoryChart"></div>
+          </article>
+
+          <article class="analytics-card">
+            <header class="section-head">
+              <div>
+                <span class="eyebrow">Status</span>
+                <h2>Prazo e entrega</h2>
+              </div>
+            </header>
+            <div class="donut-wrap">
+              <div class="donut" id="deadlineDonut"><span>--</span></div>
+              <div class="legend-list" id="deadlineLegend"></div>
+            </div>
+          </article>
+
+          <article class="analytics-card wide">
+            <header class="section-head">
+              <div>
+                <span class="eyebrow">Equipe</span>
+                <h2>Distribuição por responsável</h2>
+              </div>
+            </header>
+            <div class="owner-chart" id="ownerChart"></div>
+          </article>
+
+          <article class="analytics-card">
+            <header class="section-head">
+              <div>
+                <span class="eyebrow">Próximos passos</span>
+                <h2>Vencimentos próximos</h2>
+              </div>
+            </header>
+            <div class="deadline-list" id="deadlineList"></div>
+          </article>
+        </section>
+      </section>
+
+      <section class="view-panel" id="projectsView" data-view-panel="projects" aria-label="Projetos">
+        <section class="quick-tabs" id="quickFilterBar" aria-label="Filtros rápidos">
+          <button type="button" class="quick-tab active" data-quick-filter="all">Todos <strong>0</strong></button>
+          <button type="button" class="quick-tab danger" data-quick-filter="critical">Críticos <strong>0</strong></button>
+          <button type="button" class="quick-tab warning" data-quick-filter="dueSoon">Perto de vencer <strong>0</strong></button>
+          <button type="button" class="quick-tab success" data-quick-filter="onTime">No prazo <strong>0</strong></button>
+          <button type="button" class="quick-tab done" data-quick-filter="delivered">Entregues <strong>0</strong></button>
+        </section>
+
+        <section class="toolbar" aria-label="Filtros detalhados">
+          <label class="search-field">
+            <span>Buscar</span>
+            <input id="searchInput" type="search" placeholder="Projeto, unidade, setor, responsável ou observação">
+          </label>
+          <label class="select-field">
+            <span>Status</span>
+            <select id="statusFilter"><option value="">Todos</option></select>
+          </label>
+          <label class="select-field">
+            <span>Categoria</span>
+            <select id="categoryFilter"><option value="">Todas</option></select>
+          </label>
+          <label class="select-field">
+            <span>Responsável</span>
+            <select id="ownerFilter"><option value="">Todos</option></select>
+          </label>
+          <label class="select-field">
+            <span>Prazo</span>
+            <select id="deadlineFilter">
+              <option value="">Todos</option>
+              <option value="overdue">Atrasados</option>
+              <option value="dueSoon">Perto de vencer</option>
+              <option value="onTime">No prazo</option>
+              <option value="delivered">Entregues</option>
+              <option value="noDate">Sem prazo</option>
+            </select>
+          </label>
+          <label class="select-field">
+            <span>Ordenar</span>
+            <select id="sortSelect">
+              <option value="deadline">Prazo mais próximo</option>
+              <option value="risk">Maior risco</option>
+              <option value="progressAsc">Menor progresso</option>
+              <option value="progressDesc">Maior progresso</option>
+              <option value="owner">Responsável</option>
+              <option value="category">Categoria</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="projects-grid" id="projectsGrid" aria-live="polite"></section>
+        <section class="empty-state hidden" id="emptyState">
+          <h2>Nenhum projeto encontrado</h2>
+          <p>Ajuste os filtros, mude de aba ou cadastre um novo projeto.</p>
+        </section>
+      </section>
+
+      <section class="view-panel" id="timelineView" data-view-panel="timeline" aria-label="Cronograma">
+        <header class="section-head page-section-head">
+          <div>
+            <span class="eyebrow">Cronograma inteligente</span>
+            <h2>Projetos por vencimento</h2>
+            <p>Veja rapidamente o que está vencido, o que vence nos próximos dias e o que já foi entregue.</p>
+          </div>
+        </header>
+        <div class="timeline-board" id="timelineBoard"></div>
+      </section>
+
+      <section class="view-panel" id="risksView" data-view-panel="risks" aria-label="Riscos">
+        <div class="risk-hero" id="riskHero">
+          <div>
+            <span class="eyebrow">Sala de risco</span>
+            <h2>Projetos que pedem atenção</h2>
+            <p>Projetos vencidos, perto de vencer ou com baixo progresso para o prazo.</p>
+          </div>
+          <strong id="riskHeroCount">0</strong>
+        </div>
+        <div class="risk-grid" id="riskGrid"></div>
       </section>
     </main>
   </div>

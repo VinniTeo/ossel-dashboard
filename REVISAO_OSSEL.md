@@ -1,68 +1,93 @@
-# Revisão OSSEL Assistência - versão final melhorada
+# Revisão OSSEL Assistência - Versão visual dinâmica
 
-## Arquivos principais alterados/criados
+## Foco da nova revisão
+Esta versão reforça a persistência já implementada via GitHub e melhora profundamente a experiência visual do dashboard. O painel deixou de ser uma lista estática de cards e passou a ter navegação por abas, visão executiva, indicadores de prazo, cronograma e sala de riscos.
 
-- `app.py`: backend Flask revisado, segurança, login, APIs, persistência GitHub robusta e tratamento de falhas.
-- `templates/login.html`: nova tela de login com a logo oficial e visual institucional.
-- `templates/index.html`: novo dashboard responsivo com cards, filtros, modal e área de status da persistência.
-- `static/css/styles.css`: novo visual moderno, responsivo e alinhado à marca.
-- `static/js/dashboard.js`: carregamento do painel, filtros, slider de progresso, modal de edição, feedbacks e chamadas seguras às APIs.
-- `static/js/login.js`: estado de carregamento no botão de login.
-- `static/img/logo-ossel.jpeg`: logo oficial enviada.
-- `render.yaml`: configuração de deploy com variáveis de ambiente necessárias.
-- `README.md`: instruções atualizadas de deploy, persistência e testes.
+## Melhorias visuais e funcionais aplicadas
 
-## Melhorias funcionais
+### 1. Navegação por abas
+- Criada navegação lateral por abas:
+  - Visão geral
+  - Projetos
+  - Cronograma
+  - Riscos
+- Cada aba possui contador dinâmico.
+- A aba de riscos destaca automaticamente a quantidade de projetos críticos.
+- O cabeçalho muda conforme a área selecionada.
 
-- Progresso editável por slider diretamente no card.
-- Observações editáveis no card para quem tem permissão.
-- Modal para criação e edição de projetos.
-- Busca por projeto, unidade, setor, categoria, responsável e observação.
-- Filtros por status, categoria e responsável.
-- Exportação CSV mantida.
-- Feedback visual para salvar, erro e sucesso.
-- Tela de estado vazio.
-- Status visível da persistência GitHub.
+### 2. Dashboards de análise
+- Criada tela de visão executiva com:
+  - Card principal de saúde do portfólio.
+  - Progresso médio em gráfico circular.
+  - Indicadores de total, críticos, no prazo e entregues.
+  - Gráfico por categoria.
+  - Gráfico por responsável.
+  - Donut de distribuição por prazo/status.
+  - Lista de próximos vencimentos.
 
-## Persistência após deploy
+### 3. Indicação de prazo
+- Implementada classificação visual dos projetos:
+  - Atrasado
+  - Vence hoje
+  - Perto de vencer
+  - No prazo
+  - Entregue
+  - Sem prazo
+- Os cards mudam cor e destaque conforme a situação.
+- Projetos críticos ficam mais visíveis.
 
-A persistência foi reforçada para usar as variáveis:
+### 4. Diferenciação dos projetos
+- Cards ganharam faixa lateral por categoria/situação.
+- Cada card mostra categoria, prazo, status, responsável e unidade de forma mais clara.
+- Cards de projetos vencidos, próximos do prazo, no prazo e entregues têm estilos diferentes.
 
-- `GITHUB_REPO`
-- `GITHUB_TOKEN`
-- `GITHUB_DATA_PATH`
+### 5. Filtros rápidos e navegação melhorada
+- Criadas abas rápidas dentro da área de projetos:
+  - Todos
+  - Críticos
+  - Perto de vencer
+  - No prazo
+  - Entregues
+- Adicionados filtros detalhados por:
+  - Status
+  - Categoria
+  - Responsável
+  - Prazo
+  - Ordenação
+- A busca continua funcionando por projeto, unidade, setor, responsável e observações.
 
-Agora, quando uma alteração é feita, o backend salva o JSON remoto no GitHub antes de confirmar a transação local. Se o GitHub falhar, a alteração é cancelada e o usuário recebe erro. Isso evita o problema de parecer salvo localmente e depois perder o progresso em um novo deploy.
+### 6. Cronograma
+- Criada aba específica de cronograma com agrupamento por vencimento:
+  - Atrasados
+  - Vence hoje ou em até 7 dias
+  - No prazo
+  - Sem prazo definido
+  - Entregues
 
-## Segurança
+### 7. Sala de riscos
+- Criada aba específica para projetos que exigem atenção.
+- A lista inclui projetos vencidos, perto do prazo e projetos com progresso baixo para o prazo.
+- Cada risco exibe motivo, responsável, prazo e progresso.
 
-- Senhas lidas por variáveis de ambiente.
-- Sem senha fixa em produção.
-- Token do GitHub usado somente no backend.
-- CSRF em ações de alteração.
-- Cookies de sessão com boas práticas.
-- Rotas privadas protegidas.
-- Permissões aplicadas também no backend.
-- Headers básicos de segurança.
-- Debug desativado em produção.
+### 8. Persistência após deploy
+- Mantida a lógica de persistência via GitHub usando:
+  - GITHUB_REPO
+  - GITHUB_TOKEN
+  - GITHUB_DATA_PATH
+- O progresso continua sendo salvo pelo backend e sincronizado com o GitHub quando configurado.
+- O sistema continua bloqueando sucesso falso quando o GitHub está configurado e o backup falha.
 
-## Visual e UX
+## Arquivos alterados
+- `templates/index.html`
+- `static/css/styles.css`
+- `static/js/dashboard.js`
+- `REVISAO_OSSEL.md`
 
-- Login redesenhado com identidade OSSEL.
-- Dashboard moderno, limpo e responsivo.
-- Cards com hierarquia visual melhor.
-- Badges de status.
-- Barra e slider de progresso integrados.
-- Mensagens claras quando o GitHub não está configurado.
-- Mobile e desktop revisados.
+## Validações realizadas
+- `python -m py_compile app.py`
+- `node --check static/js/dashboard.js`
+- Teste local de login.
+- Teste local de criação de projeto.
+- Teste local de atualização de progresso.
+- Teste local de carregamento das APIs principais.
 
-## Testes recomendados
-
-- Login com todos os usuários.
-- Acesso sem login bloqueado.
-- Criação de projeto por administrador.
-- Alteração de progresso pelo slider.
-- Edição de observação.
-- Exclusão de projeto.
-- Falha simulada de GitHub.
-- Novo deploy no Render com restauração via `data/runtime_projects.json`.

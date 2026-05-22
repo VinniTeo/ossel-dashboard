@@ -111,3 +111,16 @@ export GITHUB_DATA_PATH="data/runtime_projects.json"
 - O token nunca é enviado para HTML, JavaScript ou respostas de API.
 - O arquivo `data/runtime_projects.json` é criado/atualizado automaticamente pela aplicação no GitHub.
 - O ZIP não inclui `data/runtime_projects.json` para evitar sobrescrever dados reais já salvos.
+
+## Melhorias visuais desta versão
+
+Esta versão adiciona uma navegação mais moderna por abas:
+
+- Visão geral executiva.
+- Projetos com filtros rápidos.
+- Cronograma por vencimento.
+- Sala de riscos.
+- Indicadores de projetos atrasados, perto de vencer, no prazo, entregues e sem prazo.
+- Dashboards por categoria, responsável, prazo/status e próximos vencimentos.
+
+A persistência após deploy continua dependendo das variáveis `GITHUB_REPO`, `GITHUB_TOKEN` e `GITHUB_DATA_PATH`. Quando essas variáveis estão configuradas no Render, alterações de progresso, observações e responsáveis são sincronizadas com o arquivo remoto `data/runtime_projects.json`.
