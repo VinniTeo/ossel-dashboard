@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-22T20:00:19Z",
+  "updated_at": "2026-05-22T21:22:42Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-19",
+  "action": "atualiza-projeto-29",
   "project_count": 108,
   "projects": [
     {
@@ -830,13 +830,13 @@
       "unidade": "SA - PERI 179",
       "setor": "Novos Negocios",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 13,
+      "status": "Em andamento",
       "prazo": "2026-07-28",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 29,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-22T21:22:42Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 29
     },
@@ -1736,5 +1736,6 @@
       "assigned_to": "",
       "id": 80
     }
-  ]
+  ],
+  "checksum": "bbdb8eff26b46182497da6ddea8ca70a3af1632811387a371e1c3bfaec3ea0f6"
 }
