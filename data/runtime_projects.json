@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:29:37Z",
+  "updated_at": "2026-05-23T00:29:46Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-36",
+  "action": "atualiza-projeto-37",
   "project_count": 108,
   "projects": [
     {
@@ -535,6 +535,22 @@
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 36
+    },
+    {
+      "nome": "Mesa Seguro",
+      "projeto_pai": "Troca de maquinas - SCS - FUNE",
+      "unidade": "SCS - FUNE",
+      "setor": "Mesa Seguro",
+      "categoria": "Troca de Máquinas",
+      "progresso": 0,
+      "status": "Pendente",
+      "prazo": "2026-06-30",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
+      "ordem": 37,
+      "updated_at": "2026-05-23T00:29:46Z",
+      "updated_by": "Administrador",
+      "assigned_to": "",
+      "id": 37
     },
     {
       "nome": "TOTVS Chefe x TOTVS - Mont Cristo",
@@ -1177,22 +1193,6 @@
       "id": 92
     },
     {
-      "nome": "Mesa Seguro",
-      "projeto_pai": "Troca de maquinas - SCS - FUNE",
-      "unidade": "SCS - FUNE",
-      "setor": "Mesa Seguro",
-      "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
-      "prazo": "2026-09-15",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
-      "ordem": 37,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
-      "assigned_to": "",
-      "id": 37
-    },
-    {
       "nome": "Troca das antenas - SCS - GIULLIAS",
       "projeto_pai": "",
       "unidade": "SCS - GIULLIAS",
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "a40591600e08f9e7c3e4fce8dd2894e4e6034f219fcc24ed082f6608ebb078e9"
+  "checksum": "02ad4e8c2715aca60a0bf72dd6bd98b5a6f22657cd722d19fc59db321058f66f"
 }
