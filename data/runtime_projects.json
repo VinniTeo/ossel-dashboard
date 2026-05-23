@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:23:05Z",
+  "updated_at": "2026-05-23T00:23:47Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-31",
+  "action": "atualiza-projeto-90",
   "project_count": 108,
   "projects": [
     {
@@ -1054,13 +1054,13 @@
       "unidade": "SP - FUNE JARDIM AVELINO",
       "setor": "",
       "categoria": "Antenas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-08-26",
       "obs": "Pendente restruturação logica de rede para inicio",
       "ordem": 90,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:23:47Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 90
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "9eda872f6a1ba948569c33cb6ea2a68ebe7bac1b97237ca4043dcbab069b92d8"
+  "checksum": "1ccce161a198d8f79e2bb33908c0895ad8ca642e41b262954340146987978420"
 }
