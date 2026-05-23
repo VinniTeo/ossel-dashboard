@@ -3,7 +3,7 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:30:09Z",
+  "updated_at": "2026-05-23T00:30:20Z",
   "updated_by": "Administrador",
   "action": "atualiza-projeto-40",
   "project_count": 108,
@@ -567,6 +567,22 @@
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 38
+    },
+    {
+      "nome": "Giullias",
+      "projeto_pai": "Troca de maquinas - SCS - FUNE",
+      "unidade": "SCS - FUNE",
+      "setor": "Giullias",
+      "categoria": "Troca de Máquinas",
+      "progresso": 20,
+      "status": "Em andamento",
+      "prazo": "2026-06-30",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
+      "ordem": 40,
+      "updated_at": "2026-05-23T00:30:20Z",
+      "updated_by": "Administrador",
+      "assigned_to": "",
+      "id": 40
     },
     {
       "nome": "TOTVS Chefe x TOTVS - Mont Cristo",
@@ -1305,22 +1321,6 @@
       "id": 67
     },
     {
-      "nome": "Giullias",
-      "projeto_pai": "Troca de maquinas - SCS - FUNE",
-      "unidade": "SCS - FUNE",
-      "setor": "Giullias",
-      "categoria": "Troca de Máquinas",
-      "progresso": 20,
-      "status": "Em andamento",
-      "prazo": "2026-10-06",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
-      "ordem": 40,
-      "updated_at": "2026-05-23T00:30:09Z",
-      "updated_by": "Administrador",
-      "assigned_to": "",
-      "id": 40
-    },
-    {
       "nome": "Troca das antenas - SA - ABAVILLI JARDIM",
       "projeto_pai": "",
       "unidade": "SA - ABAVILLI JARDIM",
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "94c5419ba5141c83c890a18471e6fe495b9f9f10727a73ee2dbc3520b7141502"
+  "checksum": "7bab973d4d4de09e75a596874084c9305d39def1d12c14c39079e21a22a6b754"
 }
