@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:28:02Z",
+  "updated_at": "2026-05-23T00:29:37Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-43",
+  "action": "atualiza-projeto-36",
   "project_count": 108,
   "projects": [
     {
@@ -519,6 +519,22 @@
       "updated_by": "",
       "assigned_to": "",
       "id": 25
+    },
+    {
+      "nome": "Atendimento",
+      "projeto_pai": "Troca de maquinas - SCS - FUNE",
+      "unidade": "SCS - FUNE",
+      "setor": "Atendimento",
+      "categoria": "Troca de Máquinas",
+      "progresso": 0,
+      "status": "Pendente",
+      "prazo": "2026-06-30",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
+      "ordem": 36,
+      "updated_at": "2026-05-23T00:29:37Z",
+      "updated_by": "Administrador",
+      "assigned_to": "",
+      "id": 36
     },
     {
       "nome": "TOTVS Chefe x TOTVS - Mont Cristo",
@@ -1145,22 +1161,6 @@
       "id": 65
     },
     {
-      "nome": "Atendimento",
-      "projeto_pai": "Troca de maquinas - SCS - FUNE",
-      "unidade": "SCS - FUNE",
-      "setor": "Atendimento",
-      "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
-      "prazo": "2026-09-08",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
-      "ordem": 36,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
-      "assigned_to": "",
-      "id": 36
-    },
-    {
       "nome": "Troca das antenas - SA - COMFLORES",
       "projeto_pai": "",
       "unidade": "SA - COMFLORES",
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "6408a83a23a952b12f4ad2026b9b5ba24fc1e383ea3bc29919cab6957ddf09d7"
+  "checksum": "a40591600e08f9e7c3e4fce8dd2894e4e6034f219fcc24ed082f6608ebb078e9"
 }
