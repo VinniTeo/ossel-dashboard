@@ -3,7 +3,7 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:26:21Z",
+  "updated_at": "2026-05-23T00:26:25Z",
   "updated_by": "Administrador",
   "action": "atualiza-projeto-53",
   "project_count": 108,
@@ -1614,12 +1614,12 @@
       "unidade": "SP - GIULLIAS",
       "setor": "",
       "categoria": "Troca de Máquinas",
-      "progresso": 47,
+      "progresso": 50,
       "status": "Em andamento",
       "prazo": "2026-11-30",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 53,
-      "updated_at": "2026-05-23T00:26:21Z",
+      "updated_at": "2026-05-23T00:26:25Z",
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 53
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "f0538ea070c3a36c558f7417d9327fd97669ec27aec876b4d58c55577c206204"
+  "checksum": "04a40063381b228ab5e83de2bdd81ba93af605113d39e755e0ab51195e35e8ac"
 }
