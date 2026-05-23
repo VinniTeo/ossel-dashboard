@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:16:10Z",
+  "updated_at": "2026-05-23T00:16:53Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-71",
+  "action": "atualiza-projeto-4",
   "project_count": 108,
   "projects": [
     {
@@ -289,10 +289,10 @@
       "progresso": 95,
       "status": "Em andamento",
       "prazo": "2026-05-15",
-      "obs": "Pendente revisão dos produtos da lanchonete, recontagem e agendar um dia para Go live",
+      "obs": "Pendente revisão dos produtos da lanchonete, parte fiscal e recontagem e agendar um dia para Go live",
       "ordem": 4,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:16:53Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 4
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "ee55f0a45ce71c2882624fe9716b97d73ff8ee1ded0f9edbf2857d6106146516"
+  "checksum": "5da7871a113e683dd2f493cd8e27ae4b6d296f685a88f81d3b5c0c68113785ab"
 }
