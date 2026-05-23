@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:26:43Z",
+  "updated_at": "2026-05-23T00:28:02Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-51",
+  "action": "atualiza-projeto-43",
   "project_count": 108,
   "projects": [
     {
@@ -1406,13 +1406,13 @@
       "unidade": "SCS - FUNE",
       "setor": "Mesa Operacional",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-10-27",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 43,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:28:02Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 43
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "dcb656c2005c0c3b5a4bb05d23e108dcc7be98badc9c9f6dbec89cd59d86864b"
+  "checksum": "6408a83a23a952b12f4ad2026b9b5ba24fc1e383ea3bc29919cab6957ddf09d7"
 }
