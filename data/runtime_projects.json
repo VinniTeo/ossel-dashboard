@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:34:09Z",
+  "updated_at": "2026-05-23T00:34:10Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-38",
+  "action": "atualiza-projeto-41",
   "project_count": 108,
   "projects": [
     {
@@ -561,9 +561,9 @@
       "progresso": 0,
       "status": "Pendente",
       "prazo": "2026-06-30",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias. Em foco para melhoria e sucesso Go-live Virtus",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 38,
-      "updated_at": "2026-05-23T00:34:09Z",
+      "updated_at": "2026-05-23T00:29:58Z",
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 38
@@ -609,9 +609,9 @@
       "progresso": 0,
       "status": "Pendente",
       "prazo": "2026-06-30",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias. Em foco para melhoria e sucesso Go-live Virtus",
       "ordem": 41,
-      "updated_at": "2026-05-23T00:31:21Z",
+      "updated_at": "2026-05-23T00:34:10Z",
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 41
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "1bf7ffdb4870e0535c7fb4883446abaa74255a94b269dee6a2de5967c8e1eb9d"
+  "checksum": "161f7ca399c2c43f8216320c1a6851b70e67883ef4b0a400e3c14282e0a9be59"
 }
