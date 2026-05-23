@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:26:32Z",
+  "updated_at": "2026-05-23T00:26:43Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-52",
+  "action": "atualiza-projeto-51",
   "project_count": 108,
   "projects": [
     {
@@ -1582,13 +1582,13 @@
       "unidade": "SCS - GIULLIAS",
       "setor": "",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 35,
+      "status": "Em andamento",
       "prazo": "2026-11-24",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 51,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:26:43Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 51
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "0721e8a27148f0778258e38a9c34362b5fded12db84b6d313d423e5a0866759d"
+  "checksum": "dcb656c2005c0c3b5a4bb05d23e108dcc7be98badc9c9f6dbec89cd59d86864b"
 }
