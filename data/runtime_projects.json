@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:17:57Z",
+  "updated_at": "2026-05-23T00:19:34Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-22",
+  "action": "atualiza-projeto-1",
   "project_count": 108,
   "projects": [
     {
@@ -497,10 +497,10 @@
       "progresso": 80,
       "status": "Em andamento",
       "prazo": "2026-06-30",
-      "obs": "Pendente, devido à necessidade de diversas configurações e testes pelos usuários operacionais.",
+      "obs": "Pendente, devido à necessidade de diversas configurações e testes pelos usuários operacionais. Testes práticos serão realizados na ultima semana de maio para Go-live",
       "ordem": 1,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:19:34Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 1
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "fc57c2a1b9ccfedd1ca8d9fcfdad29f5d078c30af4731fb4a90ff432e092ec1b"
+  "checksum": "c538ca0939231b8cefbb6e6b4d3da13f0a48398afd250f09769959cb2416f993"
 }
