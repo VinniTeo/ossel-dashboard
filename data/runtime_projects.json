@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:16:53Z",
+  "updated_at": "2026-05-23T00:16:54Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-4",
+  "action": "atualiza-projeto-21",
   "project_count": 108,
   "projects": [
     {
@@ -414,13 +414,13 @@
       "unidade": "SA - ADM",
       "setor": "Tesouraria",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-06-09",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 21,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:16:54Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 21
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "5da7871a113e683dd2f493cd8e27ae4b6d296f685a88f81d3b5c0c68113785ab"
+  "checksum": "c3113ce512a826f3dc2cffdb6f5008e6b49c498206ffe6503525084a290b4538"
 }
