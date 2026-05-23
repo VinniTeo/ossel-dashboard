@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:17:05Z",
+  "updated_at": "2026-05-23T00:17:54Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-21",
+  "action": "atualiza-projeto-22",
   "project_count": 108,
   "projects": [
     {
@@ -446,13 +446,13 @@
       "unidade": "SA - ADM",
       "setor": "Controladoria",
       "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 49,
+      "status": "Em andamento",
       "prazo": "2026-06-16",
       "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
       "ordem": 22,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-23T00:17:54Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 22
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "bf15416532818d40d1389d522bb9c04a636db4d6a5d8596d2acd70b32eb9cb7e"
+  "checksum": "62e541c46c9a740c3e4ea135b09f45032cea7af2dc596ec46dee612cfdb7f2d4"
 }
