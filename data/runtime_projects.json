@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:31:01Z",
+  "updated_at": "2026-05-23T00:31:16Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-39",
+  "action": "atualiza-projeto-41",
   "project_count": 108,
   "projects": [
     {
@@ -599,6 +599,22 @@
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 40
+    },
+    {
+      "nome": "Supervisão Operacional",
+      "projeto_pai": "Troca de maquinas - SCS - FUNE",
+      "unidade": "SCS - FUNE",
+      "setor": "Supervisão Operacional",
+      "categoria": "Troca de Máquinas",
+      "progresso": 0,
+      "status": "Pendente",
+      "prazo": "2026-06-30",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
+      "ordem": 41,
+      "updated_at": "2026-05-23T00:31:16Z",
+      "updated_by": "Administrador",
+      "assigned_to": "",
+      "id": 41
     },
     {
       "nome": "TOTVS Chefe x TOTVS - Mont Cristo",
@@ -1337,22 +1353,6 @@
       "id": 96
     },
     {
-      "nome": "Supervisão Operacional",
-      "projeto_pai": "Troca de maquinas - SCS - FUNE",
-      "unidade": "SCS - FUNE",
-      "setor": "Supervisão Operacional",
-      "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
-      "prazo": "2026-10-13",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
-      "ordem": 41,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
-      "assigned_to": "",
-      "id": 41
-    },
-    {
       "nome": "Troca das antenas - SA - ABAVILLI BOSQUE",
       "projeto_pai": "",
       "unidade": "SA - ABAVILLI BOSQUE",
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "dff52063c926f8a4249ce7e529c467328bbd370910cfe886070849abcbfe05fa"
+  "checksum": "0be6bc8364d2887513254f6608aab4c14a8b44828fe89c87e67acee6b3bcde0a"
 }
