@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:29:46Z",
+  "updated_at": "2026-05-23T00:29:58Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-37",
+  "action": "atualiza-projeto-38",
   "project_count": 108,
   "projects": [
     {
@@ -551,6 +551,22 @@
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 37
+    },
+    {
+      "nome": "Adm",
+      "projeto_pai": "Troca de maquinas - SCS - FUNE",
+      "unidade": "SCS - FUNE",
+      "setor": "Adm",
+      "categoria": "Troca de Máquinas",
+      "progresso": 0,
+      "status": "Pendente",
+      "prazo": "2026-06-30",
+      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
+      "ordem": 38,
+      "updated_at": "2026-05-23T00:29:58Z",
+      "updated_by": "Administrador",
+      "assigned_to": "",
+      "id": 38
     },
     {
       "nome": "TOTVS Chefe x TOTVS - Mont Cristo",
@@ -1225,22 +1241,6 @@
       "id": 66
     },
     {
-      "nome": "Adm",
-      "projeto_pai": "Troca de maquinas - SCS - FUNE",
-      "unidade": "SCS - FUNE",
-      "setor": "Adm",
-      "categoria": "Troca de Máquinas",
-      "progresso": 0,
-      "status": "Pendente",
-      "prazo": "2026-09-22",
-      "obs": "Realizar troca, monitorar, ajustar pendências e manter backup por alguns dias",
-      "ordem": 38,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
-      "assigned_to": "",
-      "id": 38
-    },
-    {
       "nome": "Troca das antenas - SP - FLOR DO SOL",
       "projeto_pai": "",
       "unidade": "SP - FLOR DO SOL",
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "02ad4e8c2715aca60a0bf72dd6bd98b5a6f22657cd722d19fc59db321058f66f"
+  "checksum": "41013624b1b3b3495b2badcec4be3ea85d2d4e8342c8b0db85e41b8bc8e3af33"
 }
