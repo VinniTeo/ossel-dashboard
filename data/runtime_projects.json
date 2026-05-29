@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-23T00:35:33Z",
+  "updated_at": "2026-05-29T23:18:55Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-35",
+  "action": "atualiza-projeto-71",
   "project_count": 108,
   "projects": [
     {
@@ -301,13 +301,13 @@
       "projeto_pai": "",
       "unidade": "Telefonia Sorocaba",
       "setor": "",
-      "categoria": "Telefonia",
+      "categoria": "Outros",
       "progresso": 90,
       "status": "Em andamento",
       "prazo": "2026-05-15",
-      "obs": "Configuração finalizada, Treinamento com os usuários sendo realizado e pendente portabilidade marcada para o dia 03/06",
+      "obs": "Configuração finalizada, Treinamento com os usuários sendo realizado e pendente portabilidade marcada para o dia 01/06",
       "ordem": 71,
-      "updated_at": "2026-05-23T00:16:10Z",
+      "updated_at": "2026-05-29T23:18:55Z",
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 71
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "96a72fa16ac02bae320bedc2b4ec3d80f40b9395542ba2f61566804878fbee3b"
+  "checksum": "bb5b4b4a2be93353e75efed143f6443b5548c6e90b855d10675cf4d4badef169"
 }
