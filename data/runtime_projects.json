@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-29T23:18:55Z",
+  "updated_at": "2026-05-29T23:20:14Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-71",
+  "action": "atualiza-projeto-8",
   "project_count": 108,
   "projects": [
     {
@@ -377,22 +377,6 @@
       "id": 7
     },
     {
-      "nome": "Microsoft 365 - TEAMS E E-MAILS",
-      "projeto_pai": "",
-      "unidade": "Microsoft 365 - TEAMS E E-MAILS",
-      "setor": "",
-      "categoria": "Microsoft 365",
-      "progresso": 95,
-      "status": "Em andamento",
-      "prazo": "2026-06-01",
-      "obs": "Pendente migração dos e-mails e configuração para os usuarios.",
-      "ordem": 8,
-      "updated_at": "2026-05-23T00:03:43Z",
-      "updated_by": "Administrador",
-      "assigned_to": "",
-      "id": 8
-    },
-    {
       "nome": "Atendimento",
       "projeto_pai": "Troca de maquinas - SA - ADM",
       "unidade": "SA - ADM",
@@ -423,6 +407,22 @@
       "updated_by": "Administrador",
       "assigned_to": "",
       "id": 21
+    },
+    {
+      "nome": "Microsoft 365 - TEAMS E E-MAILS",
+      "projeto_pai": "",
+      "unidade": "Microsoft 365 - TEAMS E E-MAILS",
+      "setor": "",
+      "categoria": "Outros",
+      "progresso": 95,
+      "status": "Em andamento",
+      "prazo": "2026-06-15",
+      "obs": "Pendente migração dos e-mails e configuração para os usuarios.",
+      "ordem": 8,
+      "updated_at": "2026-05-29T23:20:14Z",
+      "updated_by": "Administrador",
+      "assigned_to": "",
+      "id": 8
     },
     {
       "nome": "Troca de maquinas - SA - ADM",
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "bb5b4b4a2be93353e75efed143f6443b5548c6e90b855d10675cf4d4badef169"
+  "checksum": "1c85f7e8ff6718cbebdd37839114d297c5a491c1357a2fa66c5d4fd810ae318f"
 }
