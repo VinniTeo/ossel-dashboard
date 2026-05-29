@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-29T23:22:28Z",
+  "updated_at": "2026-05-29T23:23:14Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-82",
+  "action": "atualiza-projeto-83",
   "project_count": 108,
   "projects": [
     {
@@ -750,13 +750,13 @@
       "unidade": "SA - ADM",
       "setor": "",
       "categoria": "Antenas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-07-08",
       "obs": "Pendente restruturação logica de rede para inicio",
       "ordem": 83,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-29T23:23:14Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 83
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "cc82b4a5f8c90972604230cb1a15c212be4b44046412526c34cb9e40cf1b8939"
+  "checksum": "9b130fd5254e9a63928f40d36494289bf4da396f7fbd0a556ddedac4c4f22b42"
 }
