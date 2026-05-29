@@ -3,9 +3,9 @@
   "app": "ossel-dashboard",
   "source": "render",
   "data_path": "data/runtime_projects.json",
-  "updated_at": "2026-05-29T23:20:29Z",
+  "updated_at": "2026-05-29T23:22:28Z",
   "updated_by": "Administrador",
-  "action": "atualiza-projeto-15",
+  "action": "atualiza-projeto-82",
   "project_count": 108,
   "projects": [
     {
@@ -686,13 +686,13 @@
       "unidade": "SA - INOVA",
       "setor": "",
       "categoria": "Antenas",
-      "progresso": 0,
-      "status": "Pendente",
+      "progresso": 100,
+      "status": "Entregue",
       "prazo": "2026-07-01",
       "obs": "Pendente restruturação logica de rede para inicio",
       "ordem": 82,
-      "updated_at": "2026-05-21T13:55:20",
-      "updated_by": "",
+      "updated_at": "2026-05-29T23:22:28Z",
+      "updated_by": "Administrador",
       "assigned_to": "",
       "id": 82
     },
@@ -1737,5 +1737,5 @@
       "id": 80
     }
   ],
-  "checksum": "15e9584352b69170a66d85b6a0ec0120cc2e3606b294d50d700be475794a01cc"
+  "checksum": "cc82b4a5f8c90972604230cb1a15c212be4b44046412526c34cb9e40cf1b8939"
 }
